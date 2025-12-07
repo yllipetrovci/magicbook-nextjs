@@ -1,0 +1,29 @@
+[
+  {
+    "id": "2-month",
+    "title": "2-month plan",
+    "subtitle": "40 Credits every two months",
+    "price": 53,
+    "originalPrice": 154,
+    "tag": "Special value - save 50",
+    "period": "per moment"
+  },
+  {
+    "id": "1-month",
+    "title": "1-month plan",
+    "subtitle": "20 Credits every two months",
+    "price": 66,
+    "originalPrice": 166,
+    "tag": "Special value - save 50",
+    "period": "per moment"
+  },
+  {
+    "id": "weekly",
+    "title": "Weekly plan",
+    "subtitle": "4 Credits every week",
+    "price": 205,
+    "originalPrice": null,
+    "tag": null,
+    "period": "per moment"
+  }
+]

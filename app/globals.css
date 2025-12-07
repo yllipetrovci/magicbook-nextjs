@@ -1,0 +1,169 @@
+@import "tailwindcss";
+@import "@fortawesome/fontawesome-free/css/all.min.css";
+
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background-color: #0B0C15;
+  /* Midnight Navy */
+  background-image: radial-gradient(circle at 50% 0%, #1a1c2e 0%, #0B0C15 100%);
+  background-size: cover;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  color: #F3F4F6;
+  /* Light Text */
+  min-height: 100vh;
+}
+
+/* Custom scrollbar for story text */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.perspective-1000 {
+  perspective: 1000px;
+}
+
+.transform-style-3d {
+  transform-style: preserve-3d;
+}
+
+.backface-hidden {
+  backface-visibility: hidden;
+}
+
+.rotate-y-180 {
+  transform: rotateY(180deg);
+}
+
+/* FAQ Accordion Details Styles */
+details>summary {
+  list-style: none;
+}
+
+details>summary::-webkit-details-marker {
+  display: none;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.mask-linear-fade {
+  mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 10%, black 90%, transparent);
+}
+
+.paused {
+  animation-play-state: paused;
+}
+
+/* ----------------------------------------
+   THEME EXTENSIONS (Tailwind v4 syntax)
+-----------------------------------------*/
+@theme {
+  --font-serif: "Libre Baskerville", serif;
+  --font-display: "Cinzel", serif;
+
+  /* Magic Color System */
+  --color-magic-bg: #0B0C15;
+  --color-magic-card: #131625;
+  --color-magic-surface: #1E2235;
+  --color-magic-text: #F3F4F6;
+  --color-magic-muted: #9CA3AF;
+
+  --color-magic-purple: #8B5CF6;
+  --color-magic-purpleLight: #A78BFA;
+  --color-magic-pink: #F472B6;
+  --color-magic-pinkLight: #FBCFE8;
+  --color-magic-blue: #3B82F6;
+  --color-magic-blueLight: #BFDBFE;
+  --color-magic-yellow: #FBBF24;
+  --color-magic-orange: #F97316;
+  --color-magic-green: #34D399;
+  --color-magic-cream: #FFF8E7;
+
+  /* Animations */
+  --animate-bounce-slow: bounce 3s infinite;
+  --animate-pulse-slow: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-float-delayed: float 6s ease-in-out 3s infinite;
+  --animate-wiggle: wiggle 2s ease-in-out infinite;
+  --animate-spin-slow: spin 12s linear infinite;
+  --animate-shimmer: shimmer 3s linear infinite;
+  --animate-marquee: marquee 100s linear infinite;
+  --animate-fade-in: fadeIn 0.5s ease-out forwards;
+  --animate-slide-up-fade: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* ----------------------------------------
+   CUSTOM KEYFRAMES
+-----------------------------------------*/
+@keyframes float {
+
+  0%,
+  100% {
+    transform: translateY(0)
+  }
+
+  50% {
+    transform: translateY(-20px)
+  }
+}
+
+@keyframes wiggle {
+
+  0%,
+  100% {
+    transform: rotate(-3deg)
+  }
+
+  50% {
+    transform: rotate(3deg)
+  }
+}
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0)
+  }
+
+  100% {
+    transform: translateX(-50%)
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(10px)
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0)
+  }
+}
+
+@keyframes slideUpFade {
+  0% {
+    opacity: 0;
+    transform: translateY(20px)
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0)
+  }
+}
