@@ -5,24 +5,25 @@ import { useStory } from '@/app/contexts/StoryContext';
 import { GeneratedStory } from '@/app/types';
 import { useLanguage } from '@/app/contexts/LanguageContext';
 import { PATHS, STEPS_PATHS } from '@/app/constants/stepsPaths';
+import { generateMagicStory } from '@/lib/services-magic-book/geminiService';
 
 
 const Generating: React.FC = () => {
   const router = useRouter();
   const { config,
-    // setGeneratedStory 
+    setGeneratedStory
 
   } = useStory();
   const { t } = useLanguage();
   const LOADING_STEPS = [
-    t("gen_step_1"),
-    t("gen_step_2"),
-    t("gen_step_3"),
-    t("gen_step_4"),
-    t("gen_step_5"),
-    t("gen_step_6"),
-    t("gen_step_7"),
-    t("gen_step_8")
+    t("generatingPage.gen_step_1"),
+    t("generatingPage.gen_step_2"),
+    t("generatingPage.gen_step_3"),
+    t("generatingPage.gen_step_4"),
+    t("generatingPage.gen_step_5"),
+    t("generatingPage.gen_step_6"),
+    t("generatingPage.gen_step_7"),
+    t("generatingPage.gen_step_8")
   ];
   const [loadingStep, setLoadingStep] = useState(0);
   const [completedSteps, setCompletedSteps] = useState<string[]>([]);
@@ -55,26 +56,38 @@ const Generating: React.FC = () => {
         // In a real app, handle API Key check or user prompt better
         let story: GeneratedStory;
 
-        if (!process.env.API_KEY) {
-          console.warn("No API Key found, using mock generation");
-          await new Promise(resolve => setTimeout(resolve, 5000)); // Simulate longer wait for animation
-          story = {
-            title: `The Brave Adventures of ${config.heroName}`,
-            pages: [
-              { text: `Once upon a time, in a land far away, lived a brave hero named ${config.heroName}.`, imageDescription: "Hero standing on a hill" },
-              { text: `${config.heroName} loved the color ${config.color} and always wore a cape of that shade.`, imageDescription: "Hero wearing a cape" },
-              { text: `One day, ${config.heroName} visited ${config.place} and met ${config.companions}.`, imageDescription: "Hero meeting friends" },
-              { text: `They used ${config.superPower} to help a lost star find its way home.`, imageDescription: "Hero using powers" },
-              { text: `The star twinkled 'Thank you!' and granted ${config.heroName}'s wish: ${config.secretWish}.`, imageDescription: "Star glowing brightly" },
-              { text: `And so, they all lived happily ever after. The End.`, imageDescription: "Group hug" }
-            ]
-          };
-        } else {
-          // story = await generateMagicStory(config, language);
-        }
+        story = {
+          title: `The Brave Adventures of ${config.heroName}`,
+          pages: [
+            { text: `Once upon a time, in a land far away, lived a brave hero named ${config.heroName}.`, imageDescription: "Hero standing on a hill" },
+            { text: `${config.heroName} loved the color ${config.color} and always wore a cape of that shade.`, imageDescription: "Hero wearing a cape" },
+            { text: `One day, ${config.heroName} visited ${config.place} and met ${config.companions}.`, imageDescription: "Hero meeting friends" },
+            { text: `They used ${config.superPower} to help a lost star find its way home.`, imageDescription: "Hero using powers" },
+            { text: `The star twinkled 'Thank you!' and granted ${config.heroName}'s wish: ${config.secretWish}.`, imageDescription: "Star glowing brightly" },
+            { text: `And so, they all lived happily ever after. The End.`, imageDescription: "Group hug" }
+          ]
+        };
+
+        // if (!process.env.API_KEY) {
+        //   console.warn("No API Key found, using mock generation");
+        //   await new Promise(resolve => setTimeout(resolve, 5000)); // Simulate longer wait for animation
+        //   story = {
+        //     title: `The Brave Adventures of ${config.heroName}`,
+        //     pages: [
+        //       { text: `Once upon a time, in a land far away, lived a brave hero named ${config.heroName}.`, imageDescription: "Hero standing on a hill" },
+        //       { text: `${config.heroName} loved the color ${config.color} and always wore a cape of that shade.`, imageDescription: "Hero wearing a cape" },
+        //       { text: `One day, ${config.heroName} visited ${config.place} and met ${config.companions}.`, imageDescription: "Hero meeting friends" },
+        //       { text: `They used ${config.superPower} to help a lost star find its way home.`, imageDescription: "Hero using powers" },
+        //       { text: `The star twinkled 'Thank you!' and granted ${config.heroName}'s wish: ${config.secretWish}.`, imageDescription: "Star glowing brightly" },
+        //       { text: `And so, they all lived happily ever after. The End.`, imageDescription: "Group hug" }
+        //     ]
+        //   };
+        // } else {
+        //   // story = await generateMagicStory(config, 'en');
+        // }
 
         if (mounted) {
-          // setGeneratedStory(story);
+          setGeneratedStory(story as GeneratedStory);
           router.push(PATHS.PREVIEW);
         }
       } catch (e) {

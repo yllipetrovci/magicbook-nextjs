@@ -196,7 +196,7 @@ export default function HeroUpload() {
         </div>
 
         <div className="flex gap-4 mt-8 max-w-lg mx-auto">
-            <Button variant="ghost" onClick={handleUploadContinue} disabled={processingTarget !== null} className="flex-1 text-gray-400 hover:text-white">Back</Button>
+            <Button variant="ghost" onClick={router.back} disabled={processingTarget !== null} className="flex-1 text-gray-400 hover:text-white">Back</Button>
 
             <Button
                 onClick={handleUploadContinue}

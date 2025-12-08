@@ -7,6 +7,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { Check } from "lucide-react";
+import { PATHS } from "@/app/constants/stepsPaths";
 
 const schema = yup.object({
    password: yup.string()
@@ -48,6 +49,8 @@ const ResetPassword = () => {
 
          console.log("RESET PASSWORD")
          console.log({ data });
+
+         router.push(PATHS.DASHBOARD);
          return;
 
          if (!email) {

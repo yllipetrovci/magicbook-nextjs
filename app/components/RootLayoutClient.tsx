@@ -51,6 +51,7 @@ export function RootLayoutClient({ children }: { children: React.ReactNode }) {
 
     // Routes that should NOT have the navbar and main wrapper
     const isDashboardRoute = pathname?.startsWith('/dashboard');
+    const isUpsellRoute = pathname?.startsWith('/upsell');
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -72,7 +73,7 @@ export function RootLayoutClient({ children }: { children: React.ReactNode }) {
     };
 
 
-    if (isDashboardRoute) {
+    if (isUpsellRoute) {
         // Dashboard routes get their own layout, so just return children
         return <>{children}</>;
     }

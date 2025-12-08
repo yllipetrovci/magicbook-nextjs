@@ -7,6 +7,7 @@ import { Button } from '@/app/components/Button';
 import { useStory } from '@/app/contexts/StoryContext';
 import { useLanguage } from '@/app/contexts/LanguageContext';
 import { PricingSection } from '@/app/components/PricingSection';
+import { PATHS } from '@/app/constants/stepsPaths';
 
 export const Pricing: React.FC = () => {
    const router = useRouter();
@@ -23,35 +24,29 @@ export const Pricing: React.FC = () => {
       setMounted(true);
    }, [])
 
-   const handleFreePlan = () => {
-      if (config.email && config.email.includes('@')) {
-         // Email already exists
-         updateConfig('planType', 'free');
-         router.push('/success');
-      } else {
-         // Need email
-         setShowEmailModal(true);
-      }
-   };
-
    const handleEmailSubmit = () => {
       if (emailInput.includes('@')) {
          updateConfig('email', emailInput);
          updateConfig('planType', 'free');
-         router.push('/success');
+         router.push(PATHS.SUCCESS);
       }
    };
 
-   const handlePaidPlan = () => {
-      updateConfig('planType', 'paid');
-      router.push('/checkout');
+   const handlePricePlan = (plan: string) => {
+      updateConfig('planType', plan);
+      if (plan === 'free') {
+         router.push(PATHS.SUCCESS);
+         return;
+      }
+
+      router.push(PATHS.CHECKOUT);
    };
 
    const handleBack = () => {
       if (isDashboardFlow) {
-         router.push('/dashboard');
+         router.push(PATHS.DASHBOARD);
       } else {
-         router.push('/preview');
+         router.push(PATHS.PREVIEW);
       }
    };
 
@@ -147,7 +142,7 @@ export const Pricing: React.FC = () => {
          </div>
 
          <PricingSection
-            onPlanSelected={() => { }}
+            onPlanSelected={handlePricePlan}
             showFreePlan={!isDashboardFlow}
             title={isDashboardFlow ? "Add Story Credits" : t('price_title')}
             subtitle={isDashboardFlow ? "Top up your account to create more magic." : undefined}

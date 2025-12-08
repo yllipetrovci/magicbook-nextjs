@@ -12,4 +12,14 @@ export const STEPS_PATHS = {
 export const PATHS = {
     GENERATING: '/generating',
     PREVIEW: '/preview',
+    GENERATING_2: '/generating-2',
+    PRICING: '/pricing',
+    CHECKOUT: '/checkout',
+    DASHBOARD: '/dashboard',
+    RESET_PASSWORD: '/reset-password',
+    SUCCESS: '/success',
+    UPSELL_BOOK: '/upsell-book',
+    UPSELL_VIDEO: '/upsell-video',
+    UPSELL_DAILY: '/upsell-daily',
+
 }

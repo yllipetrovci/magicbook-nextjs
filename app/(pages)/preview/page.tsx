@@ -8,6 +8,8 @@ import { TrustSection } from '@/app/components/TrustSection';
 import { Testimonials } from '@/app/components/Testimonials';
 import { useLanguage } from '@/app/contexts/LanguageContext';
 import { generateStoryPDF } from '../../../lib/generateStoryPDF';
+import { PATHS } from '@/app/constants/stepsPaths';
+import { BookCoverPreview } from './components/BookCoverPreview';
 
 const COVER_IMAGES = [
    "https://image.pollinations.ai/prompt/children%20book%20cover%20The%20Forest%20Adventure%20boy%20and%20girl%20hiking%20cartoon%20pixar%20style?width=400&height=600&nologo=true",
@@ -53,11 +55,14 @@ export const StoryPreview: React.FC = () => {
    }
 
    const handleDownloadPDF = async () => {
+
+      router.push(PATHS.GENERATING_2);
+      return;
       setIsCraftingPDF(true);
       setProgress(10); // Start
 
       try {
-         // Step 1: Start UI
+         // Step 1: Start 
          setCurrentStepIndex(0);
 
          // Step 2-4: The PDF service does the heavy lifting. 
@@ -166,67 +171,33 @@ export const StoryPreview: React.FC = () => {
 
    // Generate a cover image URL if specific one isn't present
    const coverUrl = generatedStory.coverImage || randomCover;
-
    const downloadButtonText = config.heroName
-      ? `Download ${config.heroName}'s Craft`
-      : "Download Your Hero's Craft";
+      ? `Step Into ${config.heroName}'s Adventure`
+      : "Step Into Your Hero's Adventure";
 
    return (
       <div className="flex flex-col items-center justify-start min-h-[90vh] px-4 py-8 animate-fade-in relative overflow-x-hidden">
 
-         {/* LOCKED BOOK COVER VIEW (Reader Removed) */}
-         <div className="relative mb-8 mt-4 group cursor-pointer" onClick={handleDownloadPDF}>
-            <div className="w-[300px] md:w-[350px] aspect-[2/3] rounded-r-2xl rounded-l-md bg-[#1e293b] relative shadow-[0_20px_50px_rgba(0,0,0,0.5)] transform transition-transform duration-500 hover:scale-105 hover:-rotate-1 border-l-4 border-white/5 overflow-hidden">
-
-               {/* Cover Image */}
-               <img
-                  src={coverUrl}
-                  alt="Cover"
-                  className="absolute inset-0 w-full h-full object-cover opacity-90"
-               />
-               <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-transparent to-black/80"></div>
-
-               {/* Title */}
-               <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full px-6 text-center z-10">
-                  <div className="bg-[#111827]/90 backdrop-blur-sm px-6 py-4 rounded-xl border-2 border-[#FF9F1C] shadow-2xl">
-                     <h1 className="text-2xl font-black text-[#FF9F1C] leading-tight line-clamp-3 font-serif">
-                        {generatedStory.title}
-                     </h1>
-                  </div>
-               </div>
-
-               {/* Lock Overlay */}
-               <div className="absolute inset-0 bg-black/30 backdrop-blur-[2px] flex items-center justify-center z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <div className="bg-black/60 p-6 rounded-full border-2 border-magic-orange shadow-2xl scale-110">
-                     <i className="fa-solid fa-lock text-4xl text-magic-orange"></i>
-                  </div>
-               </div>
-
-               {/* Author Badge */}
-               <div className="absolute bottom-8 w-full flex justify-center z-10">
-                  <div className="bg-black/40 backdrop-blur-sm px-6 py-2 rounded-full border border-white/10 text-center shadow-lg">
-                     <p className="text-white/80 text-[10px] font-bold tracking-[0.2em] uppercase mb-1">Written For</p>
-                     <div className="flex items-center justify-center bg-black/50 backdrop-blur-md px-4 py-1.5 rounded-full border border-white/20">
-                        <span className="text-white font-bold text-lg font-serif">{config.heroName || "The Hero"}</span>
-                     </div>
-                  </div>
-               </div>
-            </div>
-
-            {/* Spine Effect */}
-            <div className="absolute top-1 bottom-1 -left-2 w-4 bg-gray-800 rounded-l-md shadow-inner"></div>
+         <div className="text-center mb-8 mt-4">
+            <h2 className="text-3xl md:text-4xl font-black text-white mb-2 font-serif">Your Story is Ready!</h2>
+            <p className="text-gray-400 text-lg">Unlock the full adventure to start reading.</p>
          </div>
 
-         <div className="text-center mb-8">
-            <h2 className="text-3xl font-black text-white mb-2">Your Story is Ready!</h2>
-            <p className="text-gray-400">Unlock the full adventure to start reading.</p>
-         </div>
+         {/* NEW REUSABLE PREVIEW COMPONENT */}
+         <BookCoverPreview
+            story={generatedStory}
+            config={config}
+            isLocked={true}
+            onDownload={handleDownloadPDF}
+            className="mb-8"
+         />
 
          {/* Download Action */}
-         <div className="w-full flex justify-center mb-12">
+         <div className="w-full flex justify-center mb-16">
             <Button
                onClick={handleDownloadPDF}
                size="lg"
+               variant='transparent'
                className="bg-magic-green hover:bg-green-600 border-b-4 border-green-700 rounded-2xl shadow-lg shadow-green-500/20 text-xl px-12 py-4 animate-bounce-slow"
             >
                <i className="fa-solid fa-lock-open mr-2"></i> {downloadButtonText}
