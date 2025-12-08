@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useStory } from '@/app/contexts/StoryContext';
 import { GeneratedStory } from '@/app/types';
 import { useLanguage } from '@/app/contexts/LanguageContext';
+import { PATHS, STEPS_PATHS } from '@/app/constants/stepsPaths';
 
 
 const Generating: React.FC = () => {
@@ -74,13 +75,13 @@ const Generating: React.FC = () => {
 
         if (mounted) {
           // setGeneratedStory(story);
-          router.push('/preview');
+          router.push(PATHS.PREVIEW);
         }
       } catch (e) {
         console.error(e);
         if (mounted) {
           alert("Oops! The magic wands got tangled. Please try again.");
-          router.push('/details');
+          router.push(STEPS_PATHS.STEP_6);
         }
       }
     };

@@ -6,6 +6,7 @@ import { useStory } from "@/app/contexts/StoryContext";
 import { useLanguage } from "@/app/contexts/LanguageContext";
 import { Button } from "@/app/components";
 import { useRouter } from "next/navigation";
+import { STEPS_PATHS } from "@/app/constants/stepsPaths";
 
 export default function NamePage() {
     const router = useRouter();
@@ -25,7 +26,7 @@ export default function NamePage() {
     if (!mounted) return null; // 👈 Prevent hydration mismatch
 
     const goNextPage = () => {
-        router.push('/steps/style')
+        router.push(STEPS_PATHS.STEP_2)
     }
 
     const handleNameSubmit = () => {

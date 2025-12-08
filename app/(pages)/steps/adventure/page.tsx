@@ -5,6 +5,7 @@ import { playMagicSound } from '@/app/utils/audio';
 import { Button } from '@/app/components';
 import { useEffect, useState } from 'react';
 import { useLanguage } from '@/app/contexts/LanguageContext';
+import { STEPS_PATHS } from '@/app/constants/stepsPaths';
 
 const themeKeys = [
   { id: 'christmas', key: 'theme_santa', icon: 'fa-candy-cane', color: 'bg-red-500', isLimited: true },
@@ -115,10 +116,12 @@ export default function AdventureSelection() {
           );
         })}
       </div>
+      <div className="mt-8 flex gap-4">
+        <Button onClick={() => router.push(STEPS_PATHS.STEP_6)} fullWidth size="lg" className="text-xl shadow-xl shadow-purple-500/20 bg-gradient-to-r from-magic-purple to-magic-pink hover:to-pink-500 border-none animate-pulse-slow min-w-[200px]">
+          Next
+        </Button>
+      </div>
 
-      <Button onClick={() => router.push('/steps/customize-and-finish')} fullWidth size="lg" className="text-xl shadow-xl shadow-purple-500/20 bg-gradient-to-r from-magic-purple to-magic-pink hover:to-pink-500 border-none animate-pulse-slow">
-        Next
-      </Button>
     </div>
   );
 };

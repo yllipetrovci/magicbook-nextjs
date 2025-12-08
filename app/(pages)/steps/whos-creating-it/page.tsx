@@ -6,6 +6,7 @@ import { playMagicSound } from '@/app/utils/audio';
 import { Button } from "@/app/components";
 import { useRouter } from 'next/navigation';
 import { useLanguage } from "@/app/contexts/LanguageContext";
+import { STEPS_PATHS } from "@/app/constants/stepsPaths";
 
 const PARENT_ROLES = ['Mom', 'Dad', 'Grandma', 'Grandpa', 'Aunt', 'Uncle'];
 
@@ -33,9 +34,7 @@ export default function WhosCreatingItPage() {
 
 
     const goNextPage = () => {
-        // router.push('/steps/name');
-        router.push('/steps/show-cupon');
-
+        router.push(STEPS_PATHS.STEP_3);
 
     }
 
@@ -50,10 +49,7 @@ export default function WhosCreatingItPage() {
 
         if (localEmail.trim()) {
             updateConfig('email', localEmail);
-            setTimeout(() => {
-                goNextPage()
-
-            }, 2000);
+            goNextPage()
         } else {
             goNextPage()
         }

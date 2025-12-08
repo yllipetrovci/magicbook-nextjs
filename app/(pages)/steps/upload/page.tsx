@@ -2,15 +2,17 @@
 'use client'
 
 import { Button } from "@/app/components";
+import { STEPS_PATHS } from "@/app/constants/stepsPaths";
 import { useStory } from "@/app/contexts/StoryContext";
 import { playMagicSound } from "@/app/utils/audio";
 import { useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function HeroUpload() {
     const { updateConfig, config } = useStory();
-
+    const router = useRouter();
     const [includeParent, setIncludeParent] = useState(config.includeParent || false);
-    const [localEmail, setLocalEmail] = useState(config.email || '');
+    // const [localEmail, setLocalEmail] = useState(config.email || '');
     const [localName, setLocalName] = useState('');
     const [relationship, setRelationship] = useState('');
     const [processingTarget, setProcessingTarget] = useState<'hero' | 'parent' | null>(null);
@@ -39,16 +41,16 @@ export default function HeroUpload() {
     const handleUploadContinue = () => {
         playMagicSound();
         // setStep('gender');
-        // router.push('/gender');
+        router.push(STEPS_PATHS.STEP_4);
     };
 
 
-    const handleSkipUpload = () => {
-        playMagicSound();
-        // setStep('gender');
-        // router.push('/gender');
+    // const handleSkipUpload = () => {
+    //     playMagicSound();
+    //     // setStep('gender');
+    //     router.push(STEPS_PATHS.STEP_4);
 
-    };
+    // };
 
     const processFile = (file: File, target: 'hero' | 'parent') => {
         setProcessingTarget(target);
@@ -71,7 +73,7 @@ export default function HeroUpload() {
         }, 2500); // 2.5s delay for "Magic" effect
     };
 
-    return (<div key="upload" className={`w-full ${includeParent ? 'max-w-4xl' : 'max-w-xl'} animate-slide-up-fade`}>
+    return (<div key="upload" className={`w-full ${includeParent ? 'max-w-4xl' : 'max-w-xl'} animate-slide-up-fade mb-10`}>
         <h2 className="text-4xl md:text-5xl font-black text-center text-white mb-4 drop-shadow-lg">
             {includeParent ? `Let's see ${localName} & ${relationship}'s smiles! 📸` : `Let's see ${localName}'s magical smile! 📸`}
         </h2>
@@ -194,32 +196,17 @@ export default function HeroUpload() {
         </div>
 
         <div className="flex gap-4 mt-8 max-w-lg mx-auto">
-            <Button variant="ghost" onClick={() => {
-                // setStep('style')
-                // router.push('/style')
+            <Button variant="ghost" onClick={handleUploadContinue} disabled={processingTarget !== null} className="flex-1 text-gray-400 hover:text-white">Back</Button>
 
-            }} disabled={processingTarget !== null} className="flex-1 text-gray-400 hover:text-white">Back</Button>
-
-            {preview ? (
-                <Button
-                    onClick={handleUploadContinue}
-                    className="flex-[2] shadow-lg shadow-green-500/20 bg-magic-green hover:bg-green-600"
-                    size="lg"
-                    disabled={processingTarget !== null}
-                >
-                    Continue <i className="fa-solid fa-check ml-2"></i>
-                </Button>
-            ) : (
-                <Button
-                    onClick={handleSkipUpload}
-                    className="flex-[2] shadow-lg shadow-white/10 bg-white/10 hover:bg-white/20"
-                    size="lg"
-                    disabled={processingTarget !== null}
-                >
-                    Skip Photo <i className="fa-solid fa-arrow-right ml-2"></i>
-                </Button>
-            )}
+            <Button
+                onClick={handleUploadContinue}
+                className="flex-[2] shadow-lg shadow-green-500/20 bg-magic-green hover:bg-green-600"
+                size="lg"
+                variant="transparent"
+                disabled={processingTarget !== null && preview !== ''}
+            >
+                Continue <i className="fa-solid fa-check ml-2"></i>
+            </Button>
         </div>
-
     </div>)
 }

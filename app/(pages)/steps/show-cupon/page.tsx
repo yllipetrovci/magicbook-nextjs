@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { PATHS } from "@/app/constants/stepsPaths";
 
 export default function ShowCuponPage() {
 
@@ -9,8 +10,8 @@ export default function ShowCuponPage() {
 
     useEffect(() => {
         setTimeout(() => {
-            router.push('/steps/name');
-        }, 3000);
+            router.push(PATHS.GENERATING);
+        }, 2000);
     }, []);
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md animate-fade-in">

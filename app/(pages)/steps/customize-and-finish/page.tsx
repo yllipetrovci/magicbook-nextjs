@@ -18,6 +18,7 @@ import ColorOption from './components/ColorsSection';
 import CompanionButton from './components/CompanionPresentCard';
 import StoryToneOption from './components/StoryTonesButton';
 import { useLanguage } from '@/app/contexts/LanguageContext';
+import { STEPS_PATHS } from '@/app/constants/stepsPaths';
 
 // Yup Validation Schema
 // const validationSchema = yup.object({
@@ -97,7 +98,10 @@ export default function CustomizeAndFinish() {
         Object.keys(data).forEach(key => {
             updateConfig(key as keyof StoryConfig, data[key as keyof StoryConfig]);
         });
-        router.push('/generating');
+        router.push(STEPS_PATHS.STEP_7);
+        // router.push('/generating');
+
+
     };
 
     const handleRandomMap = () => {
@@ -293,7 +297,7 @@ export default function CustomizeAndFinish() {
                     </div>
 
                     <div className="mt-8 flex gap-4">
-                        <Button variant="ghost" onClick={() => router.push('/adventure')} className="text-gray-400 hover:text-white px-8">
+                        <Button variant="ghost" onClick={() => router.back()} className="text-gray-400 hover:text-white px-8">
                             {t('det_back')}
                         </Button>
                         <Button type="submit" fullWidth size="lg" className="text-xl shadow-xl shadow-purple-500/20 bg-gradient-to-r from-magic-purple to-magic-pink hover:to-pink-500 border-none animate-pulse-slow">

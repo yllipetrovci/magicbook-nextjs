@@ -7,8 +7,9 @@ interface CreationStepperProps {
 
 export const CreationStepper: React.FC<CreationStepperProps> = ({ currentStep }) => {
   const steps = [
-    { id: 'whos-creating-it', label: 'Who’s creating it' },
     { id: 'name', label: 'Hero Name' },
+    { id: 'whos-creating-it', label: 'Who’s creating it' },
+    { id: 'upload', label: 'Upload' },
     { id: 'style', label: 'Pick Style' },
     { id: 'adventure', label: 'Pick Adventure' },
     { id: 'customize-and-finish', label: 'Customize & Finish' },

@@ -1,4 +1,5 @@
 'use client'
+import { STEPS_PATHS } from "@/app/constants/stepsPaths";
 import { useLanguage } from "@/app/contexts/LanguageContext";
 import { useStory } from "@/app/contexts/StoryContext";
 import { playMagicSound } from "@/app/utils/audio";
@@ -35,7 +36,7 @@ export default function StylePage() {
         playMagicSound();
         updateConfig('coverBorder', styleLabel); // Storing style in 'coverBorder' property
         // setStep('upload');
-        router.push('/steps/adventure');
+        router.push(STEPS_PATHS.STEP_5);
     };
 
     if (!mounted) return null;
