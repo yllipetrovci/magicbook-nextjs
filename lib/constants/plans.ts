@@ -1,5 +1,3 @@
-import { PricePlan } from "@/app/(pages)/pricing/components/PriceCard";
-
 export const plans: any[] = [
     {
         id: 'free',

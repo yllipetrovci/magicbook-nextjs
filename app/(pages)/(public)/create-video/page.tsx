@@ -2,9 +2,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
-import { useStory } from '../../contexts/StoryContext';
-import { Button } from '../../components/Button';
-import { GeneratedVideo } from '../../types';
+import { useStory } from '../../../contexts/StoryContext';
+import { Button } from '../../../components/Button';
+import { GeneratedVideo } from '../../../types';
 import { useLanguage } from '@/app/contexts/LanguageContext';
 
 const ROLES = [

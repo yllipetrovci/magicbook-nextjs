@@ -2,9 +2,9 @@
 'use client'
 import React, { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { useStory } from '../../contexts/StoryContext';
-import { Button } from '../../components/Button';
-import { GeneratedImage } from '../../types';
+import { useStory } from '../../../contexts/StoryContext';
+import { Button } from '../../../components/Button';
+import { GeneratedImage } from '../../../types';
 import { useLanguage } from '@/app/contexts/LanguageContext';
 
 const STYLES = [

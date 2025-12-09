@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useStory } from '@/app/contexts/StoryContext';
-import { PriceCard, PricePlan } from '@/app/(pages)/pricing/components/PriceCard';
+import { PriceCard, PricePlan } from '@/app/(pages)/(public)/pricing/components/PriceCard';
 import { useLanguage } from '../contexts/LanguageContext';
 import { plans } from '@/lib/constants/plans';
 
