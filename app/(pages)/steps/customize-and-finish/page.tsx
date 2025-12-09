@@ -81,6 +81,10 @@ export default function CustomizeAndFinish() {
 
     useEffect(() => {
         setMounted(true);
+
+        console.log({ config })
+
+        // generateStoryPrompt
     }, []);
 
 

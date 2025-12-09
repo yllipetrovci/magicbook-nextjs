@@ -30,6 +30,7 @@ export const OrderSummary: React.FC<OrderSummaryProps> = ({
         ? (total / credits).toFixed(2)
         : '0.00';
 
+    console.log({ pricePerStory })
     return (
         <div className="flex-1 bg-magic-card p-8 rounded-3xl shadow-xl border border-white/5 h-fit flex flex-col">
             <h3 className="text-2xl font-bold text-white mb-6">Order Summary</h3>
@@ -56,17 +57,17 @@ export const OrderSummary: React.FC<OrderSummaryProps> = ({
                                 <i className="fa-solid fa-coins text-yellow-400 text-xs"></i>
                                 Unlimited Stories
                             </span>
-                        ) : pageCount ? (
+                        ) : (
                             <span className="font-medium text-white flex items-center gap-2">
                                 <i className="fa-solid fa-book-open text-magic-blue text-xs"></i>
                                 {pageCount} Page Story
                             </span>
-                        ) : null}
+                        )}
 
                         {/* Price Calculation for Single Story */}
                         {!isSubscription && pageCount && (
                             <div className="text-xs text-gray-500 font-mono mt-1">
-                                {pageCount} pages x $0.99
+                                {pageCount} pages x ${pricePerStory}
                             </div>
                         )}
                     </div>
@@ -84,7 +85,7 @@ export const OrderSummary: React.FC<OrderSummaryProps> = ({
                 <div className="flex justify-between items-end">
                     <span className="text-xl font-bold text-white">Total</span>
                     <div className="text-right">
-                        <span className="text-3xl font-black text-magic-orange block leading-none">${total.toFixed(2)}</span>
+                        <span className="text-3xl font-black text-magic-orange block leading-none">${total}</span>
                         {isSubscription ? (
                             <span className="text-[10px] text-gray-500 font-bold uppercase tracking-wider block mt-2 bg-white/5 px-2 py-1 rounded">
                                 Billed Monthly • Cancel Anytime
@@ -99,10 +100,6 @@ export const OrderSummary: React.FC<OrderSummaryProps> = ({
             </div>
 
             {/* Action Button moved here */}
-            <Button fullWidth onClick={onPay} size="lg" className="shadow-lg shadow-orange-500/20 text-xl py-4 bg-magic-orange hover:bg-orange-600 border-b-4 border-orange-800 active:border-b-0 active:translate-y-1 transition-all mb-6">
-                Pay Securely ${total.toFixed(2)} <i className="fa-solid fa-lock ml-2"></i>
-            </Button>
-
             <TrustSection variant="minimal" className="mt-auto" />
 
             <div className="bg-green-500/10 p-4 rounded-xl mt-4 border border-green-500/20 shadow-[0_0_15px_rgba(34,197,94,0.1)]">

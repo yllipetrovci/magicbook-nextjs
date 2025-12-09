@@ -7,6 +7,7 @@ import { useStory } from '@/app/contexts/StoryContext';
 import { OrderSummary } from './components/OrderSummary';
 import { PaymentForm } from './components/PaymentForm';
 import { PATHS } from '@/app/constants/stepsPaths';
+import { plans } from '@/lib/constants/plans';
 
 // Helper to deduce cover image if not generated yet
 const getCheckoutCover = (theme: string, generatedCover?: string) => {
@@ -21,9 +22,10 @@ const getCheckoutCover = (theme: string, generatedCover?: string) => {
 
 export const Checkout: React.FC = () => {
    const router = useRouter();
-   const { t, addCredits, config, generatedStory } = useStory();
+   const { t, addCredits, config, generatedStory }: any = useStory();
 
-   const isUnlimitedPlan = config?.selectedPlanId === 'unlimited';
+   const selectedPlan = plans.find(p => p.id === config?.planType);
+   console.log({ selectedPlan })
 
    let planName = "Custom Storybook";
    let subtotal = 0;
@@ -35,26 +37,9 @@ export const Checkout: React.FC = () => {
    const pageCount = config.customPageCount || 4; // Default to 4 if not set
    const pricePerPage = 0.99;
 
-   if (isUnlimitedPlan) {
-      // Family Pack Subscription Logic
-      planName = "Family Pack";
-      subtotal = 29.99;
-      discount = 15.00;
-      total = 14.99;
-      credits = 'Unlimited';
-   } else {
-      // Single Story / Pay Per Page Logic
-      planName = "Custom Storybook";
-      // Calculate dynamic price: Pages * $0.99
-      subtotal = pageCount * pricePerPage;
-      discount = 0; // No discount on single purchase for now, or apply coupon if needed
-      total = subtotal;
-      credits = 1; // Effectively 1 story
-   }
-
-   const isSubscription = isUnlimitedPlan;
+   const isSubscription = selectedPlan?.isSubscription;
    const coverImage = getCheckoutCover(config.theme, generatedStory?.coverImage);
-
+   console.log({ config })
    const handlePayment = () => {
       // Simulate payment processing
       const btn = document.activeElement as HTMLButtonElement;
@@ -64,13 +49,13 @@ export const Checkout: React.FC = () => {
       }
       setTimeout(() => {
          // Add credits based on plan
-         const creditsToAdd = isUnlimitedPlan ? 999 : 1;
-         addCredits(creditsToAdd);
+         // const creditsToAdd = isUnlimitedPlan ? 999 : 1;
+         // addCredits(creditsToAdd);
          // Redirect to Upsell Sequence
          router.push(PATHS.UPSELL_BOOK);
       }, 2000);
    };
-
+   const DISCOUNT_PRICE = selectedPlan?.price - (selectedPlan?.price * 0.5);
    return (
       <div className="flex flex-col items-center min-h-[80vh] px-4 py-12">
          <Button variant="ghost" onClick={() => router.back()} className="self-start mb-8 ml-4 md:ml-20 text-gray-400 hover:text-white"><i className="fa-solid fa-arrow-left"></i> {t('check_back')}</Button>
@@ -80,13 +65,13 @@ export const Checkout: React.FC = () => {
             {/* Order Summary Component - Now contains the Pay Button */}
             <OrderSummary
                planName={planName}
-               price={subtotal}
-               discount={discount}
-               total={total}
-               credits={credits}
+               price={selectedPlan?.price}
+               discount={DISCOUNT_PRICE}
+               total={parseFloat(DISCOUNT_PRICE.toFixed(2))}
+               credits={selectedPlan?.credits}
                coverImage={coverImage}
-               isSubscription={isSubscription}
-               pageCount={!isSubscription ? pageCount : undefined}
+               isSubscription={selectedPlan?.isSubscription}
+               pageCount={pageCount}
                onPay={handlePayment}
             />
 

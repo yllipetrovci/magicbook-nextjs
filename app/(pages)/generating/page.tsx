@@ -44,7 +44,7 @@ const Generating: React.FC = () => {
         setCompletedSteps(curr => [...curr, LOADING_STEPS[prev]].slice(-3)); // Keep last 3
         return next;
       });
-    }, 1500);
+    }, 3000);
     return () => clearInterval(interval);
   }, []);
 

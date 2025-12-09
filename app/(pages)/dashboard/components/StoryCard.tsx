@@ -86,7 +86,7 @@ export const StoryCard: React.FC<StoryCardProps> = ({
 
             <div className="mt-auto flex gap-2">
                 {onRead && (
-                    <Button onClick={onRead} fullWidth size="sm" className="bg-magic-blue hover:bg-blue-600 shadow-lg shadow-blue-500/20 flex-1 text-xs py-2 h-8">
+                    <Button onClick={onRead} variant='transparent' fullWidth size="sm" className="bg-magic-blue hover:bg-blue-600 shadow-lg shadow-blue-500/20 flex-1 text-xs py-2 h-8">
                         Read Story
                     </Button>
                 )}

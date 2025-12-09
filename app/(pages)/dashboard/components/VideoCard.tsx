@@ -73,7 +73,7 @@ export const VideoCard: React.FC<VideoCardProps> = ({
 
             <div className="mt-auto flex gap-2">
                 {onWatch && (
-                    <Button onClick={onWatch} fullWidth size="sm" className="bg-magic-green hover:bg-green-600 shadow-lg shadow-green-500/20 text-xs py-1.5 h-8 flex-1">
+                    <Button onClick={onWatch} variant='transparent' fullWidth size="sm" className="bg-magic-green hover:bg-green-600 shadow-lg shadow-green-500/20 text-xs py-1.5 h-8 flex-1">
                         Watch
                     </Button>
                 )}

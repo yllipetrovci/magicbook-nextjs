@@ -32,6 +32,18 @@ export interface PricingPlan {
 }
 
 
+export interface StoryResponse {
+    title: string;
+    author: string;
+    coverImageAlt: string;
+    pages: {
+        imageAltText: string;
+        text: string;
+        mainCharacterIncluded: boolean;
+    }[];
+}
+
+
 
 
 //MAGIC BOOK

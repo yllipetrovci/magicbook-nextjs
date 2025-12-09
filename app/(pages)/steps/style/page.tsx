@@ -20,6 +20,22 @@ const BOOK_STYLES = [
     { id: 'pixel', label: 'Pixel Art', img: 'https://image.pollinations.ai/prompt/pixel%20art%20style%20children%20book%20illustration%208bit%20cute?width=250&height=250&nologo=true' },
     { id: 'clay', label: 'Claymation', img: 'https://image.pollinations.ai/prompt/claymation%20style%20children%20book%20illustration%20plasticine%20cute?width=250&height=250&nologo=true' },
 ];
+
+
+const BOOK_STYLES = [
+    'fantasy',
+    'royal',
+    'minimal',
+    'watercolor',
+    'comic',
+    'cozy',
+    '3d',
+    'vintage',
+    'sparkly',
+    'anime',
+    'pixel',
+    'clay',
+];
 export default function StylePage() {
     const router = useRouter();
     const { updateConfig, config } = useStory();

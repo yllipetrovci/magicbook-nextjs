@@ -1,35 +1,55 @@
-export const PLANS = [
+import { PricePlan } from "@/app/(pages)/pricing/components/PriceCard";
+
+export const plans: any[] = [
     {
-        id: "2-month",
-        title: "2-month plan",
-        subtitle: "40 Credits every two months",
-        price: 53,
-        originalPrice: 154,
-        tag: "Special value - save 50",
-        period: "per moment",
-        credits: 40,
-        interval: "2-month",
+        id: 'free',
+        title: 'Starter',
+        price: 'Free',
+        subtitle: '3 Pages',
+        credits: 3,
+        features: [
+            '3 Page Story',
+            'Standard Illustrations',
+            'Web View Only'
+        ],
+        buttonText: 'Start Creating',
+        colorTheme: 'dark',
+        isSubscription: false,
+        badge: undefined
     },
     {
-        id: "1-month",
-        title: "1-month plan",
-        subtitle: "20 Credits every month",
-        price: 66,
-        originalPrice: 166,
-        tag: "Special value - save 50",
-        period: "per moment",
-        credits: 20,
-        interval: "1-month",
+        id: 'unlimited',
+        title: 'Family Pack',
+        price: 29.99,
+        credits: 25,
+        isSubscription: false,
+        billingText: 'Unlimited',
+        features: [
+            'Unlimited Stories',
+            'Unlimited HD Illustrations',
+            'Commercial Rights',
+            'Access to New Themes'
+        ],
+        buttonText: 'Start Creating',
+        colorTheme: 'purple',
+        isPopular: true,
+        savingsText: 'SAVE 40% VS BUYING INDIVIDUALLY'
     },
     {
-        id: "weekly",
-        title: "Weekly plan",
-        subtitle: "4 Credits every week",
-        price: 205,
-        originalPrice: null,
-        tag: null,
-        period: "per moment",
-        credits: 4,
-        interval: "1-week",
+        id: 'credits',
+        title: 'Creator',
+        price: 19.99,
+        credits: 15,
+        subtitle: '10 Credits',
+        features: [
+            '10 Magical Stories',
+            'Keep them forever',
+            'Printable PDF',
+            'No Expiration'
+        ],
+        buttonText: 'Start Creating',
+        isSubscription: false,
+        colorTheme: 'dark',
+        badge: undefined // Removed "CREDIT PACK" badge to match screenshot cleaner look, or we can keep it. Screenshot shows standard dark card.
     }
-] as const;
+];

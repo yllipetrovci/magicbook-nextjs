@@ -85,8 +85,6 @@ export const BookCoverPreview: React.FC<BookCoverPreviewProps> = ({
                     </div>
                 </div>
 
-                {/* Spine Effect */}
-                <div className="absolute top-1 bottom-1 -left-2 w-4 bg-gray-800 rounded-l-md shadow-inner"></div>
             </div>
 
             {/* --- MAGIC RECIPE (DETAILS) --- */}

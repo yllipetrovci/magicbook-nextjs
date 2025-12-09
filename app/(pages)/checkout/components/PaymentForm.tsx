@@ -1,4 +1,5 @@
 
+import { Button } from '@/app/components';
 import React from 'react';
 
 interface PaymentFormProps {
@@ -40,6 +41,10 @@ export const PaymentForm: React.FC<PaymentFormProps> = () => {
                         <input type="text" placeholder="123" className="w-full p-4 bg-magic-bg rounded-xl border border-white/10 outline-none focus:border-magic-orange text-white placeholder-gray-600 font-mono" />
                     </div>
                 </div>
+
+                <Button fullWidth onClick={() => { }} size="lg" className="shadow-lg shadow-orange-500/20 text-xl py-4 bg-magic-orange hover:bg-orange-600 border-b-4 border-orange-800 active:border-b-0 active:translate-y-1 transition-all mb-6">
+                    Order Now
+                </Button>
 
                 <p className="text-center text-xs text-gray-500 mt-4">By purchasing you agree to our terms of service.</p>
             </div>
