@@ -19,6 +19,10 @@ import CompanionButton from './components/CompanionPresentCard';
 import StoryToneOption from './components/StoryTonesButton';
 import { useLanguage } from '@/app/contexts/LanguageContext';
 import { STEPS_PATHS } from '@/app/constants/stepsPaths';
+import { generateStoryPrompt } from '@/lib/prompts/storyGeneration';
+import { characterExtractionPrompt } from '@/lib/prompts/characterExtraction';
+import { generatePageImagePrompt } from '@/lib/prompts/pageImageGeneration';
+
 
 // Yup Validation Schema
 // const validationSchema = yup.object({
@@ -84,7 +88,81 @@ export default function CustomizeAndFinish() {
 
         console.log({ config })
 
-        // generateStoryPrompt
+        // const configMock = {
+        //     "heroName": "enes",
+        //     "isAvatar": false,
+        //     "theme": "superhero",
+        //     "place": "The Starry Moon Base",
+        //     "color": "Pink",
+        //     "companions": "a friendly tiny dragon",
+        //     "superPower": "",
+        //     "secretWish": "hello",
+        //     "email": "yllipetrovci@gmail.com",
+        //     "planType": "unlimited",
+        //     "archetype": "royal",
+        //     "tone": "Animal Friends",
+        //     "childAge": 5,
+        //     "customPageCount": 6,
+        //     "coverBorder": "Minimal Modern",
+        //     "parentRelationship": "Mom",
+        //     "includeParent": false,
+        //     "parentImage": null,
+        //     "heroImage": "data:image/jpeg;base64,/9j/4AAQSkZJR"
+
+        // }
+
+        const characterLook = `warm-toned young person with short dark hair, neatly 
+            shaped eyebrows, trimmed facial hair, and wearing a textured green turtleneck sweater`;
+
+
+        const generateStoryConfigs: any = {
+            characterLook,
+            heroName: config.heroName,
+            style: config.coverBorder,
+            theme: config?.theme,
+            tone: config?.tone,
+            characterType: config?.archetype,
+            childAge: config?.childAge,
+            pageCount: config?.customPageCount,
+            location: config?.place,
+            companions: config?.companions,
+            secretWish: config.secretWish
+        }
+
+        // const { system, user } = generateStoryPrompt(generateStoryConfigs);
+        // const response = characterExtractionPrompt();
+
+        const response = generatePageImagePrompt({
+            characterLook,
+            style: generateStoryConfigs.style,
+            theme: generateStoryConfigs.theme,
+            tone: generateStoryConfigs.tone,
+            characterType: generateStoryConfigs.characterType,
+            companions: generateStoryConfigs.companions,
+            childAge: generateStoryConfigs.childAge,
+            secretWish: generateStoryConfigs.secretWish,
+            imageAltText:
+                "The tiny dragon curiously peers into the window of the moon base, seeing Enes inside. They make eye contact.",
+
+            // "In a hidden moon crater, a tiny, emerald-green dragon with friendly eyes practices making small, glittery puffs of light with its breath.",
+            // "Inside the base, Prince Enes, a small boy in a simple silver cape, looks wistfully out a large window at the passing stars.",
+            // "Enes and the tiny dragon sit together on a ledge, sharing moonberries. They are both smiling, looking at friendly alien animal shapes in the stars.",
+            // "A wide, peaceful view of the Starry Moon Base, glowing softly against the black velvet of space, with Earth a blue marble in the distance.",
+            // "The tiny dragon uses its sparkle-breath to repair a broken communication dish on the base's roof, sending a ripple of light into space.",
+            mainCharacterIncluded: true
+        });
+
+        console.log({
+            SYSTEM_PROMPT: response.system,
+            USER_PROMPT: response.user
+        })
+
+        // console.log(JSON.stringify({
+        //     SYSTEM_PROMPT: response.system,
+        //     USER_PROMPT: response.user
+        // }))
+
+        // console.log({ system, user });
     }, []);
 
 
