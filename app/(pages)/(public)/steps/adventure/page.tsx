@@ -5,7 +5,7 @@ import { playMagicSound } from '@/app/utils/audio';
 import { Button } from '@/app/components';
 import { useEffect, useState } from 'react';
 import { useLanguage } from '@/app/contexts/LanguageContext';
-import { STEPS_PATHS } from '@/app/constants/stepsPaths';
+import { STEPS_PATHS } from '@/app/constants/relativeRoutePaths';
 
 const themeKeys = [
   { id: 'christmas', key: 'theme_santa', icon: 'fa-candy-cane', color: 'bg-red-500', isLimited: true },

@@ -4,7 +4,7 @@ export interface UserProfile {
     displayName?: string;
     photoURL?: string;
     // Firestore fields
-    coins?: number;
+    credits?: number;
     plan?: string;
     createdAt?: string;
 }

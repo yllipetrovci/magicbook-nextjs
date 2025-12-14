@@ -4,7 +4,7 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/app/components/Button';
 import { useStory } from '@/app/contexts/StoryContext';
-import { PATHS } from '@/app/constants/stepsPaths';
+import { PATHS } from '@/app/constants/relativeRoutePaths';
 
 const FloatingSparkles = () => {
    return (

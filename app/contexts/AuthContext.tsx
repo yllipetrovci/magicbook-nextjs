@@ -8,6 +8,7 @@ interface AuthContextType {
   loading: boolean;
   refreshUser: () => Promise<void>;
   logout: () => Promise<void>;
+  setUser: React.Dispatch<React.SetStateAction<UserProfile | null>>;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -15,26 +16,23 @@ const AuthContext = createContext<AuthContextType>({
   loading: true,
   refreshUser: async () => { },
   logout: async () => { },
+  setUser: () => { },
 });
 
 export const useAuth = () => useContext(AuthContext);
 
 export function AuthProvider({
   children,
-  serverUser,
 }: {
   children: React.ReactNode;
-  serverUser: any; // from getUserServer()
 }) {
-  const [user, setUser] = useState<UserProfile | null>(serverUser || null);
+  const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(false);
 
   /**
    * 🔄 Refresh user data from Firestore (coins, plan, etc.)
    */
   const refreshUser = async () => {
-    if (!serverUser) return;
-
     try {
       setLoading(true);
 
@@ -64,10 +62,12 @@ export function AuthProvider({
     }
   };
 
+
+
   // No onAuthStateChanged — dashboard uses SERVER cookies only
 
   return (
-    <AuthContext.Provider value={{ user, loading, refreshUser, logout }}>
+    <AuthContext.Provider value={{ user, loading, refreshUser, logout, setUser }}>
       {children}
     </AuthContext.Provider>
   );

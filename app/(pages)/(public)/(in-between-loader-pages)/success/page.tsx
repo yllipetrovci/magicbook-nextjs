@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useStory } from '@/app/contexts/StoryContext';
-import { PATHS } from '@/app/constants/stepsPaths';
+import { PATHS } from '@/app/constants/relativeRoutePaths';
 
 const Confetti = () => {
     return (

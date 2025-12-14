@@ -7,7 +7,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { Check } from "lucide-react";
-import { PATHS } from "@/app/constants/stepsPaths";
+import { PATHS } from "@/app/constants/relativeRoutePaths";
 import { useStory } from "@/app/contexts/StoryContext";
 
 const schema = yup.object({
@@ -40,52 +40,50 @@ const ResetPassword = () => {
    // const { funnelData } = { funnelData: funnelDataMock }; //useFunnel();
 
    const onSubmit = async (data: FormData) => {
+
+      // const mockConfig = {
+      //    "heroName": "enes",
+      //    "isAvatar": false,
+      //    "theme": "superhero",
+      //    "place": "The Starry Moon Base",
+      //    "color": "Pink",
+      //    "companions": "a friendly tiny dragon",
+      //    "superPower": "",
+      //    "secretWish": "hello",
+      //    "email": "yllipetrovci@gmail.com",
+      //    "planType": "unlimited",
+      //    "archetype": "royal",
+      //    "tone": "Animal Friends",
+      //    "childAge": 5,
+      //    "customPageCount": 6,
+      //    "coverBorder": "Minimal Modern",
+      //    "parentRelationship": "Mom",
+      //    "includeParent": false,
+      //    "parentImage": null,
+      //    heroImage: "null"
+      // }
+
       try {
          // const { email } = funnelDataMock;
 
          console.log({ config })
 
-
-
-
-         const mockConfig = {
-            "heroName": "enes",
-            "isAvatar": false,
-            "theme": "superhero",
-            "place": "The Starry Moon Base",
-            "color": "Pink",
-            "companions": "a friendly tiny dragon",
-            "superPower": "",
-            "secretWish": "hello",
-            "email": "yllipetrovci@gmail.com",
-            "planType": "unlimited",
-            "archetype": "royal",
-            "tone": "Animal Friends",
-            "childAge": 5,
-            "customPageCount": 6,
-            "coverBorder": "Minimal Modern",
-            "parentRelationship": "Mom",
-            "includeParent": false,
-            "parentImage": null,
-            heroImage: "null"
-         }
-
-
          console.log("RESET PASSWORD")
          console.log({ data });
+         debugger;
 
          // // Call your unified backend signup
-         // const res = await fetch("/api/firebase/create-account", {
-         //    method: "POST",
-         //    headers: { "Content-Type": "application/json" },
-         //    body: JSON.stringify({
-         //       email,
-         //       password: data.password,
-         //       animationStyle: funnelDataMock.animationStyle,
-         //       selectedPlanId: funnelDataMock.selectedPlanId,
-         //       image: funnelDataMock.image,
-         //    }),
-         // });
+         const res = await fetch("/api/firebase/create-account", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+               email: config?.email,
+               password: data.password,
+               // animationStyle: funnelDataMock.animationStyle,
+               // selectedPlanId: funnelDataMock.selectedPlanId,
+               // image: funnelDataMock.image,
+            }),
+         });
 
          const json = await res.json();
 

@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { Testimonials, FloatingSparkles, Button } from '@/app/components';
 import { useLanguage } from '@/app/contexts/LanguageContext';
 import { PricingSection } from './components/PricingSection';
-import { STEPS_PATHS } from './constants/stepsPaths';
+import { STEPS_PATHS } from './constants/relativeRoutePaths';
 
 export default function Page() {
   const router = useRouter();

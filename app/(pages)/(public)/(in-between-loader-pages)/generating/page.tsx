@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useStory } from '@/app/contexts/StoryContext';
 import { GeneratedStory } from '@/app/types';
 import { useLanguage } from '@/app/contexts/LanguageContext';
-import { PATHS, STEPS_PATHS } from '@/app/constants/stepsPaths';
+import { PATHS, STEPS_PATHS } from '@/app/constants/relativeRoutePaths';
 import { generateMagicStory } from '@/lib/services-magic-book/geminiService';
 
 

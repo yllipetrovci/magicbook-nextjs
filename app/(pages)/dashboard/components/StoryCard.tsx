@@ -1,7 +1,9 @@
 
+'use client';
 import React from 'react';
 import { Button } from '@/app/components/Button';
 import { GeneratedStory } from '@/app/types';
+import { format } from "date-fns";
 
 interface StoryCardProps {
     story?: GeneratedStory;
@@ -22,6 +24,17 @@ export const StoryCard: React.FC<StoryCardProps> = ({
     onDelete,
     isDownloading = false
 }) => {
+
+
+    const [mounted, setMounted] = React.useState(false);
+
+    React.useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    if(!mounted) {
+        return null;
+    }
 
     // --- LOADING / SKELETON STATE ---
     if (isLoading || !story) {
@@ -81,7 +94,7 @@ export const StoryCard: React.FC<StoryCardProps> = ({
             <h3 className="text-base font-black text-white mb-0.5 line-clamp-1" title={story.title}>{story.title}</h3>
             <p className="text-xs text-gray-500 mb-3 flex items-center justify-between font-medium">
                 <span>{story.pages.length} Pages</span>
-                <span>{story.date ? new Date(story.date).toLocaleDateString() : 'Just now'}</span>
+                <span>{story.date ? format(new Date(story.date), "yyyy-MM-dd") : 'Just now'}</span>
             </p>
 
             <div className="mt-auto flex gap-2">

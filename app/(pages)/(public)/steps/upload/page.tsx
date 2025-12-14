@@ -2,7 +2,7 @@
 'use client'
 
 import { Button } from "@/app/components";
-import { STEPS_PATHS } from "@/app/constants/stepsPaths";
+import { STEPS_PATHS } from "@/app/constants/relativeRoutePaths";
 import { useStory } from "@/app/contexts/StoryContext";
 import { playMagicSound } from "@/app/utils/audio";
 import { useRef, useState } from "react";
@@ -37,23 +37,15 @@ export default function HeroUpload() {
         }
     };
 
-
     const handleUploadContinue = () => {
         playMagicSound();
         // setStep('gender');
         router.push(STEPS_PATHS.STEP_4);
     };
 
-
-    // const handleSkipUpload = () => {
-    //     playMagicSound();
-    //     // setStep('gender');
-    //     router.push(STEPS_PATHS.STEP_4);
-
-    // };
-
     const processFile = (file: File, target: 'hero' | 'parent') => {
         setProcessingTarget(target);
+        console.log("Processing file for:", target);
         // Simulate AI Magic Processing
         setTimeout(() => {
             const reader = new FileReader();

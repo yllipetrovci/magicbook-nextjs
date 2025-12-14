@@ -5,6 +5,7 @@ import path from "path";
 if (!admin.apps.length) {
     const serviceAccountPath = process.env.FIREBASE_SERVICE_ACCOUNT_PATH;
 
+    console.log({serviceAccountPath});
     if (!serviceAccountPath) {
         throw new Error("FIREBASE_SERVICE_ACCOUNT_PATH is not set");
     }
@@ -15,8 +16,8 @@ if (!admin.apps.length) {
 
     admin.initializeApp({
         credential: admin.credential.cert(serviceAccount),
-        storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-        databaseURL: process.env.NEXT_PUBLIC_FIREBASE_DATABASE_URL,
+        storageBucket: process.env.PRIVATE_FIREBASE_STORAGE_BUCKET,
+        databaseURL: process.env.PRIVATE_FIREBASE_DATABASE_URL,
     });
 }
 

@@ -7,7 +7,7 @@ import { Button } from '@/app/components/Button';
 import { useStory } from '@/app/contexts/StoryContext';
 import { useLanguage } from '@/app/contexts/LanguageContext';
 import { PricingSection } from '@/app/components/PricingSection';
-import { PATHS } from '@/app/constants/stepsPaths';
+import { PATHS } from '@/app/constants/relativeRoutePaths';
 
 export const Pricing: React.FC = () => {
    const router = useRouter();

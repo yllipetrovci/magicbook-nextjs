@@ -6,7 +6,7 @@ import { useStory } from "@/app/contexts/StoryContext";
 import { useLanguage } from "@/app/contexts/LanguageContext";
 import { Button } from "@/app/components";
 import { useRouter } from "next/navigation";
-import { STEPS_PATHS } from "@/app/constants/stepsPaths";
+import { STEPS_PATHS } from "@/app/constants/relativeRoutePaths";
 
 export default function NamePage() {
     const router = useRouter();

@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { PATHS } from "@/app/constants/stepsPaths";
+import { PATHS } from "@/app/constants/relativeRoutePaths";
 
 export default function ShowCuponPage() {
 

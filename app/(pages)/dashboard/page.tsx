@@ -11,12 +11,15 @@ import { useLanguage } from '@/app/contexts/LanguageContext';
 
 export const DashboardPage: React.FC = () => {
     const router = useRouter();
-    const { user, savedStories, setGeneratedStory, deleteStory, config } = useStory();
+    const user = { credits: 5 }; // Mock user credits
+    const { config } = useStory();
+    const stories: GeneratedStory [] = [] as any; // Mock stories
+
     const { t } = useLanguage();
     const [downloadingId, setDownloadingId] = useState<number | null>(null);
 
-    const latestHeroName = savedStories.length > 0 && savedStories[0].heroName
-        ? savedStories[0].heroName
+    const latestHeroName = stories?.length > 0 && stories[0].heroName
+        ? stories[0].heroName
         : (config.heroName || "Little Hero");
 
     const handleCreateNew = () => {
@@ -28,7 +31,7 @@ export const DashboardPage: React.FC = () => {
     };
 
     const handleReadStory = (story: GeneratedStory) => {
-        setGeneratedStory(story);
+        // setGeneratedStory(story);
         router.push('/read');
     };
 
@@ -71,11 +74,11 @@ export const DashboardPage: React.FC = () => {
                 title={t('dash_library')}
                 icon="fa-book-open-reader"
                 iconColor="text-magic-purple"
-                count={savedStories.length}
+                count={stories.length}
                 countLabel="stories"
                 badgeColor="text-green-400"
                 dotColor="bg-green-500"
-                items={savedStories}
+                items={stories}
                 onCreate={handleCreateNew}
                 emptyState={{
                     icon: 'fa-box-open',
@@ -92,10 +95,13 @@ export const DashboardPage: React.FC = () => {
                 renderItem={(story, index) => (
                     <StoryCard
                         key={index}
-                        story={story}
+                        story={story || {}}
                         onRead={() => handleReadStory(story)}
                         onDownload={(e) => handleDownloadPdf(e, index, story)}
-                        onDelete={(e) => { e.stopPropagation(); deleteStory(index); }}
+                        onDelete={(e) => {
+                            e.stopPropagation();
+                            // deleteStory(index);
+                        }}
                         isDownloading={downloadingId === index}
                     />
                 )}

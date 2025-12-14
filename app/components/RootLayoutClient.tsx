@@ -98,6 +98,7 @@ export function RootLayoutClient({ children }: { children: React.ReactNode }) {
                     </div>
 
                     {/* Desktop Navigation Links */}
+                    {/* <p>{JSON.stringify(user)}</p> */}
                     {user && (
                         <div className="hidden md:flex items-center gap-6">
                             <Link href="/dashboard" className="text-gray-300 hover:text-white font-bold transition-colors text-sm uppercase tracking-wide">

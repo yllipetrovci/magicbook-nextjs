@@ -7,8 +7,8 @@ import { Button } from '@/app/components/Button';
 import { TrustSection } from '@/app/components/TrustSection';
 import { Testimonials } from '@/app/components/Testimonials';
 import { useLanguage } from '@/app/contexts/LanguageContext';
-import { generateStoryPDF } from '../../../lib/generateStoryPDF';
-import { PATHS } from '@/app/constants/stepsPaths';
+// import { generateStoryPDF } from '../../../lib/generateStoryPDF';
+import { PATHS } from '@/app/constants/relativeRoutePaths';
 import { BookCoverPreview } from './components/BookCoverPreview';
 
 const COVER_IMAGES = [
@@ -83,7 +83,7 @@ export const StoryPreview: React.FC = () => {
          }, 500);
 
          // Actual Generation
-         await generateStoryPDF(generatedStory);
+         // await generateStoryPDF(generatedStory);
 
          clearInterval(progressInterval);
          setProgress(100);

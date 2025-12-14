@@ -6,7 +6,7 @@ export const STEPS_PATHS = {
     STEP_5: '/steps/adventure',
     STEP_6: '/steps/customize-and-finish',
     STEP_7: '/steps/show-cupon',
-}
+} as const;
 
 
 export const PATHS = {
@@ -15,11 +15,22 @@ export const PATHS = {
     GENERATING_2: '/generating-2',
     PRICING: '/pricing',
     CHECKOUT: '/checkout',
-    DASHBOARD: '/dashboard',
     RESET_PASSWORD: '/reset-password',
     SUCCESS: '/success',
+
+    DASHBOARD: '/dashboard',
     UPSELL_BOOK: '/upsell-book',
     UPSELL_VIDEO: '/upsell-video',
-    UPSELL_DAILY: '/upsell-daily',
+    UPSELL_DAILY: '/upsell-daily'
 
-}
+} as const;
+
+
+export const DASHBOARD_PATHS = {
+    LIBRARY: '/dashboard',
+    VIDEOS: '/dashboard/videos',
+    COLORING: '/dashboard/coloring',
+    INVITE: '/dashboard/invite',
+    // CREDITS: '/dashboard/credits',
+
+} as const;

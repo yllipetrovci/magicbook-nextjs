@@ -6,7 +6,7 @@ import { playMagicSound } from '@/app/utils/audio';
 import { Button } from "@/app/components";
 import { useRouter } from 'next/navigation';
 import { useLanguage } from "@/app/contexts/LanguageContext";
-import { STEPS_PATHS } from "@/app/constants/stepsPaths";
+import { STEPS_PATHS } from "@/app/constants/relativeRoutePaths";
 
 const PARENT_ROLES = ['Mom', 'Dad', 'Grandma', 'Grandpa', 'Aunt', 'Uncle'];
 

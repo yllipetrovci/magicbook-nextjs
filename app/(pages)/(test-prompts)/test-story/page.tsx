@@ -11,41 +11,41 @@ import { generateVeoScenePrompt } from "@/lib/prompts/deepseek-veo3-generateText
 const STORAGE_KEY = "storybook-test-form";
 
 const mockStory = {
-    "title": "Guxhi and the Starlight Turtle",
-    "author": "Guxhi & AI Storymaker",
-    "coverImageAlt": "A detailed 3D render of a child with voluminous curly hair and a gap-toothed smile, sitting on a glowing turtle at magical docks under a starry, Christmas-themed nebula.",
-    "pages": [
-        {
-            "imageAltText": "A panoramic 3D view of the Enchanted Turtle Docks at dusk, with glowing lily pad platforms and ancient, star-etched stone pillars rising from calm, reflective water.",
-            "text": "At the Enchanted Turtle Docks, Christmas arrived on a special turtle shell. Each year, the Starlight Turtle would bring glowing orbs from the cosmos to light the holiday skies.",
-            "mainCharacterIncluded": false
-        },
-        {
-            "imageAltText": "Guxhi, with their wide eyes and gap-toothed smile, peers worriedly over the dock's edge where the water's reflection shows no Christmas lights.",
-            "text": "Guxhi loved the turtle's light show most of all. But the docks were dark and quiet. 'Where is our Christmas light?' they wondered, feeling a hero's courage stir in their heart.",
-            "mainCharacterIncluded": true
-        },
-        {
-            "imageAltText": "Deep below the docks, the Starlight Turtle swims slowly, its usually glowing shell dim because a cluster of space-kelp is tangled around its flippers.",
-            "text": "Far below, the great turtle was stuck. Thick, heavy kelp from a drifting space-reef had wrapped around its legs, slowing it down and dimming its light.",
-            "mainCharacterIncluded": false
-        },
-        {
-            "imageAltText": "Guxhi kneels on a lily pad, using a long, smooth reed to carefully probe the dark water, searching for a sign of their friend.",
-            "text": "Guxhi knew the turtle was in trouble. They took a deep breath, their curly hair bouncing. 'I'll find you,' they promised the quiet water, and began to search.",
-            "mainCharacterIncluded": true
-        },
-        {
-            "imageAltText": "A school of tiny, bioluminescent fish try to nibble at the thick space-kelp, but their small lights are not enough to cut through the strong fibers.",
-            "text": "The water creatures tried to help. Glimmer-fish nibbled, and eels pulled, but the strange kelp was as strong as anchor chains. The turtle remained trapped.",
-            "mainCharacterIncluded": false
-        },
-        {
-            "imageAltText": "Guxhi, with a determined grin, uses a sharp, blessed moon-shell to saw through the last strand of kelp, as the turtle's shell begins to glow brightly again.",
-            "text": "Guxhi dove down! With a special shell they found, they sawed and sawed. *Snap!* The kelp broke free. The turtle's shell erupted in light, painting the sky with Christmas constellations.",
-            "mainCharacterIncluded": true
-        }
-    ]
+  "title": "Princess Kompi's Starlight Christmas",
+  "author": "Kompi & AI Storymaker",
+  "coverImageAlt": "A royal 3D illustration of Princess Kompi in a velvet space-themed dress, standing on a glowing turtle-shell platform at the Enchanted Turtle Docks under a starry Christmas sky with a tiny glowing star-turtle companion.",
+  "pages": [
+    {
+      "imageAltText": "A magical 3D scene of the Enchanted Turtle Docks at twilight. Giant, gentle star-turtles with crystalline shells drift peacefully in a calm bay. Their shells twinkle with constellations, and warm lanterns float between ancient wooden piers decorated with frost and holly.",
+      "text": "High above the world, where the sky turns to starlight, floated the Enchanted Turtle Docks. Here, the gentle star-turtles rested between journeys, their crystal shells holding the glow of a thousand Christmas wishes.",
+      "mainCharacterIncluded": false
+    },
+    {
+      "imageAltText": "Princess Kompi, a toddler with a round face, high wavy pigtails, and a soft smile, wears a deep blue velvet dress dotted with silver stars. She carefully places a glowing star-shaped cookie on the edge of a pier, watching the water with her large, round dark-brown eyes.",
+      "text": "Princess Kompi loved visiting the docks. With a happy hum, she left a sparkling star-cookie by the water—a tiny gift for her star-turtle friends.",
+      "mainCharacterIncluded": true
+    },
+    {
+      "imageAltText": "A close-up 3D view of a tiny, newborn star-turtle. It has enormous, curious eyes and a soft shell that flickers weakly, like a candle about to go out. It nudges a floating piece of tinsel sadly.",
+      "text": "But one little star-turtle was lost and lonely. Its shell-light was fading, too small and new to shine on its own. It missed the warm glow of the Christmas Star, its true home.",
+      "mainCharacterIncluded": false
+    },
+    {
+      "imageAltText": "Princess Kompi is not in the scene. The tiny star-turtle follows a trail of Kompi's fallen star-cookie crumbs. It moves past giant, sleeping turtle shadows and under arches woven with magical, glowing ice.",
+      "text": "The little turtle saw a trail of glittering crumbs! With a hopeful wiggle, it began to follow the sparkly path, past sleeping giants and arches of glowing ice.",
+      "mainCharacterIncluded": false
+    },
+    {
+      "imageAltText": "Princess Kompi sits cross-legged on the dock, her full cheeks lit with a gentle glow. The tiny star-turtle rests in her lap, snuggled in a velvet ribbon. Kompi holds a shimmering sugar crystal above it, and the turtle's shell begins to brighten.",
+      "text": "Kompi found the shivering turtle! \"You need starlight,\" she whispered. She offered her last sugar crystal, full of Christmas magic. The little turtle snuggled close, and its shell began to glow warmly.",
+      "mainCharacterIncluded": true
+    },
+    {
+      "imageAltText": "A wide 3D shot of the Docks from above. The newborn star-turtle, now shining brightly, swims joyously beside a giant parent turtle. Their combined shell-lights paint beautiful, swirling constellations across the dark water and snowy piers. Princess Kompi is not visible; the focus is on the magical reunion.",
+      "text": "With a happy flicker, the little turtle's light shone strong! It zipped through the water, painting Christmas constellations, until it found its family. And the Docks sparkled brighter than ever with the magic of a shared wish.",
+      "mainCharacterIncluded": false
+    }
+  ]
 }
 
 const TestPageImages = () => {

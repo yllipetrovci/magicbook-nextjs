@@ -18,7 +18,7 @@ import ColorOption from './components/ColorsSection';
 import CompanionButton from './components/CompanionPresentCard';
 import StoryToneOption from './components/StoryTonesButton';
 import { useLanguage } from '@/app/contexts/LanguageContext';
-import { STEPS_PATHS } from '@/app/constants/stepsPaths';
+import { STEPS_PATHS } from '@/app/constants/relativeRoutePaths';
 import { generateStoryPrompt } from '@/lib/prompts/storyGeneration';
 import { characterExtractionPrompt } from '@/lib/prompts/characterExtraction';
 import { generatePageImagePrompt } from '@/lib/prompts/pageImageGeneration';

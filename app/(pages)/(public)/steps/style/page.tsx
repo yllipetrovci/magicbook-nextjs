@@ -1,5 +1,5 @@
 'use client'
-import { STEPS_PATHS } from "@/app/constants/stepsPaths";
+import { STEPS_PATHS } from "@/app/constants/relativeRoutePaths";
 import { useLanguage } from "@/app/contexts/LanguageContext";
 import { useStory } from "@/app/contexts/StoryContext";
 import { playMagicSound } from "@/app/utils/audio";

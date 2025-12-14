@@ -1,6 +1,9 @@
 
 import { Button } from '@/app/components';
 import React from 'react';
+import { useRouter } from "next/navigation";
+import { PATHS } from '@/app/constants/relativeRoutePaths';
+
 
 interface PaymentFormProps {
     // total prop is no longer needed for button, but keeping interface clean
@@ -8,6 +11,7 @@ interface PaymentFormProps {
 }
 
 export const PaymentForm: React.FC<PaymentFormProps> = () => {
+    const router = useRouter();
     return (
         <div className="flex-[1.5] bg-magic-card p-8 rounded-3xl shadow-xl border border-white/5 h-fit">
             <h3 className="text-2xl font-bold text-white mb-6 flex items-center gap-3">
@@ -42,7 +46,7 @@ export const PaymentForm: React.FC<PaymentFormProps> = () => {
                     </div>
                 </div>
 
-                <Button fullWidth onClick={() => { }} size="lg" className="shadow-lg shadow-orange-500/20 text-xl py-4 bg-magic-orange hover:bg-orange-600 border-b-4 border-orange-800 active:border-b-0 active:translate-y-1 transition-all mb-6">
+                <Button fullWidth onClick={() => router.push(PATHS.UPSELL_BOOK)} size="lg" className="shadow-lg shadow-orange-500/20 text-xl py-4 bg-magic-orange hover:bg-orange-600 border-b-4 border-orange-800 active:border-b-0 active:translate-y-1 transition-all mb-6">
                     Order Now
                 </Button>
 

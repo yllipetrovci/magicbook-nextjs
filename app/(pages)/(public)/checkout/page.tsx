@@ -6,7 +6,7 @@ import { Button } from '@/app/components/Button';
 import { useStory } from '@/app/contexts/StoryContext';
 import { OrderSummary } from './components/OrderSummary';
 import { PaymentForm } from './components/PaymentForm';
-import { PATHS } from '@/app/constants/stepsPaths';
+import { PATHS } from '@/app/constants/relativeRoutePaths';
 import { plans } from '@/lib/constants/plans';
 
 // Helper to deduce cover image if not generated yet
