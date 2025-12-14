@@ -4,6 +4,8 @@ import React from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/app/components/Button';
 import { useStory } from '@/app/contexts/StoryContext';
+import { PATHS } from '@/app/constants/relativeRoutePaths';
+import { upsellVideo } from '@/lib/constants/plans';
 
 const FloatingSparkles = () => {
    return (
@@ -17,10 +19,21 @@ const FloatingSparkles = () => {
 
 export const UpsellVideo: React.FC = () => {
    const router = useRouter();
-   const { config } = useStory();
+   const { config, setHasUpsellVideo } = useStory();
+
 
    const handleNext = () => {
-      router.push('/upsell-daily');
+      //TODO: API CALL
+      setHasUpsellVideo(true);
+
+
+      router.push(PATHS.UPSELL_DAILY);
+   };
+
+   const handleNoThanks = () => {
+      setHasUpsellVideo(false);
+      router.push(PATHS.UPSELL_DAILY);
+
    };
 
    return (
@@ -57,7 +70,7 @@ export const UpsellVideo: React.FC = () => {
                      {/* Overlay Content */}
                      <div className="absolute bottom-0 left-0 w-full p-6 bg-gradient-to-t from-black/90 via-black/50 to-transparent">
                         <div className="flex items-center gap-2 text-magic-green text-xs font-bold uppercase tracking-widest mb-1">
-                           <i className="fa-solid fa-video"></i> 4K Resolution
+                           {/* <i className="fa-solid fa-video"></i> 4K Resolution */}
                         </div>
                         <p className="text-white font-serif italic text-lg leading-relaxed">
                            "Watching {config.heroName} fly across the screen brought tears to my eyes. It's like a real movie!"
@@ -109,8 +122,8 @@ export const UpsellVideo: React.FC = () => {
                   {/* Price & CTA */}
                   <div className="pt-4">
                      <div className="flex items-end gap-3 mb-6">
-                        <span className="text-4xl font-black text-white font-serif">$4.99</span>
-                        <span className="text-lg text-gray-500 line-through mb-1.5 decoration-red-500/50">$24.99</span>
+                        <span className="text-4xl font-black text-white font-serif">${upsellVideo.price}</span>
+                        <span className="text-lg text-gray-500 line-through mb-1.5 decoration-red-500/50">${upsellVideo.originalPrice}</span>
                         <span className="bg-red-500/20 text-red-400 px-2 py-1 rounded text-xs font-bold mb-2 border border-red-500/20">80% OFF</span>
                      </div>
 
@@ -124,7 +137,7 @@ export const UpsellVideo: React.FC = () => {
                      </Button>
 
                      <button
-                        onClick={handleNext}
+                        onClick={handleNoThanks}
                         className="w-full text-center mt-4 text-sm text-gray-500 font-medium hover:text-white transition-colors"
                      >
                         No thanks, just the book

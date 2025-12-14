@@ -8,6 +8,7 @@ import { OrderSummary } from './components/OrderSummary';
 import { PaymentForm } from './components/PaymentForm';
 import { PATHS } from '@/app/constants/relativeRoutePaths';
 import { plans } from '@/lib/constants/plans';
+import { useLanguage } from '@/app/contexts/LanguageContext';
 
 // Helper to deduce cover image if not generated yet
 const getCheckoutCover = (theme: string, generatedCover?: string) => {
@@ -22,24 +23,19 @@ const getCheckoutCover = (theme: string, generatedCover?: string) => {
 
 export const Checkout: React.FC = () => {
    const router = useRouter();
-   const { t, addCredits, config, generatedStory }: any = useStory();
+   const { config, generatedStory, setMainPaymentIsDone }: any = useStory();
+   const { t } = useLanguage();
 
    const selectedPlan = plans.find(p => p.id === config?.planType);
    console.log({ selectedPlan })
+   console.log({ config })
 
-   let planName = "Custom Storybook";
-   let subtotal = 0;
-   let discount = 0;
-   let total = 0;
-   let credits: number | 'Unlimited' = 0;
 
    // Page Count Logic
    const pageCount = config.customPageCount || 4; // Default to 4 if not set
-   const pricePerPage = 0.99;
 
-   const isSubscription = selectedPlan?.isSubscription;
    const coverImage = getCheckoutCover(config.theme, generatedStory?.coverImage);
-   console.log({ config })
+
    const handlePayment = () => {
       // Simulate payment processing
       const btn = document.activeElement as HTMLButtonElement;
@@ -47,11 +43,9 @@ export const Checkout: React.FC = () => {
          btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Processing...';
          btn.disabled = true;
       }
+
+      setMainPaymentIsDone(true);
       setTimeout(() => {
-         // Add credits based on plan
-         // const creditsToAdd = isUnlimitedPlan ? 999 : 1;
-         // addCredits(creditsToAdd);
-         // Redirect to Upsell Sequence
          router.push(PATHS.UPSELL_BOOK);
       }, 2000);
    };
@@ -64,7 +58,7 @@ export const Checkout: React.FC = () => {
 
             {/* Order Summary Component - Now contains the Pay Button */}
             <OrderSummary
-               planName={planName}
+               planName={selectedPlan?.title}
                price={selectedPlan?.price}
                discount={DISCOUNT_PRICE}
                total={parseFloat(DISCOUNT_PRICE.toFixed(2))}

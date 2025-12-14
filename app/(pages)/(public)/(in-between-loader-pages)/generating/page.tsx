@@ -87,7 +87,7 @@ const Generating: React.FC = () => {
         // }
 
         if (mounted) {
-          setGeneratedStory(story as GeneratedStory);
+          // setGeneratedStory(story as GeneratedStory);
           router.push(PATHS.PREVIEW);
         }
       } catch (e) {

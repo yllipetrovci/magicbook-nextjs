@@ -12,15 +12,15 @@ export default function HeroUpload() {
     const { updateConfig, config } = useStory();
     const router = useRouter();
     const [includeParent, setIncludeParent] = useState(config.includeParent || false);
-    // const [localEmail, setLocalEmail] = useState(config.email || '');
     const [localName, setLocalName] = useState('');
     const [relationship, setRelationship] = useState('');
     const [processingTarget, setProcessingTarget] = useState<'hero' | 'parent' | null>(null);
-    const [preview, setPreview] = useState('');
     const fileInputRef = useRef<HTMLInputElement>(null);
     const parentFileInputRef = useRef<HTMLInputElement>(null);
+    const [preview, setPreview] = useState(config.heroImage || null);
     const [parentPreview, setParentPreview] = useState<string | null>(config.parentImage || null);
 
+    console.log({config});
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>, target: 'hero' | 'parent') => {
         const file = event.target.files?.[0];
@@ -45,7 +45,7 @@ export default function HeroUpload() {
 
     const processFile = (file: File, target: 'hero' | 'parent') => {
         setProcessingTarget(target);
-        console.log("Processing file for:", target);
+        // console.log("Processing file for:", target);
         // Simulate AI Magic Processing
         setTimeout(() => {
             const reader = new FileReader();
@@ -54,7 +54,7 @@ export default function HeroUpload() {
                 if (target === 'hero') {
                     setPreview(result);
                     updateConfig('heroImage', result);
-                    updateConfig('isAvatar', false);
+                    // updateConfig('isAvatar', false);
                 } else {
                     setParentPreview(result);
                     updateConfig('parentImage', result);

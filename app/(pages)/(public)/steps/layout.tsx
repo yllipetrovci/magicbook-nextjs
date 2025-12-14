@@ -17,9 +17,9 @@ export default function MagicLayout({ children }: { children: React.ReactNode })
 
                 <div className="w-full max-w-5xl mb-2 px-2">
                     <Button
-                        variant="ghost"
+                        variant="transparent"
                         onClick={() => router.back()}
-                        className="text-gray-400 hover:text-white pl-0"
+                        className="text-gray-400 hover:text-white hover:bg-white/5 px-3 py-2 rounded-lg transition-all"
                     >
                         <i className="fa-solid fa-arrow-left mr-2"></i> Back
                     </Button>

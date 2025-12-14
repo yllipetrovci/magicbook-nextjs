@@ -25,6 +25,15 @@ interface StoryContextType {
   drawImages: GeneratedImage[];
   appTheme: AppTheme;
   setAppTheme: (theme: AppTheme) => void;
+
+  setHasUpsellBook: React.Dispatch<React.SetStateAction<boolean>>,
+  setHasUpsellVideo: React.Dispatch<React.SetStateAction<boolean>>,
+  setHasUpsellDaily: React.Dispatch<React.SetStateAction<boolean>>,
+  setMainPaymentIsDone: React.Dispatch<React.SetStateAction<boolean>>,
+  hasUpSellBook: boolean
+  hasUpSellVideo: boolean
+  hasUpSellDaily: boolean
+  mainPaymentIsDone: boolean
 }
 
 const StoryContext = createContext<StoryContextType | undefined>(undefined);
@@ -35,8 +44,11 @@ export const StoryProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [stories, setStories] = useState<GeneratedStory[]>([MOCK_STORY]);
   const [videos, setVideos] = useState<GeneratedVideo[]>([MOCK_VIDEO]);
   const [drawImages, setDrawImages] = useState<GeneratedImage[]>([MOCK_IMAGE]);
-
-  // 🔹 Load from localStorage AFTER mount (SSR-safe)
+  const [hasUpSellBook, setHasUpsellBook] = useState<boolean>(false);
+  const [hasUpSellVideo, setHasUpsellVideo] = useState<boolean>(false);
+  const [hasUpSellDaily, setHasUpsellDaily] = useState<boolean>(false);
+  const [mainPaymentIsDone, setMainPaymentIsDone] = useState<boolean>(false);
+  // 🔹 Load from localStorage on mount
   useEffect(() => {
     setConfig(
       LocalStorageService.get(
@@ -44,6 +56,13 @@ export const StoryProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         DEFAULT_CONFIG
       )
     );
+
+    setMainPaymentIsDone(
+      LocalStorageService.get<boolean>(
+        LOCAL_STORAGE_KEYS.MAIN_PAYMENT_DONE,
+        false
+      )
+    )
 
     setAppTheme(
       LocalStorageService.get<AppTheme>(
@@ -72,6 +91,11 @@ export const StoryProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         [MOCK_IMAGE]
       )
     );
+
+    LocalStorageService.get<boolean>(
+      LOCAL_STORAGE_KEYS.HAS_UPSELL_BOOK,
+      false
+    )
   }, []);
 
   const updateConfig = (field: keyof StoryConfig, value: any) => {
@@ -94,12 +118,30 @@ export const StoryProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }, [config]);
 
   useEffect(() => {
+    LocalStorageService.set(LOCAL_STORAGE_KEYS.SAVED_IMAGES, drawImages);
+  }, [drawImages]);
+
+  // 🔹 Persist upsell states
+  useEffect(() => {
+    LocalStorageService.set(LOCAL_STORAGE_KEYS.HAS_UPSELL_BOOK, hasUpSellBook);
+  }, [hasUpSellBook]);
+
+  useEffect(() => {
+    LocalStorageService.set(LOCAL_STORAGE_KEYS.HAS_UPSELL_VIDEO, hasUpSellVideo);
+  }, [hasUpSellVideo]);
+
+  useEffect(() => {
+    LocalStorageService.set(LOCAL_STORAGE_KEYS.HAS_UPSELL_DAILY, hasUpSellDaily);
+  }, [hasUpSellDaily]);
+
+  useEffect(() => {
     LocalStorageService.set(LOCAL_STORAGE_KEYS.APP_THEME, appTheme);
   }, [appTheme]);
 
+
   useEffect(() => {
-    LocalStorageService.set(LOCAL_STORAGE_KEYS.SAVED_IMAGES, drawImages);
-  }, [drawImages]);
+    LocalStorageService.set(LOCAL_STORAGE_KEYS.MAIN_PAYMENT_DONE, mainPaymentIsDone);
+  }, [mainPaymentIsDone]);
 
   return (
     <StoryContext.Provider
@@ -114,6 +156,13 @@ export const StoryProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         drawImages,
         appTheme,
         setAppTheme,
+        setHasUpsellBook,
+        setHasUpsellVideo,
+        setHasUpsellDaily,
+        hasUpSellBook,
+        hasUpSellVideo,
+        hasUpSellDaily,
+        mainPaymentIsDone, setMainPaymentIsDone
       }}
     >
       {children}

@@ -12,7 +12,7 @@ export const plans: any[] = [
         ],
         buttonText: 'Start Creating',
         colorTheme: 'dark',
-        isSubscription: false,
+        isSubscription: true,
         badge: undefined
     },
     {
@@ -20,7 +20,7 @@ export const plans: any[] = [
         title: 'Family Pack',
         price: 29.99,
         credits: 25,
-        isSubscription: false,
+        isSubscription: true,
         billingText: 'Unlimited',
         features: [
             'Unlimited Stories',
@@ -46,8 +46,42 @@ export const plans: any[] = [
             'No Expiration'
         ],
         buttonText: 'Start Creating',
-        isSubscription: false,
+        isSubscription: true,
         colorTheme: 'dark',
         badge: undefined // Removed "CREDIT PACK" badge to match screenshot cleaner look, or we can keep it. Screenshot shows standard dark card.
     }
 ];
+
+
+
+export const upsellBook = {
+    id: 'upsell_video',
+    title: 'Video Upgrade',
+    price: 14.99,
+    originalPrice: 29.99,
+    features: [
+        'Animated Story Video',
+        'Professional Narration',
+        'Background Music',
+        'Perfect for Sharing'
+    ],
+}
+
+export const upsellVideo = {
+    id: 'upsell_video',
+    title: 'Video Upgrade',
+    price: 7.99,
+    originalPrice: 39.95,
+    features: [
+        'Animated Story Video',
+        'Professional Narration',
+        'Background Music',
+        'Perfect for Sharing'
+    ],
+}
+
+export const upsellDaily = {
+    id: 'upsell_daily',
+    title: 'Daily Stories',
+    price: 0.59,
+}

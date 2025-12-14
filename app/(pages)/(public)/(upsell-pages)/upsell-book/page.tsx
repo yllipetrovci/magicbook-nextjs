@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/app/components/Button';
 import { useStory } from '@/app/contexts/StoryContext';
 import { PATHS } from '@/app/constants/relativeRoutePaths';
+import { upsellBook } from '@/lib/constants/plans';
 
 const FloatingSparkles = () => {
    return (
@@ -18,12 +19,22 @@ const FloatingSparkles = () => {
 
 export const UpsellBook: React.FC = () => {
    const router = useRouter();
-   const { config } = useStory();
+   const { config, setHasUpsellBook } = useStory();
 
    const handleNext = () => {
+      //TODO: API CALL
+      setHasUpsellBook(true);
+
+
       router.push(PATHS.UPSELL_VIDEO);
    };
-   // fixed inset-0
+
+   const handleNoThanks = () => {
+      setHasUpsellBook(false);
+      router.push(PATHS.UPSELL_VIDEO);
+   };
+
+
    return (
       <div className=" z-[100] overflow-y-auto bg-[#0B0C15] animate-fade-in font-sans text-white bg-[radial-gradient(circle_at_center,_#1a1c2e_0%,_#0B0C15_100%)]">
          <FloatingSparkles />
@@ -108,8 +119,8 @@ export const UpsellBook: React.FC = () => {
                   {/* Price & CTA */}
                   <div className="pt-4">
                      <div className="flex items-end gap-3 mb-6">
-                        <span className="text-4xl font-black text-white font-serif">$14.99</span>
-                        <span className="text-lg text-gray-500 line-through mb-1.5 decoration-red-500/50">$29.99</span>
+                        <span className="text-4xl font-black text-white font-serif">${upsellBook.price}</span>
+                        <span className="text-lg text-gray-500 line-through mb-1.5 decoration-red-500/50">${upsellBook.originalPrice}</span>
                         <span className="bg-red-500/20 text-red-400 px-2 py-1 rounded text-xs font-bold mb-2 border border-red-500/20">50% OFF TODAY</span>
                      </div>
 
@@ -123,7 +134,7 @@ export const UpsellBook: React.FC = () => {
                      </Button>
 
                      <button
-                        onClick={handleNext}
+                        onClick={handleNoThanks}
                         className="w-full text-center mt-4 text-sm text-gray-500 font-medium hover:text-white transition-colors"
                      >
                         No thanks, I'll keep the standard version

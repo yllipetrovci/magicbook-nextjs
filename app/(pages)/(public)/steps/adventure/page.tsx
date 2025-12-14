@@ -2,10 +2,10 @@
 import { useRouter } from 'next/navigation';
 import { useStory } from '@/app/contexts/StoryContext';
 import { playMagicSound } from '@/app/utils/audio';
-import { Button } from '@/app/components';
 import { useEffect, useState } from 'react';
 import { useLanguage } from '@/app/contexts/LanguageContext';
 import { STEPS_PATHS } from '@/app/constants/relativeRoutePaths';
+import clsx from 'clsx';
 
 const themeKeys = [
   { id: 'christmas', key: 'theme_santa', icon: 'fa-candy-cane', color: 'bg-red-500', isLimited: true },
@@ -16,9 +16,6 @@ const themeKeys = [
   { id: 'superhero', key: 'theme_superhero', icon: 'fa-mask', color: 'bg-blue-500' },
   { id: 'special', key: 'theme_special', icon: 'fa-wand-magic-sparkles', color: 'bg-indigo-500', descriptionKey: 'desc_special' },
 ];
-
-
-
 
 export default function AdventureSelection() {
   const router = useRouter();
@@ -34,6 +31,7 @@ export default function AdventureSelection() {
   const handleSelect = (themeName: string) => {
     playMagicSound();
     updateConfig('theme', themeName);
+    router.push(STEPS_PATHS.STEP_6)
   };
 
   const handleArchetypeSelect = (type: 'hero' | 'royal') => {
@@ -54,7 +52,7 @@ export default function AdventureSelection() {
         <div className="grid grid-cols-2 gap-6">
           <button
             onClick={() => handleArchetypeSelect('hero')}
-            className={`p-6 rounded-2xl border-2 flex flex-col items-center justify-center gap-3 transition-all duration-300 group ${currentArchetype === 'hero' ? 'bg-magic-orange/20 border-magic-orange shadow-[0_0_20px_rgba(249,115,22,0.3)] scale-105' : 'bg-magic-card border-white/10 hover:bg-white/5 opacity-70 hover:opacity-100'}`}
+            className={`p-6 cursor-pointer rounded-2xl border-2 flex flex-col items-center justify-center gap-3 transition-all duration-300 group ${currentArchetype === 'hero' ? 'bg-magic-orange/20 border-magic-orange shadow-[0_0_20px_rgba(249,115,22,0.3)] scale-105' : 'bg-magic-card border-white/10 hover:bg-white/5 opacity-70 hover:opacity-100'}`}
           >
             <div className={`w-16 h-16 rounded-full flex items-center justify-center text-3xl transition-transform group-hover:scale-110 ${currentArchetype === 'hero' ? 'bg-magic-orange text-white' : 'bg-white/10 text-gray-500'}`}>
               <i className="fa-solid fa-shield-halved"></i>
@@ -67,7 +65,7 @@ export default function AdventureSelection() {
 
           <button
             onClick={() => handleArchetypeSelect('royal')}
-            className={`p-6 rounded-2xl border-2 flex flex-col items-center justify-center gap-3 transition-all duration-300 group ${currentArchetype === 'royal' ? 'bg-magic-purple/20 border-magic-purple shadow-[0_0_20px_rgba(168,85,247,0.3)] scale-105' : 'bg-magic-card border-white/10 hover:bg-white/5 opacity-70 hover:opacity-100'}`}
+            className={`p-6 cursor-pointer rounded-2xl border-2 flex flex-col items-center justify-center gap-3 transition-all duration-300 group ${currentArchetype === 'royal' ? 'bg-magic-purple/20 border-magic-purple shadow-[0_0_20px_rgba(168,85,247,0.3)] scale-105' : 'bg-magic-card border-white/10 hover:bg-white/5 opacity-70 hover:opacity-100'}`}
           >
             <div className={`w-16 h-16 rounded-full flex items-center justify-center text-3xl transition-transform group-hover:scale-110 ${currentArchetype === 'royal' ? 'bg-magic-purple text-white' : 'bg-white/10 text-gray-500'}`}>
               <i className="fa-solid fa-crown"></i>
@@ -88,15 +86,14 @@ export default function AdventureSelection() {
             <button
               key={theme.id}
               onClick={() => handleSelect(theme.id)}
-              className={`
-                text-left bg-magic-card p-6 rounded-2xl border border-white/5 
-                hover:scale-[1.03] hover:shadow-2xl hover:border-magic-purple hover:shadow-purple-500/20 
-                transition-all duration-300 group relative overflow-hidden
-                ${theme.isLimited && config.theme !== 'christmas' ? 'ring-2 ring-red-500/50' : ''}
-                ${isSelected ? 'ring-2 ring-magic-purple' : 'border-magic-purple shadow-purple-500/20'}
-                `
-
-              }
+              className={clsx(
+                'cursor-pointer',
+                'text-left bg-magic-card p-6 rounded-2xl border border-white/5',
+                'hover:scale-[1.03] hover:shadow-2xl hover:border-magic-purple hover:shadow-purple-500/20',
+                'transition-all duration-300 group relative overflow-hidden',
+                theme.isLimited && config.theme !== 'christmas' && 'ring-2 ring-red-500/50',
+                isSelected ? 'ring-2 ring-magic-purple' : 'border-magic-purple shadow-purple-500/20'
+              )}
             >
               {/* Limited Offer Badge */}
               {theme.isLimited && (
@@ -112,19 +109,18 @@ export default function AdventureSelection() {
                 <i className={`fa-solid ${theme.icon}`}></i>
               </div>
               <h3 className="text-xl font-bold text-white mb-1">{translatedName}</h3>
-              <p className={`text-sm ${theme.isLimited ? 'text-red-400 font-bold' : ((theme as any).descriptionKey ? 'text-gray-300 font-medium' : 'text-gray-500 group-hover:text-gray-400 transition-colors')}`}>
+              <p className={clsx(
+                'text-sm',
+                theme.isLimited && 'text-red-400 font-bold',
+                (theme as any).descriptionKey && 'text-gray-300 font-medium',
+                !(theme.isLimited || (theme as any).descriptionKey) && 'text-gray-500 group-hover:text-gray-400 transition-colors'
+              )}>
                 {description}
               </p>
             </button>
           );
         })}
       </div>
-      <div className="mt-8 flex gap-4">
-        <Button onClick={() => router.push(STEPS_PATHS.STEP_6)} fullWidth size="lg" className="text-xl shadow-xl shadow-purple-500/20 bg-gradient-to-r from-magic-purple to-magic-pink hover:to-pink-500 border-none animate-pulse-slow min-w-[200px]">
-          Next
-        </Button>
-      </div>
-
     </div>
   );
 };

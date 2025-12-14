@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Button } from '@/app/components/Button';
 import { useStory } from '@/app/contexts/StoryContext';
 import { PATHS } from '@/app/constants/relativeRoutePaths';
+import { upsellDaily } from '@/lib/constants/plans';
 
 const FloatingSparkles = () => {
     return (
@@ -18,9 +19,18 @@ const FloatingSparkles = () => {
 
 export const UpsellDaily: React.FC = () => {
     const router = useRouter();
-    const { config } = useStory();
+    const { config, setHasUpsellDaily } = useStory();
 
-    const handleFinish = () => {
+    const handleNext = () => {
+        //TODO: API CALL
+        setHasUpsellDaily(true);
+
+
+        router.push(PATHS.SUCCESS);
+    };
+
+    const handleNoThanks = () => {
+        setHasUpsellDaily(false);
         router.push(PATHS.SUCCESS);
     };
 
@@ -32,7 +42,7 @@ export const UpsellDaily: React.FC = () => {
 
                 {/* Close Button */}
                 <button
-                    onClick={handleFinish}
+                    onClick={handleNext}
                     className="absolute top-6 right-6 w-10 h-10 rounded-full bg-white/5 hover:bg-white/20 flex items-center justify-center text-gray-400 hover:text-white transition-all z-50"
                 >
                     <i className="fa-solid fa-times text-xl"></i>
@@ -96,13 +106,13 @@ export const UpsellDaily: React.FC = () => {
                         {/* Price & CTA */}
                         <div className="bg-magic-card/30 p-8 rounded-3xl border border-white/10 backdrop-blur-md">
                             <div className="flex items-baseline gap-2 mb-2">
-                                <span className="text-5xl font-black text-white font-serif">$0.99</span>
+                                <span className="text-5xl font-black text-white font-serif">${upsellDaily.price}</span>
                                 <span className="text-xl text-gray-400 font-medium">/ day</span>
                             </div>
                             <p className="text-sm text-gray-400 mb-8 font-medium">Billed monthly. Cancel anytime.</p>
 
                             <Button
-                                onClick={handleFinish}
+                                onClick={handleNext}
                                 fullWidth
                                 size="lg"
                                 className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-500 hover:to-purple-500 shadow-[0_0_30px_rgba(59,130,246,0.3)] text-xl py-5 border-t border-white/20 font-serif mb-4"
@@ -117,7 +127,7 @@ export const UpsellDaily: React.FC = () => {
 
                         <div className="text-center">
                             <button
-                                onClick={handleFinish}
+                                onClick={handleNoThanks}
                                 className="text-sm text-gray-500 font-medium hover:text-white transition-colors underline decoration-gray-700 underline-offset-4"
                             >
                                 No thanks, I'll stick to one story for now

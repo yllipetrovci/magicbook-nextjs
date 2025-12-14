@@ -340,14 +340,14 @@ export default function CustomizeAndFinish() {
                                 </div>
                                 {errors.companions && <p className="text-red-400 text-sm mt-2 font-bold"><i className="fa-solid fa-circle-exclamation mr-1"></i> {errors.companions.message}</p>}
 
-                                <div className="grid grid-cols-4 gap-2 mt-4">
+                                <div className="grid grid-cols-4 gap-2 mt-4 max-h-[185px] overflow-y-auto ">
                                     {COMPANION_PRESETS.map((comp) => (
                                         <CompanionButton key={comp.label} companion={comp} onAdd={handleCompanionAdd} />
                                     ))}
-                                    <button type="button" onClick={handleFriendAdd} className="flex flex-col items-center gap-1 p-2 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 hover:scale-105 transition-all group">
+                                    {/* <button type="button" onClick={handleFriendAdd} className="flex flex-col items-center justify-center gap-1 p-2 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 hover:scale-105 transition-all group">
                                         <i className="fa-solid fa-plus text-lg text-white group-hover:text-magic-green"></i>
-                                        <span className="text-[10px] text-gray-400 font-bold">{t('customizeAndFinishPage.detAdd')}</span>
-                                    </button>
+                                        <span className="text-[10px] text-gray-400 font-bold">Add</span>
+                                    </button> */}
                                 </div>
                             </div>
                         </div>

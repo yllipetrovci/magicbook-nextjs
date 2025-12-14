@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useStory } from '@/app/contexts/StoryContext';
 import { PATHS } from '@/app/constants/relativeRoutePaths';
+import { useLanguage } from '@/app/contexts/LanguageContext';
 
 const Confetti = () => {
     return (
@@ -32,7 +33,8 @@ const Confetti = () => {
 
 export const Success: React.FC = () => {
     const router = useRouter();
-    const { resetStory, t, user, config } = useStory();
+    const { resetStory, config } = useStory();
+    const { t } = useLanguage();
     const [step, setStep] = useState(1);
 
     useEffect(() => {
@@ -119,7 +121,7 @@ export const Success: React.FC = () => {
                         </div>
                         <div className="text-left">
                             <p className={`font-bold transition-colors ${step >= 3 ? 'text-white' : 'text-gray-500'}`}>Delivery</p>
-                            <p className="text-xs text-gray-400">{step >= 3 ? `Sent to ${user?.email || config.email || 'email'}` : 'Sending shortly...'}</p>
+                            <p className="text-xs text-gray-400">{step >= 3 ? `Sent to ${config?.email || config.email || 'email'}` : 'Sending shortly...'}</p>
                         </div>
                     </div>
                 </div>
