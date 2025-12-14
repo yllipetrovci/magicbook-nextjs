@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import { Check } from "lucide-react";
 import { PATHS } from "@/app/constants/relativeRoutePaths";
 import { useStory } from "@/app/contexts/StoryContext";
+import UpsellBook from "../(upsell-pages)/upsell-book/page";
 
 const schema = yup.object({
    password: yup.string()
@@ -23,7 +24,7 @@ type FormData = yup.InferType<typeof schema>;
 
 const ResetPassword = () => {
    const router = useRouter();
-   const { config } = useStory();
+   const { config, hasUpSellBook, hasUpSellVideo, hasUpSellDaily, mainPaymentIsDone } = useStory();
 
    const { register, handleSubmit, formState: { errors, isValid } } = useForm<FormData>({
       resolver: yupResolver(schema),
@@ -64,10 +65,7 @@ const ResetPassword = () => {
       // }
 
       try {
-         // const { email } = funnelDataMock;
-
          console.log({ config })
-
          console.log("RESET PASSWORD")
          console.log({ data });
          debugger;
@@ -79,9 +77,9 @@ const ResetPassword = () => {
             body: JSON.stringify({
                email: config?.email,
                password: data.password,
-               // animationStyle: funnelDataMock.animationStyle,
-               // selectedPlanId: funnelDataMock.selectedPlanId,
-               // image: funnelDataMock.image,
+               hasUpSellBook, hasUpSellVideo, hasUpSellDaily, mainPaymentIsDone,
+               selectedPlanId: config?.planType,
+               config
             }),
          });
 
@@ -92,7 +90,7 @@ const ResetPassword = () => {
             return;
          }
 
-         // toast.success("Account created successfully!");
+         toast.success("Account created successfully!");
 
          // Session cookie is already set → redirect
          // router.push('/dashboard');
@@ -116,6 +114,16 @@ const ResetPassword = () => {
                </div>
                <h2 className="text-2xl font-black text-white">Secure Your Account</h2>
                <p className="text-gray-400 text-sm mt-1">Please set a new password to continue.</p>
+               {/* <p className="text-gray-400 text-sm mt-2">
+                  This is only for creating your own password, so you can securely log in to your account.
+               </p> */}
+
+               <div className="flex items-start justify-start gap-2 mt-6 text-xs text-gray-500">
+                  <span className="text-gray-400 text-sm text-green-500">
+                     This is only for creating your own password, so you can securely log in to your account.
+                  </span>
+               </div>
+
             </div>
 
             <div className="space-y-4">

@@ -4,6 +4,64 @@ import { klingImageToVideo } from "@/lib/klingai";
 import { animationStylesPrompt, AnimationStyle } from "@/lib/constants/animation-styles-prompt";
 import { plans } from "@/lib/constants/plans";
 import { createUserVideo } from "@/lib/firestore/videos";
+/* --------------------------------------------- */
+/* 7. Main POST Handler                          */
+/* --------------------------------------------- */
+export async function POST(req: Request) {
+    try {
+        const { email, password, selectedPlanId, config,
+            hasUpSellBook, hasUpsellVideo, hasUpsellDaily, mainPaymentIsDone
+        } = await req.json();
+
+        console.log("SERVER SIDE SIGNUP:");
+        console.log({
+            email, password, selectedPlanId, config,
+            hasUpSellBook, hasUpsellVideo, hasUpsellDaily, mainPaymentIsDone
+        })
+        // deepseekAPI
+
+        // const key: AnimationStyle = animationStyle;
+        // const prompt = animationStylesPrompt[key].prompt;
+        validateInput(email, password);
+        // Payments here
+
+        // console.log({ prompt });x
+        const user = await createFirebaseUser(email, password);
+
+        console.log("User created:", user);
+        await createFirestoreUser(user.uid, email, selectedPlanId);
+
+        // const video = await klingImageToVideo({
+        //     image,
+        //     prompt
+        // });
+
+        // createUserVideo(user.uid, {
+        //     taskId: video.data.task_id,
+        //     thumbnail: null,
+        //     prompt,
+        //     style: key,
+        //     status: "processing",
+        //     videoUrl: null,
+        // });
+
+
+
+        // const videoJson = await video.json();
+
+        const idToken = await signInUser(email, password);
+        const { cookie, expiresIn } = await createSessionCookie(idToken);
+
+        return setSessionCookie(cookie, expiresIn);
+
+    } catch (error: any) {
+        console.error("SIGNUP ERROR:", error);
+        return NextResponse.json(
+            { error: error.message || "Unknown error" },
+            { status: 500 }
+        );
+    }
+}
 
 /* --------------------------------------------- */
 /* 1. Validate request body                      */
@@ -94,55 +152,3 @@ function setSessionCookie(sessionCookie: string, expiresIn: number) {
     return response;
 }
 
-/* --------------------------------------------- */
-/* 7. Main POST Handler                          */
-/* --------------------------------------------- */
-export async function POST(req: Request) {
-    try {
-        const { email, password, selectedPlanId } = await req.json();
-
-
-        // deepseekAPI
-
-        // const key: AnimationStyle = animationStyle;
-        // const prompt = animationStylesPrompt[key].prompt;
-        validateInput(email, password);
-        // Payments here
-
-        // console.log({ prompt });x
-        const user = await createFirebaseUser(email, password);
-
-        console.log("User created:", user);
-        await createFirestoreUser(user.uid, email, selectedPlanId);
-
-        // const video = await klingImageToVideo({
-        //     image,
-        //     prompt
-        // });
-
-        // createUserVideo(user.uid, {
-        //     taskId: video.data.task_id,
-        //     thumbnail: null,
-        //     prompt,
-        //     style: key,
-        //     status: "processing",
-        //     videoUrl: null,
-        // });
-
-
-
-        // const videoJson = await video.json();
-
-        const idToken = await signInUser(email, password);
-        const { cookie, expiresIn } = await createSessionCookie(idToken);
-
-        return setSessionCookie(cookie, expiresIn);
-
-    } catch (error: any) {
-        console.error("SIGNUP ERROR:", error);
-        return NextResponse.json(
-            { error: error.message || "Unknown error" },
-            { status: 500 }
-        );
-    }
-}

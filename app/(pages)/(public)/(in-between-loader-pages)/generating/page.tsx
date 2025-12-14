@@ -5,7 +5,7 @@ import { useStory } from '@/app/contexts/StoryContext';
 import { GeneratedStory } from '@/app/types';
 import { useLanguage } from '@/app/contexts/LanguageContext';
 import { PATHS, STEPS_PATHS } from '@/app/constants/relativeRoutePaths';
-import { generateMagicStory } from '@/lib/services-magic-book/geminiService';
+import { generateMagicStory } from '@/lib/ai-service/deepseek/generateStoryService';
 
 
 const Generating: React.FC = () => {
