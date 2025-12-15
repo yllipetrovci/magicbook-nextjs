@@ -11,6 +11,7 @@ import { Button } from './Button';
 import { useLanguage } from "../contexts/LanguageContext";
 import { useAuth } from "../contexts/AuthContext";
 import { User } from "../types";
+import { PATHS } from "../constants/relativeRoutePaths";
 
 const HeroBackground: React.FC = () => {
     const defaultIcons = [
@@ -196,7 +197,7 @@ export function RootLayoutClient({ children }: { children: React.ReactNode }) {
                         </div>
                     ) : (
                         <Button
-                            onClick={() => router.push('/auth')}
+                            onClick={() => router.push(PATHS.LOGIN)}
                             size="sm"
                             className="shadow-lg hover:shadow-purple-500/20 bg-magic-orange hover:bg-orange-600 text-white border-0"
                         >

@@ -45,7 +45,7 @@ export const Auth: React.FC = () => {
          body: JSON.stringify({ email: data.email, password: data.password }),
          headers: { "Content-Type": "application/json" },
       });
-
+      debugger;
       if (res.ok) {
          router.push(PATHS.DASHBOARD);
       } else {

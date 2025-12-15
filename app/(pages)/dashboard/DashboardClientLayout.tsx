@@ -27,26 +27,6 @@ export const DashboardClientLayout = ({ children }: { children: ReactNode }) => 
         { id: 'invite', path: '/dashboard/invite', label: t('dash_tab_invite'), icon: 'fa-gift', color: 'text-yellow-400' },
     ];
 
-
-
-    useEffect(() => {
-        const es = new EventSource("/api/story/stream")
-
-        es.onmessage = (event) => {
-            const data = JSON.parse(event.data)
-
-            console.log("Update:", data)
-
-            if (data.status === "completed") {
-                es.close()
-            }
-        }
-
-        return () => es.close()
-    }, [])
-
-
-
     return (
         <div className="flex flex-col min-h-[90vh] max-w-[1400px] mx-auto w-full animate-fade-in relative px-4 md:px-8 py-6">
 

@@ -9,7 +9,6 @@ import toast from "react-hot-toast";
 import { Check } from "lucide-react";
 import { PATHS } from "@/app/constants/relativeRoutePaths";
 import { useStory } from "@/app/contexts/StoryContext";
-import UpsellBook from "../(upsell-pages)/upsell-book/page";
 
 const schema = yup.object({
    password: yup.string()
@@ -65,7 +64,6 @@ const ResetPassword = () => {
          console.log({ config })
          console.log("RESET PASSWORD")
          console.log({ data });
-         debugger;
 
          // // Call your unified backend signup
          const res = await fetch("/api/firebase/create-account", {

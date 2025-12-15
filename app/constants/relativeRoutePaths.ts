@@ -10,6 +10,7 @@ export const STEPS_PATHS = {
 
 
 export const PATHS = {
+    LOGIN: '/login',
     GENERATING: '/generating',
     PREVIEW: '/preview',
     GENERATING_2: '/generating-2',
