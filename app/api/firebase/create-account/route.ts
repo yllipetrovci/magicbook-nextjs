@@ -2,8 +2,70 @@ import { NextResponse } from "next/server";
 import { adminAuth, adminFirestore } from "@/lib/firestore/firebaseAdmin";
 import { klingImageToVideo } from "@/lib/klingai";
 import { animationStylesPrompt, AnimationStyle } from "@/lib/constants/animation-styles-prompt";
-import { PLANS } from "@/lib/constants/plans";
+import { plans } from "@/lib/constants/plans";
 import { createUserVideo } from "@/lib/firestore/videos";
+import { createJob } from "@/lib/redis/createJob"
+/* --------------------------------------------- */
+/* 7. Main POST Handler                          */
+/* --------------------------------------------- */
+export async function POST(req: Request) {
+    try {
+        const { email, password, selectedPlanId, config,
+            hasUpSellBook, hasUpsellVideo, hasUpsellDaily, mainPaymentIsDone
+        } = await req.json();
+
+        console.log("SERVER SIDE SIGNUP:");
+        console.log({
+            email, password, selectedPlanId, config,
+            hasUpSellBook, hasUpsellVideo, hasUpsellDaily, mainPaymentIsDone
+        })
+        // deepseekAPI
+
+        // const key: AnimationStyle = animationStyle;
+        // const prompt = animationStylesPrompt[key].prompt;
+        validateInput(email, password);
+        // Payments here
+
+        // console.log({ prompt });x
+        const user = await createFirebaseUser(email, password);
+
+
+        createJob(config);
+
+        console.log("User created:", user);
+        await createFirestoreUser(user.uid, email, selectedPlanId);
+
+        // const video = await klingImageToVideo({
+        //     image,
+        //     prompt
+        // });
+
+        // createUserVideo(user.uid, {
+        //     taskId: video.data.task_id,
+        //     thumbnail: null,
+        //     prompt,
+        //     style: key,
+        //     status: "processing",
+        //     videoUrl: null,
+        // });
+
+
+
+        // const videoJson = await video.json();
+
+        const idToken = await signInUser(email, password);
+        const { cookie, expiresIn } = await createSessionCookie(idToken);
+
+        return setSessionCookie(cookie, expiresIn);
+
+    } catch (error: any) {
+        console.error("SIGNUP ERROR:", error);
+        return NextResponse.json(
+            { error: error.message || "Unknown error" },
+            { status: 500 }
+        );
+    }
+}
 
 /* --------------------------------------------- */
 /* 1. Validate request body                      */
@@ -18,6 +80,7 @@ function validateInput(email?: string, password?: string) {
 /* 2. Create user in Firebase Auth               */
 /* --------------------------------------------- */
 async function createFirebaseUser(email: string, password: string) {
+    console.log("Creating Firebase user with email:", email);
     return await adminAuth.createUser({ email, password });
 }
 
@@ -26,9 +89,8 @@ async function createFirebaseUser(email: string, password: string) {
 /* --------------------------------------------- */
 async function createFirestoreUser(uid: string, email: string, plan: string) {
 
-    const selectedPlanItem = PLANS.find((planItem) => planItem.id === plan);
+    const selectedPlanItem = plans.find((planItem) => planItem.id === plan);
 
-    console.log({ selectedPlanItem });
 
     await adminFirestore.collection("users").doc(uid).set({
         email,
@@ -43,7 +105,7 @@ async function createFirestoreUser(uid: string, email: string, plan: string) {
 /* 4. Sign user in via Firebase REST API         */
 /* --------------------------------------------- */
 async function signInUser(email: string, password: string) {
-    const apiKey = process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
+    const apiKey = process.env.PRIVATE_FIREBASE_API_KEY;
 
     const loginRes = await fetch(
         `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${apiKey}`,
@@ -94,53 +156,3 @@ function setSessionCookie(sessionCookie: string, expiresIn: number) {
     return response;
 }
 
-/* --------------------------------------------- */
-/* 7. Main POST Handler                          */
-/* --------------------------------------------- */
-export async function POST(req: Request) {
-    try {
-        const { email, password, animationStyle, selectedPlanId, image } = await req.json();
-
-
-        const key: AnimationStyle = animationStyle;
-        const prompt = animationStylesPrompt[key].prompt;
-        validateInput(email, password);
-        // Payments here
-
-        console.log({ prompt });
-        const user = await createFirebaseUser(email, password);
-
-        console.log("User created:", user);
-        await createFirestoreUser(user.uid, email, selectedPlanId);
-
-        const video = await klingImageToVideo({
-            image,
-            prompt
-        });
-
-        createUserVideo(user.uid, {
-            taskId: video.data.task_id,
-            thumbnail: null,
-            prompt,
-            style: key,
-            status: "processing",
-            videoUrl: null,
-        });
-
-
-
-        // const videoJson = await video.json();
-
-        const idToken = await signInUser(email, password);
-        const { cookie, expiresIn } = await createSessionCookie(idToken);
-
-        return setSessionCookie(cookie, expiresIn);
-
-    } catch (error: any) {
-        console.error("SIGNUP ERROR:", error);
-        return NextResponse.json(
-            { error: error.message || "Unknown error" },
-            { status: 500 }
-        );
-    }
-}

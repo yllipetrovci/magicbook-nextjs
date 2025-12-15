@@ -11,6 +11,7 @@ import { Button } from './Button';
 import { useLanguage } from "../contexts/LanguageContext";
 import { useAuth } from "../contexts/AuthContext";
 import { User } from "../types";
+import { PATHS } from "../constants/relativeRoutePaths";
 
 const HeroBackground: React.FC = () => {
     const defaultIcons = [
@@ -51,6 +52,7 @@ export function RootLayoutClient({ children }: { children: React.ReactNode }) {
 
     // Routes that should NOT have the navbar and main wrapper
     const isDashboardRoute = pathname?.startsWith('/dashboard');
+    const isUpsellRoute = pathname?.startsWith('/upsell');
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -72,7 +74,7 @@ export function RootLayoutClient({ children }: { children: React.ReactNode }) {
     };
 
 
-    if (isDashboardRoute) {
+    if (isUpsellRoute) {
         // Dashboard routes get their own layout, so just return children
         return <>{children}</>;
     }
@@ -97,6 +99,7 @@ export function RootLayoutClient({ children }: { children: React.ReactNode }) {
                     </div>
 
                     {/* Desktop Navigation Links */}
+                    {/* <p>{JSON.stringify(user)}</p> */}
                     {user && (
                         <div className="hidden md:flex items-center gap-6">
                             <Link href="/dashboard" className="text-gray-300 hover:text-white font-bold transition-colors text-sm uppercase tracking-wide">
@@ -194,7 +197,7 @@ export function RootLayoutClient({ children }: { children: React.ReactNode }) {
                         </div>
                     ) : (
                         <Button
-                            onClick={() => router.push('/auth')}
+                            onClick={() => router.push(PATHS.LOGIN)}
                             size="sm"
                             className="shadow-lg hover:shadow-purple-500/20 bg-magic-orange hover:bg-orange-600 text-white border-0"
                         >

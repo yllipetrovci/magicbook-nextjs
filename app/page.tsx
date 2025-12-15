@@ -4,12 +4,13 @@ import { useRouter } from 'next/navigation';
 import { Testimonials, FloatingSparkles, Button } from '@/app/components';
 import { useLanguage } from '@/app/contexts/LanguageContext';
 import { PricingSection } from './components/PricingSection';
+import { STEPS_PATHS } from './constants/relativeRoutePaths';
 
 export default function Page() {
   const router = useRouter();
   const { t } = useLanguage();
 
-  const startFlow = () => router.push('/steps/whos-creating-it');
+  const startFlow = () => router.push(STEPS_PATHS.STEP_1);
 
   return (
     <div className="flex flex-col items-center w-full overflow-x-hidden animate-fade-in text-white relative">

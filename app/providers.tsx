@@ -1,16 +1,16 @@
 "use client";
-import { FunnelProvider } from "./contexts/FunnelContext";
 import { LanguageProvider } from "./contexts/LanguageContext";
 import { StoryProvider } from "./contexts/StoryContext";
+import { AuthProvider } from "./contexts/AuthContext";
 
 export function Providers({ children }: { children: React.ReactNode }) {
     return (
-        <FunnelProvider>
+        <AuthProvider>
             <StoryProvider>
                 <LanguageProvider>
                     {children}
                 </LanguageProvider>
             </StoryProvider>
-        </FunnelProvider>
+        </AuthProvider>
     );
 }

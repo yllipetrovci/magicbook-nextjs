@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { Button } from '@/app/components';
 import { useLanguage } from '@/app/contexts/LanguageContext';
+import { PATHS } from '../constants/relativeRoutePaths';
 
 interface Language {
     code: string;
@@ -103,7 +104,7 @@ const Header: React.FC<HeaderProps> = ({ user, logout, languages, currentLang, s
                     </div>
                 ) : (
                     <Button
-                        onClick={() => router.push('/auth')}
+                        onClick={() => router.push(PATHS.LOGIN)}
                         size="sm"
                         className="shadow-lg hover:shadow-purple-500/20 bg-magic-orange hover:bg-orange-600 text-white border-0"
                     >

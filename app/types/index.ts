@@ -4,7 +4,7 @@ export interface UserProfile {
     displayName?: string;
     photoURL?: string;
     // Firestore fields
-    coins?: number;
+    credits?: number;
     plan?: string;
     createdAt?: string;
 }
@@ -29,6 +29,18 @@ export interface PricingPlan {
     price: number;
     features: string[];
     stripePriceId: string;
+}
+
+
+export interface StoryResponse {
+    title: string;
+    author: string;
+    coverImageAlt: string;
+    pages: {
+        imageAltText: string;
+        text: string;
+        mainCharacterIncluded: boolean;
+    }[];
 }
 
 
@@ -174,6 +186,14 @@ export interface User {
     email: string;
     avatar?: string;
     credits: number;
+}
+
+
+export type Job = {
+    jobId: string
+    status: "queued" | "processing" | "completed" | "failed"
+    progress: number
+    resultId?: string
 }
 
 

@@ -1,0 +1,37 @@
+{
+    "title": "The Royal Hello of the Starry Moon",
+    "author": "Enes & AI Storymaker",
+    "coverImageAlt": "A simple, modern silhouette of a tiny dragon perched on a crescent moon, looking toward a distant, sparkling moon base.",
+    "pages": [
+        {
+            "imageAltText": "A wide, peaceful view of the Starry Moon Base, glowing softly against the black velvet of space, with Earth a blue marble in the distance.",
+            "text": "Far above the world, the Starry Moon Base gleamed like a quiet jewel. It was a peaceful place, but sometimes, very quiet.",
+            "mainCharacterIncluded": false
+        },
+        {
+            "imageAltText": "Inside the base, Prince Enes, a small boy in a simple silver cape, looks wistfully out a large window at the passing stars.",
+            "text": "Prince Enes lived there. He had a royal cape and a kind heart, but his secret wish was simple: he just wanted to hear a friendly 'hello'.",
+            "mainCharacterIncluded": true
+        },
+        {
+            "imageAltText": "In a hidden moon crater, a tiny, emerald-green dragon with friendly eyes practices making small, glittery puffs of light with its breath.",
+            "text": "Meanwhile, in a secret crater, a tiny dragon was practicing its special power. Its sparkle-breath could fix star-lights and make flowers from moon dust.",
+            "mainCharacterIncluded": false
+        },
+        {
+            "imageAltText": "The tiny dragon curiously peers into the window of the moon base, seeing Enes inside. They make eye contact.",
+            "text": "The dragon flew to the base and peeked in a window. It saw the lonely prince and, with a brave smile, whispered, \"Hello!\"",
+            "mainCharacterIncluded": true
+        },
+        {
+            "imageAltText": "The tiny dragon uses its sparkle-breath to repair a broken communication dish on the base's roof, sending a ripple of light into space.",
+            "text": "While Enes was getting a space-suit, the dragon helped. It fixed the broken hello-speaker on the roof, sending a cheerful signal to the universe.",
+            "mainCharacterIncluded": false
+        },
+        {
+            "imageAltText": "Enes and the tiny dragon sit together on a ledge, sharing moonberries. They are both smiling, looking at friendly alien animal shapes in the stars.",
+            "text": "Enes and his new friend shared moonberries. Now, the base felt warm and full of hello's. Prince Enes had discovered the best superhero power: friendship.",
+            "mainCharacterIncluded": true
+        }
+    ]
+}

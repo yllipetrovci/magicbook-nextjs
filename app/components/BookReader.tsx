@@ -1,4 +1,5 @@
 
+'use client';
 import React, { useState, useEffect, useRef } from 'react';
 import { GeneratedStory } from '../types';
 import { playPageTurnSound } from '../utils/audio';
@@ -403,6 +404,8 @@ export const BookReader: React.FC<BookReaderProps> = ({ story, onClose, onComple
     });
   };
 
+  const bookOffset = currentSheet === 0 ? '-25%' : (currentSheet === totalSheets ? '25%' : '0%');
+
   return (
     <div
       className="w-full h-full flex flex-col items-center justify-center select-none transition-all duration-700 ease-in-out relative"
@@ -463,9 +466,9 @@ export const BookReader: React.FC<BookReaderProps> = ({ story, onClose, onComple
         }}
       >
         <div
-          className="absolute top-0 left-0 origin-top-left cursor-grab active:cursor-grabbing"
+          className="absolute top-0 left-0 origin-top-left cursor-grab active:cursor-grabbing transition-transform duration-[1200ms] ease-[cubic-bezier(0.645,0.045,0.355,1)]"
           style={{
-            transform: `scale(${scale})`,
+            transform: `scale(${scale}) translateX(${bookOffset})`,
             width: BOOK_WIDTH,
             height: BOOK_HEIGHT,
             perspective: '2000px', // Deeper perspective for "Big" feel
@@ -475,7 +478,15 @@ export const BookReader: React.FC<BookReaderProps> = ({ story, onClose, onComple
           onMouseDown={onMouseDown}
           onMouseUp={onMouseUp}
         >
-          <div className="book relative w-full h-full transform-style-3d shadow-[0_30px_60px_rgba(0,0,0,0.5)]">
+          <div className="book relative w-full h-full transform-style-3d">
+            {/* Dynamic Book Shadow */}
+            <div
+              className="absolute top-0 bottom-0 shadow-[0_30px_60px_rgba(0,0,0,0.5)] transition-all duration-700 ease-in-out pointer-events-none"
+              style={{
+                left: currentSheet === 0 ? '50%' : '0%',
+                width: (currentSheet === 0 || currentSheet === totalSheets) ? '50%' : '100%',
+              }}
+            ></div>
             {renderCover()}
             {renderTitleSheet()}
             {renderStorySheets()}
@@ -523,7 +534,7 @@ export const BookReader: React.FC<BookReaderProps> = ({ story, onClose, onComple
 
       <style>{`
             .sheet { position: absolute; width: 50%; height: 100%; top: 0; left: 50%; transform-origin: left center; transform-style: preserve-3d; transition: transform 1.2s cubic-bezier(0.645, 0.045, 0.355, 1); }
-            ${Array.from({ length: totalSheets + 1 }).map((_, i) => `.sheet:nth-child(${i + 1}) { transform: rotateY(${i < currentSheet ? '-180deg' : '0deg'}); }`).join('\n')}
+            ${Array.from({ length: totalSheets + 1 }).map((_, i) => `.sheet:nth-child(${i + 2}) { transform: rotateY(${i < currentSheet ? '-180deg' : '0deg'}); }`).join('\n')}
             .page { position: absolute; width: 100%; height: 100%; top: 0; left: 0; backface-visibility: hidden; overflow: hidden; }
             .page.front { transform: rotateY(0deg); }
             .page.back { transform: rotateY(180deg); }
