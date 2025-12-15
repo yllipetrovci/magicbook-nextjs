@@ -35,9 +35,6 @@ const ResetPassword = () => {
    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
 
-
-
-
    // const { funnelData } = { funnelData: funnelDataMock }; //useFunnel();
 
    const onSubmit = async (data: FormData) => {
@@ -93,7 +90,7 @@ const ResetPassword = () => {
          toast.success("Account created successfully!");
 
          // Session cookie is already set → redirect
-         // router.push('/dashboard');
+         router.push(PATHS.DASHBOARD);
 
       } catch (error: any) {
          console.error(error);

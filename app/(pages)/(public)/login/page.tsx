@@ -6,6 +6,7 @@ import { Button } from '@/app/components/Button';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useLanguage } from '@/app/contexts/LanguageContext';
+import { PATHS } from '@/app/constants/relativeRoutePaths';
 
 interface AuthFormData {
    name?: string;
@@ -36,10 +37,22 @@ export const Auth: React.FC = () => {
       }
    });
 
-   const onSubmit = (data: AuthFormData) => {
+   const onSubmit = async (data: AuthFormData) => {
       // Mock Login/Signup
       // login(data.email, data.name || data.email.split('@')[0]);
-      router.push('/dashboard');
+      const res = await fetch("/api/firebase/login", {
+         method: "POST",
+         body: JSON.stringify({ email: data.email, password: data.password }),
+         headers: { "Content-Type": "application/json" },
+      });
+
+      if (res.ok) {
+         router.push(PATHS.DASHBOARD);
+      } else {
+         console.error("Login failed");
+         // setError("Invalid credentials");
+      }
+
    };
 
    const toggleMode = () => {
@@ -64,7 +77,7 @@ export const Auth: React.FC = () => {
             </div>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-               {!isLogin && (
+               {/* {!isLogin && (
                   <div>
                      <label className="block text-sm font-bold text-gray-400 mb-2">{t('auth_name')}</label>
                      <input
@@ -74,13 +87,13 @@ export const Auth: React.FC = () => {
                      />
                      {errors.email && <span className="text-red-500 text-xs mt-1">{errors.email.message}</span>}
                   </div>
-               )}
+               )} */}
                <div>
                   <label className="block text-sm font-bold text-gray-400 mb-2">{t('auth_email')}</label>
                   <input
-                     {...register('password')}
+                     {...register('email')}
                      className={`w-full p-4 bg-black/40 rounded-xl border ${errors.password ? 'border-red-500' : 'border-white/10'} focus:border-magic-purple outline-none text-white placeholder-gray-600`}
-                     placeholder="••••••••"
+                     placeholder="email"
                   />
                   {errors.password && <span className="text-red-500 text-xs mt-1">{errors.password.message}</span>}
                </div>
@@ -89,10 +102,7 @@ export const Auth: React.FC = () => {
                   <div className="relative">
                      <input
                         type={showPassword ? "text" : "password"}
-                        {...register('password', {
-                           required: 'Password is required',
-                           minLength: { value: 6, message: 'Password must be at least 6 characters' }
-                        })}
+                        {...register('password')}
                         className={`w-full p-4 bg-black/40 rounded-xl border ${errors.password ? 'border-red-500' : 'border-white/10'} focus:border-magic-purple outline-none text-white placeholder-gray-600 pr-12`}
                         placeholder="••••••••"
                      />

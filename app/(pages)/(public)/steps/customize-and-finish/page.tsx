@@ -22,26 +22,27 @@ import { STEPS_PATHS } from '@/app/constants/relativeRoutePaths';
 import { generateStoryPrompt } from '@/lib/prompts/storyGeneration';
 import { characterExtractionPrompt } from '@/lib/prompts/characterExtraction';
 import { generatePageImagePrompt } from '@/lib/prompts/pageImageGeneration';
+import { CompanionSelector } from './components/CompanionSection';
+import { ReaderDetails } from './components/RenderDetails';
+import { LocationSelector } from './components/LocationSelector';
+import { InteractiveBookPreview } from './components/InteractiveBookPreview';
 
 
-// Yup Validation Schema
-// const validationSchema = yup.object({
-//     childAge: yup.number()
-//         .transform((value) => (isNaN(value) ? undefined : value))
-//         .required("Please enter the age")
-//         .min(1, "Minimum age is 1")
-//         .max(12, "Maximum age is 12"),
-//     customPageCount: yup.number()
-//         .transform((value) => (isNaN(value) ? undefined : value))
-//         .required("Please select page count")
-//         .min(3, "Min 3 pages")
-//         .max(12, "Max 12 pages"),
-//     tone: yup.string().required("Please select a story tone"),
-//     place: yup.string().required("Please tell us where the adventure begins"),
-//     companions: yup.string().required("Please add at least one companion"),
-//     color: yup.string().required("Please choose a magic color"),
-//     secretWish: yup.string().optional(), // Made optional
-// });
+const LOCATION_DATA: Record<string, string> = {
+  'The Enchanted Forest': 'https://image.pollinations.ai/prompt/enchanted%20forest%20magical%20glowing%20mushrooms%20pixar%20style?width=200&height=200&nologo=true',
+  'The Crystal Cave': 'https://image.pollinations.ai/prompt/crystal%20cave%20glowing%20gems%20blue%20purple%20pixar%20style?width=200&height=200&nologo=true',
+  'The Flying Castle': 'https://image.pollinations.ai/prompt/flying%20castle%20in%20clouds%20magical%20sky%20pixar%20style?width=200&height=200&nologo=true',
+  'The Starry Moon Base': 'https://image.pollinations.ai/prompt/moon%20base%20space%20adventure%20stars%20planets%20pixar%20style?width=200&height=200&nologo=true',
+  'Underwater Kingdom': 'https://image.pollinations.ai/prompt/underwater%20kingdom%20coral%20reef%20mermaids%20pixar%20style?width=200&height=200&nologo=true',
+};
+
+const COMPANION_DATA: Record<string, string> = {
+  'a loyal puppy named Spot': 'https://image.pollinations.ai/prompt/cute%20magical%20golden%20retriever%20puppy%20pixar%20style?width=200&height=200&nologo=true',
+  'a clever cat named Whiskers': 'https://image.pollinations.ai/prompt/cute%20magical%20kitten%20with%20big%20eyes%20pixar%20style?width=200&height=200&nologo=true',
+  'a friendly tiny dragon': 'https://image.pollinations.ai/prompt/cute%20baby%20dragon%20green%20scales%20pixar%20style?width=200&height=200&nologo=true',
+  'a sparkling unicorn': 'https://image.pollinations.ai/prompt/cute%20baby%20unicorn%20rainbow%20mane%20pixar%20style?width=200&height=200&nologo=true',
+};
+
 const validationSchema = yup.object({
     childAge: yup.number()
         .transform((v) => (isNaN(v) ? undefined : v))
@@ -53,6 +54,7 @@ const validationSchema = yup.object({
     place: yup.string().required(),
     companions: yup.string().required(),
     color: yup.string().required(),
+    gender: yup.string().required(),
 
     // 👇 IMPORTANT FIX
     secretWish: yup.string().default('').optional(),
@@ -77,6 +79,8 @@ export default function CustomizeAndFinish() {
             companions: config.companions || 'Santa\'s Elves',
             color: config.color || 'Magic Purple',
             secretWish: config.secretWish ?? undefined,
+            gender: ""
+
         },
         resolver: yupResolver(validationSchema),
         mode: 'onBlur' // Add mode for better validation UX, e.g., validate on blur
@@ -173,6 +177,11 @@ export default function CustomizeAndFinish() {
     const watchedPlace = watch('place');
     const watchedCompanions = watch('companions');
     const watchedWish = watch('secretWish');
+    const watchedAge = watch('childAge');
+
+    const watchedPages = watch('customPageCount');
+    const watchedGender = watch('gender');
+
 
     const onNext = (data: any) => {
         playMagicSound();
@@ -245,46 +254,16 @@ export default function CustomizeAndFinish() {
                 {/* Left Column: Form Fields (9/12) */}
                 <div className="lg:col-span-9 space-y-8 order-2 lg:order-1">
 
-                    {/* NEW: Age & Pages Section */}
-                    <div className="bg-magic-card p-6 rounded-3xl shadow-xl border border-white/10">
-                        <label className="text-white font-bold text-lg mb-4 block">
-                            <i className="fa-solid fa-child-reaching text-magic-blue mr-2"></i> {t('customizeAndFinishPage.detReaderDetails')}
-                        </label>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label className="block text-gray-400 text-sm font-bold mb-2">{t('customizeAndFinishPage.detAgeLabel')}</label>
-                                <input
-                                    type="number"
-                                    {...register('childAge')}
-                                    className={`w-full p-4 bg-black/40 rounded-xl border ${errors.childAge ? 'border-red-500' : 'border-white/10'} focus:border-magic-blue outline-none text-white placeholder-gray-600 text-center text-xl font-bold`}
-                                    placeholder={t('customizeAndFinishPage.detAgePlaceholder')}
-                                    min={1}
-                                    max={12}
-                                />
-                                {errors.childAge && <p className="text-red-400 text-sm mt-2 font-bold"><i className="fa-solid fa-circle-exclamation mr-1"></i> {errors.childAge.message}</p>}
-                            </div>
-
-                            <div>
-                                <label className="block text-gray-400 text-sm font-bold mb-2">{t('customizeAndFinishPage.detPagesLabel')}</label>
-                                <div className="relative">
-                                    <select
-                                        {...register('customPageCount')}
-                                        className={`w-full p-4 bg-black/40 rounded-xl border ${errors.customPageCount ? 'border-red-500' : 'border-white/10'} focus:border-magic-blue outline-none text-white text-xl font-bold appearance-none cursor-pointer`}
-                                    >
-                                        {PAGE_COUNTS.map((option) => (
-                                            <option key={option.value} value={option.value}>
-                                                {option.label}
-                                            </option>
-                                        ))}
-                                    </select>
-                                    <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-gray-400">
-                                        <i className="fa-solid fa-chevron-down"></i>
-                                    </div>
-                                </div>
-                                {errors.customPageCount && <p className="text-red-400 text-sm mt-2 font-bold"><i className="fa-solid fa-circle-exclamation mr-1"></i> {errors.customPageCount.message}</p>}
-                            </div>
-                        </div>
-                    </div>
+                    {/* Consolidated Reader Details Component */}
+                    <ReaderDetails
+                        gender={watchedGender as 'boy' | 'girl'}
+                        age={watchedAge || 5}
+                        pageCount={watchedPages || 6}
+                        onGenderChange={(val) => setValue('gender', val)}
+                        onAgeChange={(val) => setValue('childAge', val)}
+                        onPageCountChange={(val) => setValue('customPageCount', val)}
+                        errors={errors}
+                    />
 
                     {/* Story Tones Section */}
                     <div className="w-full">
@@ -301,77 +280,38 @@ export default function CustomizeAndFinish() {
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
 
-                        {/* Basic Details */}
                         <div className="space-y-6">
-                            <div className="bg-magic-card p-6 rounded-3xl shadow-xl border border-white/10">
-                                <label className="text-white font-bold text-lg mb-4 block"><i className="fa-solid fa-map-location-dot text-magic-blue mr-2"></i> {t('customizeAndFinishPage.detBeginLabel')}</label>
-                                <div className="relative">
-                                    <input
-                                        {...register('place')}
-                                        className={`w-full p-4 bg-black/40 rounded-xl border ${errors.place ? 'border-red-500' : 'border-white/10'} focus:border-magic-blue outline-none text-white placeholder-gray-600`}
-                                        placeholder={t('customizeAndFinishPage.detPhPlace')}
-                                    />
-                                    <button type="button" onClick={handleRandomMap} className="absolute right-3 top-1/2 -translate-y-1/2 text-magic-blue hover:text-white transition-colors" title="Random Location">
-                                        <i className="fa-solid fa-dice text-xl"></i>
-                                    </button>
-                                </div>
-                                {errors.place && <p className="text-red-400 text-sm mt-2 font-bold"><i className="fa-solid fa-circle-exclamation mr-1"></i> {errors.place.message}</p>}
+                            {/* LOCATION COMPONENT */}
+                            <LocationSelector
+                                label="Where does the adventure begin?"
+                                placeholder={t('det_ph_place')}
+                                value={watchedPlace || ''}
+                                onChange={(val) => setValue('place', val, { shouldValidate: true, shouldDirty: true })}
+                                error={errors.place?.message}
+                            />
 
-                                <div className="flex flex-wrap gap-2 mt-3">
-                                    {FANTASY_LOCATIONS.slice(0, 3).map(loc => (
-                                        <button key={loc} type="button" onClick={() => handlePresetMap(loc)} className="text-xs bg-white/5 hover:bg-white/10 text-gray-300 px-3 py-1 rounded-full border border-white/5 transition-colors">
-                                            {loc}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-
-                            <div className="bg-magic-card p-6 rounded-3xl shadow-xl border border-white/10">
-                                <label className="text-white font-bold text-lg mb-4 block"><i className="fa-solid fa-user-group text-magic-pink mr-2"></i> {t('customizeAndFinishPage.detBuddiesLabel')}</label>
-                                <div className="relative">
-                                    <input
-                                        {...register('companions')}
-                                        className={`w-full p-4 bg-black/40 rounded-xl border ${errors.companions ? 'border-red-500' : 'border-white/10'} focus:border-magic-pink outline-none text-white placeholder-gray-600 pl-12`}
-                                        placeholder={t('customizeAndFinishPage.detPhBuddies')}
-                                    />
-                                    <div className="absolute left-4 top-1/2 -translate-x-0 -translate-y-1/2 text-gray-500">
-                                        <i className="fa-solid fa-paw"></i>
-                                    </div>
-                                </div>
-                                {errors.companions && <p className="text-red-400 text-sm mt-2 font-bold"><i className="fa-solid fa-circle-exclamation mr-1"></i> {errors.companions.message}</p>}
-
-                                <div className="grid grid-cols-4 gap-2 mt-4 max-h-[185px] overflow-y-auto ">
-                                    {COMPANION_PRESETS.map((comp) => (
-                                        <CompanionButton key={comp.label} companion={comp} onAdd={handleCompanionAdd} />
-                                    ))}
-                                    {/* <button type="button" onClick={handleFriendAdd} className="flex flex-col items-center justify-center gap-1 p-2 rounded-xl border border-white/5 bg-white/5 hover:bg-white/10 hover:scale-105 transition-all group">
-                                        <i className="fa-solid fa-plus text-lg text-white group-hover:text-magic-green"></i>
-                                        <span className="text-[10px] text-gray-400 font-bold">Add</span>
-                                    </button> */}
-                                </div>
-                            </div>
                         </div>
-
                         <div className="space-y-6">
-                            <div className="bg-magic-card p-6 rounded-3xl shadow-xl border border-white/10">
-                                <label className="text-white font-bold text-lg mb-4 block"><i className="fa-solid fa-palette text-magic-purple mr-2"></i> {t('customizeAndFinishPage.detMagicLabel')}</label>
-                                <div className="flex flex-wrap gap-3 justify-center">
-                                    {COLORS.map((c) => (
-                                        <ColorOption key={c.name} color={c} watchedColor={watchedColor} playMagicSound={playMagicSound} register={register} />
-                                    ))}
-                                </div>
-                                {errors.color && <p className="text-red-400 text-sm mt-3 font-bold text-center"><i className="fa-solid fa-circle-exclamation mr-1"></i> {errors.color.message}</p>}
-                            </div>
 
-                            <div className="bg-magic-card p-6 rounded-3xl shadow-xl border border-white/10">
+                            {/* COMPANION COMPONENT */}
+                            <CompanionSelector
+                                label="Who is joining the journey?"
+                                placeholder={t('det_ph_buddies')}
+                                value={watchedCompanions || ''}
+                                onChange={(val) => setValue('companions', val, { shouldValidate: true, shouldDirty: true })}
+                                error={errors.companions?.message}
+                            />
+                        </div>
+                        <div className="space-y-6">
+                            <div className="bg-magic-card p-6 rounded-3xl shadow-xl border border-white/10 h-full">
                                 <label className="text-white font-bold text-lg mb-4 block">
                                     <i className="fa-solid fa-wand-sparkles text-yellow-400 mr-2"></i>
-                                    {t('customizeAndFinishPage.detWishLabel')}
+                                    What is their heart's deepest wish? <span className="text-sm font-normal text-gray-400 ml-1">(Optional)</span>
                                 </label>
                                 <textarea
                                     {...register('secretWish')}
-                                    className="w-full p-4 bg-black/40 rounded-xl border border-white/10 focus:border-yellow-400 outline-none text-white placeholder-gray-600 resize-none h-32"
-                                    placeholder={t('customizeAndFinishPage.detPhWishes')}
+                                    className="w-full p-4 bg-black/40 rounded-xl border border-white/10 focus:border-yellow-400 outline-none text-white placeholder-gray-600 resize-none h-[220px]"
+                                    placeholder={t('det_ph_wishes')}
                                 />
                             </div>
                         </div>
@@ -390,14 +330,28 @@ export default function CustomizeAndFinish() {
 
                 {/* Right Column: Live Preview (Sticky) (3/12) */}
                 <div className="lg:col-span-3 order-1 lg:order-2 lg:sticky lg:top-8 animate-fade-in">
-                    <LivePreview
-                        coverImageSrc={coverImageSrc}
-                        borderClass={borderClass}
-                        theme={config.theme}
-                        heroName={config.heroName}
-                        watchedColor={watchedColor}
-                        watchedWish={watchedWish as string}
-                    />
+                    <div className="bg-magic-card/50 rounded-3xl p-6 border border-white/10 shadow-2xl backdrop-blur-md w-full max-w-[360px] mx-auto flex flex-col items-center">
+                        <h3 className="text-white font-bold text-sm mb-6 flex items-center gap-2 justify-center bg-black/30 px-4 py-1.5 rounded-full border border-white/5">
+                            <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse shadow-[0_0_10px_red]"></span>
+                            Live Book Preview
+                        </h3>
+
+                        <InteractiveBookPreview
+                            coverImage={coverImageSrc}
+                            theme={config.theme}
+                            heroName={heroName}
+                            tone={watchedTone}
+                            location={watchedPlace}
+                            locationImage={LOCATION_DATA[watchedPlace]}
+                            companion={watchedCompanions}
+                            companionImage={COMPANION_DATA[watchedCompanions]}
+                            wish={watchedWish}
+                            gender={watchedGender as 'boy' | 'girl'}
+                            age={watchedAge}
+                            pages={watchedPages}
+                            heroImage={config.heroImage}
+                        />
+                    </div>
                 </div>
 
             </form>

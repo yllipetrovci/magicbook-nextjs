@@ -189,3 +189,11 @@ export interface User {
 }
 
 
+export type Job = {
+    jobId: string
+    status: "queued" | "processing" | "completed" | "failed"
+    progress: number
+    resultId?: string
+}
+
+

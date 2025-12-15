@@ -4,6 +4,7 @@ import { klingImageToVideo } from "@/lib/klingai";
 import { animationStylesPrompt, AnimationStyle } from "@/lib/constants/animation-styles-prompt";
 import { plans } from "@/lib/constants/plans";
 import { createUserVideo } from "@/lib/firestore/videos";
+import { createJob } from "@/lib/redis/createJob"
 /* --------------------------------------------- */
 /* 7. Main POST Handler                          */
 /* --------------------------------------------- */
@@ -27,6 +28,9 @@ export async function POST(req: Request) {
 
         // console.log({ prompt });x
         const user = await createFirebaseUser(email, password);
+
+
+        createJob(config);
 
         console.log("User created:", user);
         await createFirestoreUser(user.uid, email, selectedPlanId);

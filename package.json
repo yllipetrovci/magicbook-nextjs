@@ -13,6 +13,7 @@
     "@hookform/resolvers": "^5.2.2",
     "@stripe/react-stripe-js": "^5.4.1",
     "@stripe/stripe-js": "^8.5.3",
+    "@upstash/redis": "^1.35.8",
     "canvg": "^4.0.3",
     "clsx": "^2.1.1",
     "cookie": "^1.1.1",
