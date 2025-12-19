@@ -34,7 +34,7 @@ export default function WhosCreatingItPage() {
 
 
     const goNextPage = () => {
-        router.push(STEPS_PATHS.STEP_3);
+        router.push(STEPS_PATHS.STEP_4);
 
     }
 

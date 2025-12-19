@@ -1,40 +1,25 @@
 'use client'
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { PATHS } from '@/app/constants/relativeRoutePaths';
 import { useStory } from '@/app/contexts/StoryContext';
-import { GeneratedStory } from '@/app/types';
-import { useLanguage } from '@/app/contexts/LanguageContext';
-import { PATHS, STEPS_PATHS } from '@/app/constants/relativeRoutePaths';
-import { generateMagicStory } from '@/lib/ai-service/deepseek/generateStoryService';
 
+const LOADING_STEPS = [
+  "✨ Sprinkling Magic Dust...",
+  "📖 Opening the Big Book...",
+  "🎨 Mixing Rainbow Colors...",
+  "🧙‍♂️ Waking up the Wizard...",
+  "🐉 Feeding the Dragons...",
+  "🏰 Building the Castle...",
+  "🌞 Polishing the Sun...",
+  "✍️ Crafting the Hero's Tale..."
+];
 
-const Generating: React.FC = () => {
+export const Generating: React.FC = () => {
   const router = useRouter();
-  const { config,
-    setGeneratedStory
-
-  } = useStory();
-  const { t } = useLanguage();
-  const LOADING_STEPS = [
-    t("generatingPage.gen_step_1"),
-    t("generatingPage.gen_step_2"),
-    t("generatingPage.gen_step_3"),
-    t("generatingPage.gen_step_4"),
-    t("generatingPage.gen_step_5"),
-    t("generatingPage.gen_step_6"),
-    t("generatingPage.gen_step_7"),
-    t("generatingPage.gen_step_8")
-  ];
   const [loadingStep, setLoadingStep] = useState(0);
+  const {config} = useStory();
   const [completedSteps, setCompletedSteps] = useState<string[]>([]);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-    return () => {
-      setMounted(false);
-    };
-  }, []);
 
   // Animation loop for loading steps
   useEffect(() => {
@@ -44,72 +29,22 @@ const Generating: React.FC = () => {
         setCompletedSteps(curr => [...curr, LOADING_STEPS[prev]].slice(-3)); // Keep last 3
         return next;
       });
-    }, 3000);
+    }, 2500);
     return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
     let mounted = true;
 
-    const performGeneration = async () => {
-      try {
-        // In a real app, handle API Key check or user prompt better
-        let story: GeneratedStory;
-
-        story = {
-          title: `The Brave Adventures of ${config.heroName}`,
-          pages: [
-            { text: `Once upon a time, in a land far away, lived a brave hero named ${config.heroName}.`, imageDescription: "Hero standing on a hill" },
-            { text: `${config.heroName} loved the color ${config.color} and always wore a cape of that shade.`, imageDescription: "Hero wearing a cape" },
-            { text: `One day, ${config.heroName} visited ${config.place} and met ${config.companions}.`, imageDescription: "Hero meeting friends" },
-            { text: `They used ${config.superPower} to help a lost star find its way home.`, imageDescription: "Hero using powers" },
-            { text: `The star twinkled 'Thank you!' and granted ${config.heroName}'s wish: ${config.secretWish}.`, imageDescription: "Star glowing brightly" },
-            { text: `And so, they all lived happily ever after. The End.`, imageDescription: "Group hug" }
-          ]
-        };
-
-        // if (!process.env.API_KEY) {
-        //   console.warn("No API Key found, using mock generation");
-        //   await new Promise(resolve => setTimeout(resolve, 5000)); // Simulate longer wait for animation
-        //   story = {
-        //     title: `The Brave Adventures of ${config.heroName}`,
-        //     pages: [
-        //       { text: `Once upon a time, in a land far away, lived a brave hero named ${config.heroName}.`, imageDescription: "Hero standing on a hill" },
-        //       { text: `${config.heroName} loved the color ${config.color} and always wore a cape of that shade.`, imageDescription: "Hero wearing a cape" },
-        //       { text: `One day, ${config.heroName} visited ${config.place} and met ${config.companions}.`, imageDescription: "Hero meeting friends" },
-        //       { text: `They used ${config.superPower} to help a lost star find its way home.`, imageDescription: "Hero using powers" },
-        //       { text: `The star twinkled 'Thank you!' and granted ${config.heroName}'s wish: ${config.secretWish}.`, imageDescription: "Star glowing brightly" },
-        //       { text: `And so, they all lived happily ever after. The End.`, imageDescription: "Group hug" }
-        //     ]
-        //   };
-        // } else {
-        //   // story = await generateMagicStory(config, 'en');
-        // }
-
-        if (mounted) {
-          // setGeneratedStory(story as GeneratedStory);
-          router.push(PATHS.PREVIEW);
-        }
-      } catch (e) {
-        console.error(e);
-        if (mounted) {
-          alert("Oops! The magic wands got tangled. Please try again.");
-          router.push(STEPS_PATHS.STEP_6);
-        }
-      }
-    };
-
-    performGeneration();
+    setTimeout(() => {
+      router.push(PATHS.PREVIEW);
+    }, 2500);
 
     return () => {
       mounted = false;
     }
-    // setGeneratedStory, language
-  }, [config, router]);
+  }, []);
 
-  if (!mounted) {
-    return null;
-  }
   return (
     <div className="flex flex-col items-center justify-center min-h-[70vh] text-center overflow-hidden relative w-full">
 
@@ -130,7 +65,7 @@ const Generating: React.FC = () => {
       </div>
 
       <h2 className="text-4xl md:text-5xl font-black text-white mb-6 tracking-tight drop-shadow-lg px-4">
-        {/* {t("gen_title", { name: (config.heroName || 'the Hero') })} */}
+        Crafting {config.heroName || 'the Hero'}'s Adventure...
       </h2>
 
       {/* Dynamic Loading Steps */}

@@ -12,6 +12,9 @@ export default function Page() {
 
   const startFlow = () => router.push(STEPS_PATHS.STEP_1);
 
+  console.log("HELLO")
+  console.log(process.env.NEXT_PUBLIC_URL);
+
   return (
     <div className="flex flex-col items-center w-full overflow-x-hidden animate-fade-in text-white relative">
 

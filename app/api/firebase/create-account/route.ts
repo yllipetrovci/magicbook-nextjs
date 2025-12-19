@@ -29,11 +29,16 @@ export async function POST(req: Request) {
         // console.log({ prompt });x
         const user = await createFirebaseUser(email, password);
 
+        // Exclude original images from config for job processing
+        const { heroImageOriginal, parentImageOriginal, heroImage, parentImage, ...configWithoutOriginals } = config;
 
-        createJob(config);
-
+        
         console.log("User created:", user);
         await createFirestoreUser(user.uid, email, selectedPlanId);
+        const storyDoc = await createStoryDocument(user.uid, configWithoutOriginals);
+        console.log("Story document created with ID:", storyDoc.id);
+
+        createJob({...configWithoutOriginals,  storyDocId: storyDoc.id, userId: user.uid});
 
         // const video = await klingImageToVideo({
         //     image,
@@ -99,6 +104,27 @@ async function createFirestoreUser(uid: string, email: string, plan: string) {
         createdAt: new Date(),
         updatedAt: new Date(),
     });
+}
+
+/* --------------------------------------------- */
+/* 3.5. Create story document for user           */
+/* --------------------------------------------- */
+async function createStoryDocument(uid: string, config: any) {
+    const storyRef = await adminFirestore.collection("users").doc(uid).collection("stories").add({
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        status: "pending", // pending, generating, completed, failed
+
+        storyContent:{
+            title: "loading...",
+            author: "loading...",
+            coverImageAlt: 'loading...', 
+            pages: [],
+            coverImg: null 
+        }
+    });
+
+return storyRef;
 }
 
 /* --------------------------------------------- */

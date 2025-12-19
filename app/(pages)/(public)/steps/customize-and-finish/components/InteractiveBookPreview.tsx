@@ -14,7 +14,8 @@ export const InteractiveBookPreview: React.FC<{
     age?: number;
     pages?: number;
     heroImage?: string | null;
-}> = ({ coverImage, theme, heroName, tone, wish, location, locationImage, companion, companionImage, gender, age, pages, heroImage }) => {
+    dedicationMessage?: string;
+}> = ({ coverImage, theme, heroName,dedicationMessage, tone, wish, location, locationImage, companion, companionImage, gender, age, pages, heroImage }) => {
     const cardRef = useRef<HTMLDivElement>(null);
     const [rotation, setRotation] = useState({ x: 0, y: 0 });
     const [glowPos, setGlowPos] = useState({ x: 50, y: 50 });
@@ -173,6 +174,15 @@ export const InteractiveBookPreview: React.FC<{
                     <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-red-800 rounded-full border-2 border-white shadow-md"></div>
                     <p className="text-[10px] font-bold text-red-800 uppercase tracking-wider text-center mb-1">Secret Wish</p>
                     <p className="text-xs font-serif italic text-center leading-tight">"{wish.slice(0, 50)}{wish.length > 50 ? '...' : ''}"</p>
+                </div>
+            )}
+
+            {/* Dedication Message */}
+            {dedicationMessage && (
+                <div className="mt-4 w-full max-w-[320px] bg-[#e0f7fa] text-gray-800 p-4 rounded-xl shadow-lg relative transform -rotate-1 border border-gray-300">
+                    <div className="absolute -top-2 left-1/2 -translate-x-1/2 w-4 h-4 bg-magic-blue rounded-full border-2 border-white shadow-md"></div>
+                    <p className="text-[10px] font-bold text-magic-blue uppercase tracking-wider text-center mb-1">Dedication</p>
+                    <p className="text-xs font-serif italic text-center leading-tight">"{dedicationMessage.slice(0, 50)}{dedicationMessage.length > 50 ? '...' : ''}"</p>
                 </div>
             )}
 

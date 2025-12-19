@@ -8,15 +8,16 @@ interface CreationStepperProps {
 export const CreationStepper: React.FC<CreationStepperProps> = ({ currentStep }) => {
   const steps = [
     { id: 'name', label: 'Hero Name' },
-    { id: 'whos-creating-it', label: 'Who’s creating it' },
-    { id: 'upload', label: 'Upload' },
+    // { id: 'whos-creating-it', label: 'Who’s creating it' },
+    // { id: 'upload', label: 'Upload' },
     { id: 'style', label: 'Pick Style' },
     { id: 'adventure', label: 'Pick Adventure' },
     { id: 'customize-and-finish', label: 'Customize & Finish' },
   ];
 
   const stepIds = steps.map(s => s.id);
-  const currentIndex = currentStep != 'show-cupon' ? stepIds.indexOf(currentStep) : 0;
+  const currentIndex = currentStep != 'show-cupon' && currentStep != 'upload' && currentStep !='whos-creating-it' ? stepIds.indexOf(currentStep) : 0;
+
 
   return (
     <div className="w-full max-w-4xl mx-auto mb-5 px-4 animate-fade-in relative z-20">

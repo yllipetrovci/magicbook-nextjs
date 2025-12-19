@@ -10,7 +10,7 @@ interface PaymentFormProps {
     onSubmit?: () => void;
 }
 
-export const PaymentForm: React.FC<PaymentFormProps> = () => {
+export const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit }) => {
     const router = useRouter();
     return (
         <div className="flex-[1.5] bg-magic-card p-8 rounded-3xl shadow-xl border border-white/5 h-fit">
@@ -46,7 +46,7 @@ export const PaymentForm: React.FC<PaymentFormProps> = () => {
                     </div>
                 </div>
 
-                <Button fullWidth onClick={() => router.push(PATHS.UPSELL_BOOK)} size="lg" className="shadow-lg shadow-orange-500/20 text-xl py-4 bg-magic-orange hover:bg-orange-600 border-b-4 border-orange-800 active:border-b-0 active:translate-y-1 transition-all mb-6">
+                <Button fullWidth onClick={onSubmit} size="lg" className="shadow-lg shadow-orange-500/20 text-xl py-4 bg-magic-orange hover:bg-orange-600 border-b-4 border-orange-800 active:border-b-0 active:translate-y-1 transition-all mb-6">
                     Order Now
                 </Button>
 

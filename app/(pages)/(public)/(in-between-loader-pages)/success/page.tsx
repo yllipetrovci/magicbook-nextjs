@@ -45,7 +45,7 @@ export const Success: React.FC = () => {
         // Optional: Auto redirect after a long while if no interaction
         const t3 = setTimeout(() => {
             // resetStory();
-            router.push(PATHS.RESET_PASSWORD);
+            router.push(PATHS.UPSELL_BOOK);
         }, 5000);
 
         return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); };

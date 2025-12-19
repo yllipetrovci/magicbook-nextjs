@@ -104,8 +104,15 @@ export const UploadCard: React.FC<UploadCardProps> = ({
             >
                 {image ? (
                     <>
-                        <img src={image} alt={label} className="w-full h-full object-cover opacity-80 group-hover:opacity-60 transition-opacity" />
-                        <div className="absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity gap-2">
+                        <img 
+                          src={image} 
+                          alt={label} 
+                          className="w-full h-full object-contain relative z-10 transition-all duration-300 group-hover:opacity-60" 
+                        />
+                        {/* Background for contain letterboxing */}
+                        <div className="absolute inset-0 bg-black/40 z-0"></div>
+                        
+                        <div className="absolute inset-0 flex flex-col items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity gap-2 z-20">
                             <button onClick={(e) => { e.stopPropagation(); onCropStart(); }} className="bg-magic-blue px-4 py-2 rounded-full text-white font-bold shadow-xl border border-white/20 hover:bg-blue-600 transition-colors w-32">
                                 <i className="fa-solid fa-crop-simple mr-2"></i> Crop
                             </button>

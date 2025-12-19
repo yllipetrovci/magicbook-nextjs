@@ -13,14 +13,9 @@ import { StoryConfig } from '@/app/types';
 import { playMagicSound } from '@/app/utils/audio';
 import { COLORS, COMPANION_PRESETS, FANTASY_LOCATIONS, PAGE_COUNTS, STORY_TONES } from './component-configs';
 import { getBorderClass, getCoverImage } from './helpers';
-import LivePreview from './components/LivePreview';
-import ColorOption from './components/ColorsSection';
-import CompanionButton from './components/CompanionPresentCard';
 import StoryToneOption from './components/StoryTonesButton';
 import { useLanguage } from '@/app/contexts/LanguageContext';
 import { STEPS_PATHS } from '@/app/constants/relativeRoutePaths';
-import { generateStoryPrompt } from '@/lib/prompts/storyGeneration';
-import { characterExtractionPrompt } from '@/lib/prompts/characterExtraction';
 import { generatePageImagePrompt } from '@/lib/prompts/pageImageGeneration';
 import { CompanionSelector } from './components/CompanionSection';
 import { ReaderDetails } from './components/RenderDetails';
@@ -28,20 +23,73 @@ import { LocationSelector } from './components/LocationSelector';
 import { InteractiveBookPreview } from './components/InteractiveBookPreview';
 
 
-const LOCATION_DATA: Record<string, string> = {
-  'The Enchanted Forest': 'https://image.pollinations.ai/prompt/enchanted%20forest%20magical%20glowing%20mushrooms%20pixar%20style?width=200&height=200&nologo=true',
-  'The Crystal Cave': 'https://image.pollinations.ai/prompt/crystal%20cave%20glowing%20gems%20blue%20purple%20pixar%20style?width=200&height=200&nologo=true',
-  'The Flying Castle': 'https://image.pollinations.ai/prompt/flying%20castle%20in%20clouds%20magical%20sky%20pixar%20style?width=200&height=200&nologo=true',
-  'The Starry Moon Base': 'https://image.pollinations.ai/prompt/moon%20base%20space%20adventure%20stars%20planets%20pixar%20style?width=200&height=200&nologo=true',
-  'Underwater Kingdom': 'https://image.pollinations.ai/prompt/underwater%20kingdom%20coral%20reef%20mermaids%20pixar%20style?width=200&height=200&nologo=true',
-};
+const LOCATION_DATA = [
+    {
+        id: 'enchanted-forest',
+        name: 'The Enchanted Forest',
+        image: 'https://image.pollinations.ai/prompt/enchanted%20forest%20magical%20glowing%20mushrooms%20pixar%20style?width=200&height=200&nologo=true',
+    },
+    {
+        id: 'crystal-cave',
+        name: 'The Crystal Cave',
+        image: 'https://image.pollinations.ai/prompt/crystal%20cave%20glowing%20gems%20blue%20purple%20pixar%20style?width=200&height=200&nologo=true',
+    },
+    {
+        id: 'flying-castle',
+        name: 'The Flying Castle',
+        image: 'https://image.pollinations.ai/prompt/flying%20castle%20in%20clouds%20magical%20sky%20pixar%20style?width=200&height=200&nologo=true',
+    },
+    {
+        id: 'starry-moon-base',
+        name: 'The Starry Moon Base',
+        image: 'https://image.pollinations.ai/prompt/moon%20base%20space%20adventure%20stars%20planets%20pixar%20style?width=200&height=200&nologo=true',
+    },
+    {
+        id: 'underwater-kingdom',
+        name: 'Underwater Kingdom',
+        image: 'https://image.pollinations.ai/prompt/underwater%20kingdom%20coral%20reef%20mermaids%20pixar%20style?width=200&height=200&nologo=true',
+    },
+];
 
-const COMPANION_DATA: Record<string, string> = {
-  'a loyal puppy named Spot': 'https://image.pollinations.ai/prompt/cute%20magical%20golden%20retriever%20puppy%20pixar%20style?width=200&height=200&nologo=true',
-  'a clever cat named Whiskers': 'https://image.pollinations.ai/prompt/cute%20magical%20kitten%20with%20big%20eyes%20pixar%20style?width=200&height=200&nologo=true',
-  'a friendly tiny dragon': 'https://image.pollinations.ai/prompt/cute%20baby%20dragon%20green%20scales%20pixar%20style?width=200&height=200&nologo=true',
-  'a sparkling unicorn': 'https://image.pollinations.ai/prompt/cute%20baby%20unicorn%20rainbow%20mane%20pixar%20style?width=200&height=200&nologo=true',
-};
+const COMPANION_DATA = [
+    {
+        id: 'puppy',
+        name: 'a loyal puppy named Spot',
+        image: 'https://image.pollinations.ai/prompt/cute%20magical%20golden%20retriever%20puppy%20pixar%20style?width=200&height=200&nologo=true',
+    },
+    {
+        id: 'cat',
+        name: 'a clever cat named Whiskers',
+        image: 'https://image.pollinations.ai/prompt/cute%20magical%20kitten%20with%20big%20eyes%20pixar%20style?width=200&height=200&nologo=true',
+    },
+    {
+        id: 'dragon',
+        name: 'a friendly tiny dragon',
+        image: 'https://image.pollinations.ai/prompt/cute%20baby%20dragon%20green%20scales%20pixar%20style?width=200&height=200&nologo=true',
+    },
+    {
+        id: 'unicorn',
+        name: 'a sparkling unicorn',
+        image: 'https://image.pollinations.ai/prompt/cute%20baby%20unicorn%20rainbow%20mane%20pixar%20style?width=200&height=200&nologo=true',
+    },
+];
+
+// const validationSchema = yup.object({
+//     childAge: yup.number()
+//         .transform((v) => (isNaN(v) ? undefined : v))
+//         .required(),
+//     customPageCount: yup.number()
+//         .transform((v) => (isNaN(v) ? undefined : v))
+//         .required(),
+//     tone: yup.string().required(),
+//     place: yup.string().required(),
+//     companions: yup.string().required(),
+//     color: yup.string().required(),
+//     gender: yup.string().required(),
+
+//     // 👇 IMPORTANT FIX
+//     secretWish: yup.string().default('').optional(),
+// });
 
 const validationSchema = yup.object({
     childAge: yup.number()
@@ -55,9 +103,8 @@ const validationSchema = yup.object({
     companions: yup.string().required(),
     color: yup.string().required(),
     gender: yup.string().required(),
-
-    // 👇 IMPORTANT FIX
-    secretWish: yup.string().default('').optional(),
+    secretWish: yup.string().required(),
+    dedicationMessage: yup.string().required(),
 });
 
 type FormData = yup.InferType<typeof validationSchema>;
@@ -68,18 +115,20 @@ export default function CustomizeAndFinish() {
     const { t } = useLanguage();
     const [mounted, setMounted] = useState(false);
 
+    console.log({ config });
     // Initialize form with existing config data and yup resolver
-    const { register, handleSubmit, setValue, watch, setFocus, formState: { errors } } = useForm<FormData>({
+    const { register, handleSubmit, setValue, watch, setFocus, formState: { errors, isValid } } = useForm<FormData>({
         defaultValues: {
-            ...config,
+            // ...config,
             childAge: config.childAge || 5,
             customPageCount: config.customPageCount || 6,
             tone: config.tone || 'Fantasy Epic',
-            place: config.place || 'The North Pole',
-            companions: config.companions || 'Santa\'s Elves',
+            place: config.place || '',
+            companions: config.companions || '',
             color: config.color || 'Magic Purple',
-            secretWish: config.secretWish ?? undefined,
-            gender: ""
+            secretWish: config.secretWish || '',
+            gender: config.gender || 'boy',
+            dedicationMessage: config.dedicationMessage || ''
 
         },
         resolver: yupResolver(validationSchema),
@@ -181,6 +230,7 @@ export default function CustomizeAndFinish() {
 
     const watchedPages = watch('customPageCount');
     const watchedGender = watch('gender');
+    const watchedDedicationMessage = watch('dedicationMessage');
 
 
     const onNext = (data: any) => {
@@ -195,16 +245,16 @@ export default function CustomizeAndFinish() {
 
     };
 
-    const handleRandomMap = () => {
-        playMagicSound();
-        const random = FANTASY_LOCATIONS[Math.floor(Math.random() * FANTASY_LOCATIONS.length)];
-        setValue('place', random, { shouldValidate: true, shouldDirty: true });
-    };
+    // const handleRandomMap = () => {
+    //     playMagicSound();
+    //     const random = FANTASY_LOCATIONS[Math.floor(Math.random() * FANTASY_LOCATIONS.length)];
+    //     setValue('place', random, { shouldValidate: true, shouldDirty: true });
+    // };
 
-    const handlePresetMap = (place: string) => {
-        playMagicSound();
-        setValue('place', place, { shouldValidate: true, shouldDirty: true });
-    };
+    // const handlePresetMap = (place: string) => {
+    //     playMagicSound();
+    //     setValue('place', place, { shouldValidate: true, shouldDirty: true });
+    // };
 
     const handleCompanionAdd = (text: string) => {
         playMagicSound();
@@ -218,23 +268,15 @@ export default function CustomizeAndFinish() {
 
     const heroName = config.heroName || 'The Hero';
     const coverImageSrc = getCoverImage(config.theme);
-    // Default to Fantasy Epic if not set
-    const borderClass = getBorderClass(config.coverBorder || 'Fantasy Epic');
 
     // Check for special themes (like Santa) that require fewer inputs
     const isSimplifiedTheme = true;
     // mounted && config.theme?.toLowerCase().includes("santa");
 
-    // Auto-fill hidden fields for simplified themes if they are empty
-    useEffect(() => {
-        if (isSimplifiedTheme) {
-            if (!watchedPlace) setValue('place', 'The North Pole');
-            if (!watchedCompanions) setValue('companions', 'Santa\'s Elves');
-        }
-    }, [isSimplifiedTheme, setValue, watchedPlace, watchedCompanions]);
 
     if (!mounted) return null;
-
+    console.log(config);
+    console.log({watchedPlace, watchedCompanions})
     return (
         <div className="flex flex-col items-center min-h-[60vh] px-4 py-8 w-full max-w-7xl mx-auto">
 
@@ -282,31 +324,36 @@ export default function CustomizeAndFinish() {
 
                         <div className="space-y-6">
                             {/* LOCATION COMPONENT */}
-                            <LocationSelector
-                                label="Where does the adventure begin?"
-                                placeholder={t('det_ph_place')}
-                                value={watchedPlace || ''}
-                                onChange={(val) => setValue('place', val, { shouldValidate: true, shouldDirty: true })}
-                                error={errors.place?.message}
-                            />
+                            
+                            <LocationSelector label="Where does it happen?" placeholder={t('det_ph_place')} value={watchedPlace || ''} onChange={(val) => setValue('place', val)} />
 
                         </div>
                         <div className="space-y-6">
-
                             {/* COMPANION COMPONENT */}
-                            <CompanionSelector
-                                label="Who is joining the journey?"
-                                placeholder={t('det_ph_buddies')}
-                                value={watchedCompanions || ''}
-                                onChange={(val) => setValue('companions', val, { shouldValidate: true, shouldDirty: true })}
-                                error={errors.companions?.message}
-                            />
+                            <CompanionSelector label="Who goes with them?" placeholder={t('det_ph_buddies')} value={watchedCompanions || ''} onChange={(val) => setValue('companions', val)} />
+                        </div>
+                        {/* Dedication Section */}
+                        <div className="space-y-6">
+                            <div className="bg-magic-card p-6 rounded-3xl border border-white/10">
+                                <label className="text-white font-bold text-lg mb-4 block">
+                                    <i className="fa-solid fa-heart text-red-400 mr-2"></i>
+                                    Dedicate something for your special one!
+                                    <span className="text-sm font-normal text-gray-400 ml-1">(Optional)</span>
+
+                                </label>
+                                <textarea
+                                    {...register('dedicationMessage')}
+                                    placeholder="For my little star..."
+                                    className="w-full p-4 bg-black/40 rounded-xl border border-white/10 focus:border-red-400 outline-none text-white h-24 resize-none h-[220px]"
+                                />
+                            </div>
                         </div>
                         <div className="space-y-6">
                             <div className="bg-magic-card p-6 rounded-3xl shadow-xl border border-white/10 h-full">
                                 <label className="text-white font-bold text-lg mb-4 block">
                                     <i className="fa-solid fa-wand-sparkles text-yellow-400 mr-2"></i>
-                                    What is their heart's deepest wish? <span className="text-sm font-normal text-gray-400 ml-1">(Optional)</span>
+                                    What is their heart's deepest wish?
+                                    <span className="text-sm font-normal text-gray-400 ml-1">(Optional)</span>
                                 </label>
                                 <textarea
                                     {...register('secretWish')}
@@ -316,13 +363,14 @@ export default function CustomizeAndFinish() {
                             </div>
                         </div>
 
+
                     </div>
 
                     <div className="mt-8 flex gap-4">
                         <Button variant="ghost" onClick={() => router.back()} className="text-gray-400 hover:text-white px-8">
                             {t('det_back')}
                         </Button>
-                        <Button type="submit" fullWidth size="lg" className="text-xl shadow-xl shadow-purple-500/20 bg-gradient-to-r from-magic-purple to-magic-pink hover:to-pink-500 border-none animate-pulse-slow">
+                        <Button type="submit" fullWidth size="lg" disabled={!isValid} className="text-xl shadow-xl shadow-purple-500/20 bg-gradient-to-r from-magic-purple to-magic-pink hover:to-pink-500 border-none animate-pulse-slow disabled:opacity-50 disabled:bg-gray-400 disabled:shadow-none disabled:animate-none">
                             {t('det_create')} <i className="fa-solid fa-wand-magic-sparkles ml-2 text-yellow-300"></i>
                         </Button>
                     </div>
@@ -340,12 +388,13 @@ export default function CustomizeAndFinish() {
                             coverImage={coverImageSrc}
                             theme={config.theme}
                             heroName={heroName}
-                            tone={watchedTone}
+                            tone={watchedTone as string}
                             location={watchedPlace}
-                            locationImage={LOCATION_DATA[watchedPlace]}
+                            locationImage={LOCATION_DATA.find(l => l.name === watchedPlace)?.image}
                             companion={watchedCompanions}
-                            companionImage={COMPANION_DATA[watchedCompanions]}
+                            companionImage={COMPANION_DATA.find(c => c.name === watchedCompanions)?.image}
                             wish={watchedWish}
+                            dedicationMessage={watchedDedicationMessage}
                             gender={watchedGender as 'boy' | 'girl'}
                             age={watchedAge}
                             pages={watchedPages}

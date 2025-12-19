@@ -74,8 +74,9 @@ export interface User {
 export interface StoryConfig {
     heroName: string;
     heroImage?: string | null; // Data URL or Avatar ID
+    heroImageOriginal?: string | null; // Original uploaded image
     isAvatar: boolean;
-    gender?: 'boy' | 'girl';
+    gender?: 'boy' | 'girl' | '';
     archetype?: 'hero' | 'royal';
     childAge?: number;
     customPageCount?: number;
@@ -92,6 +93,8 @@ export interface StoryConfig {
     parentRelationship?: string;
     includeParent?: boolean;
     parentImage?: string | null;
+    parentImageOriginal?: string | null; // Original uploaded image
+    dedicationMessage?: string;
 }
 
 export interface GeneratedPage {
@@ -107,6 +110,7 @@ export interface GeneratedStory {
     date?: string;
     coverImage?: string;
     heroName?: string;
+    status?: 'completed' | 'pending' | 'processing' | 'failed';
 }
 
 export interface GeneratedVideo {
@@ -141,10 +145,14 @@ export const DEFAULT_CONFIG: StoryConfig = {
     tone: 'Magical Sparkle',
     childAge: 5,
     customPageCount: 6,
-    coverBorder: 'Classic Gold',
-    parentRelationship: 'Mom',
+    parentRelationship: '',
     includeParent: false,
-    parentImage: null
+    parentImage: null,
+    dedicationMessage: '',
+    gender: '',
+    heroImage: null,
+    heroImageOriginal: null,
+    parentImageOriginal: null
 };
 
 export interface Plan {

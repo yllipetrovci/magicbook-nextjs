@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useStory } from '@/app/contexts/StoryContext';
+import { useAuth } from '@/app/contexts/AuthContext';
 import { Button } from '@/app/components/Button';
 import { StoryCard } from './components/StoryCard';
 import { DashboardSection } from './components/DashboardSection';
@@ -11,9 +12,8 @@ import { useLanguage } from '@/app/contexts/LanguageContext';
 
 export const DashboardPage: React.FC = () => {
     const router = useRouter();
-    const user = { credits: 5 }; // Mock user credits
-    const { config } = useStory();
-    const stories: GeneratedStory [] = [] as any; // Mock stories
+    const { user } = useAuth();
+    const { config, stories } = useStory();
 
     const { t } = useLanguage();
     const [downloadingId, setDownloadingId] = useState<number | null>(null);
@@ -23,7 +23,7 @@ export const DashboardPage: React.FC = () => {
         : (config.heroName || "Little Hero");
 
     const handleCreateNew = () => {
-        if (user && user.credits > 0) {
+        if (user && user.credits && user.credits > 0) {
             router.push('/hero');
         } else {
             router.push('/dashboard/credits');
@@ -61,7 +61,7 @@ export const DashboardPage: React.FC = () => {
 
                 {/* Mobile Credit Display */}
                 <div className="md:hidden flex items-center gap-3 bg-black/40 px-4 py-2 rounded-full border border-white/10">
-                    <span className="text-yellow-400 font-bold">{user?.credits} Credits</span>
+                    <span className="text-yellow-400 font-bold">{user?.credits || 0} Credits</span>
                     <button onClick={() => router.push('/dashboard/credits')} className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center text-white text-xs"><i className="fa-solid fa-plus"></i></button>
                 </div>
 
@@ -92,19 +92,22 @@ export const DashboardPage: React.FC = () => {
                     icon: "fa-plus",
                     theme: "purple"
                 }}
-                renderItem={(story, index) => (
-                    <StoryCard
-                        key={index}
-                        story={story || {}}
-                        onRead={() => handleReadStory(story)}
-                        onDownload={(e) => handleDownloadPdf(e, index, story)}
-                        onDelete={(e) => {
-                            e.stopPropagation();
-                            // deleteStory(index);
-                        }}
-                        isDownloading={downloadingId === index}
-                    />
-                )}
+                renderItem={(story, index) => {
+                    console.log(story);
+                    return (
+                        <StoryCard
+                            key={index}
+                            story={story || {}}
+                            onRead={() => handleReadStory(story)}
+                            onDownload={(e) => handleDownloadPdf(e, index, story)}
+                            onDelete={(e) => {
+                                e.stopPropagation();
+                                // deleteStory(index);
+                            }}
+                            isDownloading={downloadingId === index}
+                        />
+                    )
+                }}
             />
         </>
     );

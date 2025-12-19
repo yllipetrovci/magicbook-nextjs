@@ -64,6 +64,11 @@ export function AuthProvider({
 
 
 
+  // Auto-refresh user data on mount
+  useEffect(() => {
+    refreshUser();
+  }, []);
+
   // No onAuthStateChanged — dashboard uses SERVER cookies only
 
   return (

@@ -10,6 +10,7 @@ import { Button } from './Button';
 // import { Footer } from './Footer';
 import { useLanguage } from "../contexts/LanguageContext";
 import { useAuth } from "../contexts/AuthContext";
+import { useStory } from "../contexts/StoryContext";
 import { User } from "../types";
 import { PATHS } from "../constants/relativeRoutePaths";
 
@@ -43,7 +44,8 @@ export function RootLayoutClient({ children }: { children: React.ReactNode }) {
     const pathname = usePathname();
     const router = useRouter();
     const { t, language, setLanguage } = useLanguage();
-    const { user }: any = useAuth();
+    const { user, setUser }: any = useAuth();
+    const { resetAll } = useStory();
     const [showUserMenu, setShowUserMenu] = useState(false);
     const [showLangMenu, setShowLangMenu] = useState(false);
     const langMenuRef = useRef<HTMLDivElement>(null);
@@ -53,6 +55,7 @@ export function RootLayoutClient({ children }: { children: React.ReactNode }) {
     // Routes that should NOT have the navbar and main wrapper
     const isDashboardRoute = pathname?.startsWith('/dashboard');
     const isUpsellRoute = pathname?.startsWith('/upsell');
+    const isShowCuponRoute = pathname?.startsWith('/steps/show-cupon');
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -74,7 +77,7 @@ export function RootLayoutClient({ children }: { children: React.ReactNode }) {
     };
 
 
-    if (isUpsellRoute) {
+    if (isUpsellRoute || isShowCuponRoute) {
         // Dashboard routes get their own layout, so just return children
         return <>{children}</>;
     }
@@ -186,8 +189,12 @@ export function RootLayoutClient({ children }: { children: React.ReactNode }) {
                                     </div>
 
                                     <div className="border-t border-white/5 py-2">
-                                        <button onClick={() => {
-                                            router.push('/');
+                                        <button onClick={async () => {
+                                            // Clear all user and story data
+                                            setUser(null);
+                                            resetAll();
+                                            await fetch("/api/firebase/logout", { method: "POST" });
+                                            router.push(PATHS.LOGIN);
                                         }} className="w-full text-left px-5 py-3 text-sm text-red-400 hover:bg-red-500/10 hover:text-red-300 flex items-center gap-3 transition-colors">
                                             <i className="fa-solid fa-right-from-bracket w-5 text-center"></i> {t('nav_logout')}
                                         </button>

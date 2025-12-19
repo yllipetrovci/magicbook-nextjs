@@ -1,6 +1,6 @@
 
-import { playMagicSound } from '@/app/utils/audio';
 import React, { useState, useEffect } from 'react';
+import { playMagicSound } from '@/app/utils/audio';
 
 interface LocationSelectorProps {
   value: string;

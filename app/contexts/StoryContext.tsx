@@ -20,7 +20,9 @@ interface StoryContextType {
   updateConfig: (field: keyof StoryConfig, value: any) => void;
   updateBatchConfigs: (configs: Partial<StoryConfig>) => void;
   resetStory: () => void;
+  resetAll: () => void;
   stories: GeneratedStory[];
+  setStories: React.Dispatch<React.SetStateAction<GeneratedStory[]>>;
   videos: GeneratedVideo[];
   drawImages: GeneratedImage[];
   appTheme: AppTheme;
@@ -112,6 +114,30 @@ export const StoryProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     LocalStorageService.remove(LOCAL_STORAGE_KEYS.GENERATED_STORY);
   };
 
+  const resetAll = () => {
+    setConfig(DEFAULT_CONFIG);
+    setAppTheme('default');
+    setStories([MOCK_STORY]);
+    setVideos([MOCK_VIDEO]);
+    setDrawImages([MOCK_IMAGE]);
+    setHasUpsellBook(false);
+    setHasUpsellVideo(false);
+    setHasUpsellDaily(false);
+    setMainPaymentIsDone(false);
+    
+    // Clear all localStorage
+    LocalStorageService.remove(LOCAL_STORAGE_KEYS.STORY_CONFIG);
+    LocalStorageService.remove(LOCAL_STORAGE_KEYS.GENERATED_STORY);
+    LocalStorageService.remove(LOCAL_STORAGE_KEYS.SAVED_STORIES);
+    LocalStorageService.remove(LOCAL_STORAGE_KEYS.SAVED_VIDEOS);
+    LocalStorageService.remove(LOCAL_STORAGE_KEYS.SAVED_IMAGES);
+    LocalStorageService.remove(LOCAL_STORAGE_KEYS.APP_THEME);
+    LocalStorageService.remove(LOCAL_STORAGE_KEYS.MAIN_PAYMENT_DONE);
+    LocalStorageService.remove(LOCAL_STORAGE_KEYS.HAS_UPSELL_BOOK);
+    LocalStorageService.remove(LOCAL_STORAGE_KEYS.HAS_UPSELL_VIDEO);
+    LocalStorageService.remove(LOCAL_STORAGE_KEYS.HAS_UPSELL_DAILY);
+  };
+
   // 🔹 Persist changes
   useEffect(() => {
     LocalStorageService.set(LOCAL_STORAGE_KEYS.STORY_CONFIG, config);
@@ -151,7 +177,9 @@ export const StoryProvider: React.FC<{ children: React.ReactNode }> = ({ childre
         updateConfig,
         updateBatchConfigs,
         resetStory,
+        resetAll,
         stories,
+        setStories,
         videos,
         drawImages,
         appTheme,

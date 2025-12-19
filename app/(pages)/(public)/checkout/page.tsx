@@ -27,8 +27,6 @@ export const Checkout: React.FC = () => {
    const { t } = useLanguage();
 
    const selectedPlan = plans.find(p => p.id === config?.planType);
-   console.log({ selectedPlan })
-   console.log({ config })
 
 
    // Page Count Logic
@@ -45,8 +43,9 @@ export const Checkout: React.FC = () => {
       }
 
       setMainPaymentIsDone(true);
+      console.log("HELLO")
       setTimeout(() => {
-         router.push(PATHS.UPSELL_BOOK);
+         router.push(PATHS.SUCCESS);
       }, 2000);
    };
    const DISCOUNT_PRICE = selectedPlan?.price - (selectedPlan?.price * 0.5);
@@ -66,11 +65,10 @@ export const Checkout: React.FC = () => {
                coverImage={coverImage}
                isSubscription={selectedPlan?.isSubscription}
                pageCount={pageCount}
-               onPay={handlePayment}
             />
 
             {/* Payment Form Component - Inputs Only */}
-            <PaymentForm />
+            <PaymentForm onSubmit={handlePayment} />
 
          </div>
       </div>

@@ -12,7 +12,6 @@ interface OrderSummaryProps {
     coverImage: string;
     isSubscription: boolean;
     pageCount?: number;
-    onPay: () => void;
 }
 
 export const OrderSummary: React.FC<OrderSummaryProps> = ({
@@ -23,14 +22,14 @@ export const OrderSummary: React.FC<OrderSummaryProps> = ({
     credits,
     coverImage,
     isSubscription,
-    pageCount,
-    onPay
+    pageCount
 }) => {
     const pricePerStory = typeof credits === 'number' && credits > 0
         ? (total / credits).toFixed(2)
         : '0.00';
 
     console.log({ pricePerStory })
+    console.log({price})
     return (
         <div className="flex-1 bg-magic-card p-8 rounded-3xl shadow-xl border border-white/5 h-fit flex flex-col">
             <h3 className="text-2xl font-bold text-white mb-6">Order Summary</h3>
@@ -75,9 +74,9 @@ export const OrderSummary: React.FC<OrderSummaryProps> = ({
             </div>
 
             <div className="border-t border-white/10 py-4 space-y-2">
-                <div className="flex justify-between text-gray-400 text-sm"><span>Subtotal</span><span>${price.toFixed(2)}</span></div>
+                <div className="flex justify-between text-gray-400 text-sm"><span>Subtotal</span><span>${price?.toFixed(2)}</span></div>
                 {discount > 0 && (
-                    <div className="flex justify-between text-green-400 font-bold text-sm"><span>Coupon (MAGICFUN)</span><span>-${discount.toFixed(2)}</span></div>
+                    <div className="flex justify-between text-green-400 font-bold text-sm"><span>Coupon (MAGICFUN)</span><span>-${discount?.toFixed(2)}</span></div>
                 )}
             </div>
 

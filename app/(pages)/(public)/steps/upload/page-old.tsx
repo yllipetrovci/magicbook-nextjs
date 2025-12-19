@@ -1,10 +1,10 @@
 
+'use client';
 import React, { useState } from 'react';
-import { Button } from './Button';
+import { Button } from '@/app/components/Button';
 import { playMagicSound } from '@/app/utils/audio';
-import { PhotoGuide } from './photo-upload/PhotoGuide';
-import { UploadCard } from './photo-upload/UploadCard';
-import { useStory } from '@/app/contexts/StoryContext';
+import { PhotoGuide } from '@/app/components/photo-upload/PhotoGuide';
+import { UploadCard } from '@/app/components/photo-upload/UploadCard';
 
 interface PhotoUploadSectionProps {
   heroName: string;
@@ -12,48 +12,30 @@ interface PhotoUploadSectionProps {
   relationship: string;
   initialHeroImage?: string | null;
   initialParentImage?: string | null;
-  onHeroImageUpdate: (optimized: string, original: string) => void;
-  onParentImageUpdate: (optimized: string, original: string) => void;
+  onHeroImageUpdate: (image: string) => void;
+  onParentImageUpdate: (image: string) => void;
   onBack: () => void;
   onNext: () => void;
   onSkip: () => void;
 }
 
 /**
- * Universal optimization helper with configurable profiles.
- * For UI: maxDim 1200, quality 0.8
- * For AI: maxDim 640, quality 0.3 (aggressive reduction)
+ * Optimizes an image file by converting it to WebP with 80% lossy compression.
  */
-const optimizeImage = (file: File | string, maxDim: number, quality: number): Promise<string> => {
+const optimizeImage = (file: File | string): Promise<string> => {
   return new Promise((resolve, reject) => {
     const img = new Image();
     img.onload = () => {
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
-      if (!ctx) return reject(new Error('Canvas context failed'));
-
-      let width = img.width;
-      let height = img.height;
-
-      if (width > height) {
-        if (width > maxDim) {
-          height *= maxDim / width;
-          width = maxDim;
-        }
-      } else {
-        if (height > maxDim) {
-          width *= maxDim / height;
-          height = maxDim;
-        }
+      if (!ctx) {
+        reject(new Error('Canvas context not available'));
+        return;
       }
-
-      canvas.width = width;
-      canvas.height = height;
-      ctx.imageSmoothingEnabled = true;
-      ctx.imageSmoothingQuality = quality > 0.5 ? 'high' : 'medium';
-      ctx.drawImage(img, 0, 0, width, height);
-      
-      resolve(canvas.toDataURL('image/webp', quality));
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx.drawImage(img, 0, 0);
+      resolve(canvas.toDataURL('image/webp', 0.8));
     };
     img.onerror = () => reject(new Error('Failed to load image'));
     if (typeof file === 'string') {
@@ -67,15 +49,12 @@ const optimizeImage = (file: File | string, maxDim: number, quality: number): Pr
 };
 
 /**
- * Renders the crop state to a specific quality profile.
+ * Captures the current visual state of the crop UI and renders it to a 4:3 canvas.
  */
 const performMagicCrop = (
     imageSrc: string, 
     zoom: number, 
-    pos: { x: number, y: number },
-    targetW: number,
-    targetH: number,
-    quality: number
+    pos: { x: number, y: number }
 ): Promise<string> => {
     return new Promise((resolve, reject) => {
         const img = new Image();
@@ -84,32 +63,49 @@ const performMagicCrop = (
             const ctx = canvas.getContext('2d');
             if (!ctx) return reject();
 
-            canvas.width = targetW;
-            canvas.height = targetH;
-            ctx.fillStyle = '#000000';
-            ctx.fillRect(0, 0, targetW, targetH);
+            // Target aspect ratio is 4:3
+            const targetWidth = 800;
+            const targetHeight = 600;
+            canvas.width = targetWidth;
+            canvas.height = targetHeight;
 
+            // Fill background with black (for any gaps)
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, targetWidth, targetHeight);
+
+            // Logic to calculate how to draw the "contained" image with zoom and pan
             const imgAspect = img.width / img.height;
-            const containerAspect = targetW / targetH;
+            const containerAspect = targetWidth / targetHeight;
 
             let drawW, drawH;
             if (imgAspect > containerAspect) {
-                drawW = targetW;
-                drawH = targetW / imgAspect;
+                drawW = targetWidth;
+                drawH = targetWidth / imgAspect;
             } else {
-                drawH = targetH;
-                drawW = targetH * imgAspect;
+                drawH = targetHeight;
+                drawW = targetHeight * imgAspect;
             }
 
+            // Apply Zoom
             const finalW = drawW * zoom;
             const finalH = drawH * zoom;
-            const centerX = targetW / 2;
-            const centerY = targetH / 2;
+
+            // Center + Panning
+            // Note: Since the visual UI uses CSS transforms on a 4:3 container, 
+            // we map the pixel offsets relative to the container size.
+            const centerX = targetWidth / 2;
+            const centerY = targetHeight / 2;
             
-            ctx.imageSmoothingEnabled = true;
-            ctx.imageSmoothingQuality = quality > 0.5 ? 'high' : 'medium';
-            ctx.drawImage(img, centerX - (finalW / 2) + pos.x, centerY - (finalH / 2) + pos.y, finalW, finalH);
-            resolve(canvas.toDataURL('image/webp', quality));
+            // We draw from the center point, applying the pan offset
+            ctx.drawImage(
+                img, 
+                centerX - (finalW / 2) + pos.x, 
+                centerY - (finalH / 2) + pos.y, 
+                finalW, 
+                finalH
+            );
+
+            resolve(canvas.toDataURL('image/webp', 0.8));
         };
         img.src = imageSrc;
     });
@@ -127,14 +123,14 @@ export const PhotoUploadSection: React.FC<PhotoUploadSectionProps> = ({
   onNext,
   onSkip
 }) => {
-  const { config } = useStory();
-  const [heroPreview, setHeroPreview] = useState<string | null>(config.heroImageOriginal || initialHeroImage || null);
-  const [parentPreview, setParentPreview] = useState<string | null>(config.parentImageOriginal || initialParentImage || null);
+  const [heroPreview, setHeroPreview] = useState<string | null>(initialHeroImage || null);
+  const [parentPreview, setParentPreview] = useState<string | null>(initialParentImage || null);
   
   const [processingTarget, setProcessingTarget] = useState<'hero' | 'parent' | null>(null);
   const [showGuide, setShowGuide] = useState(false);
   const [cropMode, setCropMode] = useState<'hero' | 'parent' | null>(null);
   
+  // Crop State
   const [zoomLevel, setZoomLevel] = useState(1);
   const [cropPos, setCropPos] = useState({ x: 0, y: 0 });
   const [isDragging, setIsDragging] = useState(false);
@@ -143,17 +139,13 @@ export const PhotoUploadSection: React.FC<PhotoUploadSectionProps> = ({
   const processFile = async (file: File, target: 'hero' | 'parent') => {
     setProcessingTarget(target);
     try {
-      // 1. Generate High-Res UI version (Crisp for Magic Recipe)
-      const original = await optimizeImage(file, 1200, 0.8);
-      // 2. Generate Low-Res AI version (Ultra tiny for backend processing)
-      const optimized = await optimizeImage(file, 640, 0.3);
-
+      const optimizedImage = await optimizeImage(file);
       if (target === 'hero') {
-        setHeroPreview(original);
-        onHeroImageUpdate(optimized, original);
+        setHeroPreview(optimizedImage);
+        onHeroImageUpdate(optimizedImage);
       } else {
-        setParentPreview(original);
-        onParentImageUpdate(optimized, original);
+        setParentPreview(optimizedImage);
+        onParentImageUpdate(optimizedImage);
       }
     } catch (error) {
       console.error("Processing failed:", error);
@@ -172,23 +164,19 @@ export const PhotoUploadSection: React.FC<PhotoUploadSectionProps> = ({
   const saveCrop = async () => {
       if (!cropMode) return;
       const target = cropMode;
-      const sourceImage = target === 'hero' ? heroPreview : parentPreview;
+      const originalImage = target === 'hero' ? heroPreview : parentPreview;
       
-      if (sourceImage) {
+      if (originalImage) {
           setProcessingTarget(target);
-          setCropMode(null);
+          setCropMode(null); // Close UI
           try {
-              // 1. Crop UI version
-              const croppedOriginal = await performMagicCrop(sourceImage, zoomLevel, cropPos, 800, 600, 0.8);
-              // 2. Crop AI version (Smaller footprint)
-              const croppedOptimized = await performMagicCrop(sourceImage, zoomLevel, cropPos, 512, 384, 0.3);
-
+              const cropped = await performMagicCrop(originalImage, zoomLevel, cropPos);
               if (target === 'hero') {
-                  setHeroPreview(croppedOriginal);
-                  onHeroImageUpdate(croppedOptimized, croppedOriginal);
+                  setHeroPreview(cropped);
+                  onHeroImageUpdate(cropped);
               } else {
-                  setParentPreview(croppedOriginal);
-                  onParentImageUpdate(croppedOptimized, croppedOriginal);
+                  setParentPreview(cropped);
+                  onParentImageUpdate(cropped);
               }
           } catch (e) {
               console.error("Crop failed", e);
@@ -198,8 +186,11 @@ export const PhotoUploadSection: React.FC<PhotoUploadSectionProps> = ({
       }
   };
 
-  const cancelCrop = () => setCropMode(null);
+  const cancelCrop = () => {
+      setCropMode(null);
+  };
 
+  // --- Drag & Pan Handlers ---
   const handleDragStart = (e: React.MouseEvent | React.TouchEvent) => {
       setIsDragging(true);
       const clientX = 'touches' in e ? e.touches[0].clientX : (e as React.MouseEvent).clientX;
@@ -211,10 +202,15 @@ export const PhotoUploadSection: React.FC<PhotoUploadSectionProps> = ({
       if (!isDragging) return;
       const clientX = 'touches' in e ? e.touches[0].clientX : (e as React.MouseEvent).clientX;
       const clientY = 'touches' in e ? e.touches[0].clientY : (e as React.MouseEvent).clientY;
-      setCropPos({ x: clientX - dragStart.x, y: clientY - dragStart.y });
+      setCropPos({
+          x: clientX - dragStart.x,
+          y: clientY - dragStart.y
+      });
   };
 
-  const handleDragEnd = () => setIsDragging(false);
+  const handleDragEnd = () => {
+      setIsDragging(false);
+  };
 
   return (
     <div className={`w-full ${includeParent ? 'max-w-4xl' : 'max-w-xl'} animate-slide-up-fade`}>
@@ -265,7 +261,7 @@ export const PhotoUploadSection: React.FC<PhotoUploadSectionProps> = ({
                   zoomLevel={zoomLevel}
                   cropPos={cropPos}
                   isDragging={isDragging}
-                  onFileSelect={(file) => processFile(file, 'parent')}
+                  onFileSelect={(file:any) => processFile(file, 'parent')}
                   onCropStart={() => startCrop('parent')}
                   onCropSave={saveCrop}
                   onCropCancel={cancelCrop}
@@ -303,3 +299,5 @@ export const PhotoUploadSection: React.FC<PhotoUploadSectionProps> = ({
     </div>
   );
 };
+
+export default PhotoUploadSection;

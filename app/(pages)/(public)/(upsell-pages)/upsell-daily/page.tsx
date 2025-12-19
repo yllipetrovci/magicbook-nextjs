@@ -26,12 +26,12 @@ export const UpsellDaily: React.FC = () => {
         setHasUpsellDaily(true);
 
 
-        router.push(PATHS.SUCCESS);
+        router.push(PATHS.RESET_PASSWORD);
     };
 
     const handleNoThanks = () => {
         setHasUpsellDaily(false);
-        router.push(PATHS.SUCCESS);
+        router.push(PATHS.RESET_PASSWORD);
     };
 
     return (

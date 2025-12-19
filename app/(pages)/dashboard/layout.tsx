@@ -1,17 +1,22 @@
-import { getUserServer } from "@/lib/auth";
-import { AuthProvider } from "@/app/contexts/AuthContext";
+import { getStoriesServer, getUserServer } from "@/lib/auth";
 import DashboardClientLayout from "./DashboardClientLayout";
-import { redirect } from "next/navigation";
-import { getUserVideos } from "@/lib/firestore/videos";
 import { DecodedIdToken } from "firebase-admin/auth";
+import DashboardDataSetter from "./DashboardDataSetter";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
     const user: DecodedIdToken | null = await getUserServer();
-    console.log(user);
-    // const videos = user?.uid ? (await getUserVideos(user.uid)).videos : [];
-    // if (!user) redirect("/login");
-    // console.log({ ...user, videos:[] }); // removed debug log
+    const stories = await getStoriesServer(user?.user_id);
+    
+    // Serialize stories to make them compatible with client components
+    const serializedStories = stories ? stories.map(story => ({
+        ...story,
+        createdAt: story.createdAt?.toDate?.() || story.createdAt,
+        updatedAt: story.updatedAt?.toDate?.() || story.updatedAt,
+    })) : null;
+    
     return (
-        <DashboardClientLayout>{children}</DashboardClientLayout>
+        <DashboardDataSetter user={user} stories={serializedStories}>
+            <DashboardClientLayout>{children}</DashboardClientLayout>
+        </DashboardDataSetter>
     );
 }
