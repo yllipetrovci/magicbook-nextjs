@@ -103,16 +103,6 @@ export function RootLayoutClient({ children }: { children: React.ReactNode }) {
 
                     {/* Desktop Navigation Links */}
                     {/* <p>{JSON.stringify(user)}</p> */}
-                    {user && (
-                        <div className="hidden md:flex items-center gap-6">
-                            <Link href="/dashboard" className="text-gray-300 hover:text-white font-bold transition-colors text-sm uppercase tracking-wide">
-                                {t('nav_dashboard')}
-                            </Link>
-                            <Link href="/hero" className="text-gray-300 hover:text-white font-bold transition-colors text-sm uppercase tracking-wide">
-                                Create Magic
-                            </Link>
-                        </div>
-                    )}
                 </div>
 
                 {/* Right Side: Language & Auth */}
