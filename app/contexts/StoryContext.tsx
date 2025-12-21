@@ -9,12 +9,11 @@ import {
   GeneratedImage,
   ReadingStyle,
   VoiceStyle,
+  StoryStatus,
 } from '../types';
 import { MOCK_STORY, MOCK_VIDEO, MOCK_IMAGE } from './mocks';
 import { LocalStorageService } from '../services/localStorageService';
 import { LOCAL_STORAGE_KEYS } from '../constants/localStorageKeys';
-import { clientFirestore } from '@/lib/firestore/firebaseClient';
-import { collection, onSnapshot, orderBy, query, where } from 'firebase/firestore';
 import { useAuth } from '../contexts/AuthContext';
 
 export type AppTheme = 'default' | 'christmas';
@@ -57,6 +56,49 @@ interface StoryContextType {
 
 const StoryContext = createContext<StoryContextType | undefined>(undefined);
 
+const STORY_PULL_INTERVAL_MS_FALLBACK = 15000;
+const STORY_PULL_STATUSES = [StoryStatus.PENDING, StoryStatus.PROCESSING];
+
+const getStoryPullIntervalMs = () => {
+  const raw = Number(process.env.NEXT_PUBLIC_STORY_PULL_INTERVAL_MS);
+  return Number.isFinite(raw) && raw > 0 ? raw : STORY_PULL_INTERVAL_MS_FALLBACK;
+};
+
+const normalizeStoryStatus = (status: unknown): StoryStatus => {
+  const normalized = typeof status === 'string' ? status.toLowerCase() : '';
+  switch (normalized) {
+    case StoryStatus.COMPLETED:
+      return StoryStatus.COMPLETED;
+    case StoryStatus.PROCESSING:
+      return StoryStatus.PROCESSING;
+    case StoryStatus.FAILED:
+      return StoryStatus.FAILED;
+    default:
+      return StoryStatus.PENDING;
+  }
+};
+
+const mapFirestoreStory = (story: any): GeneratedStory => {
+  const createdAt =
+    story.createdAt instanceof Date
+      ? story.createdAt
+      : typeof story.createdAt === 'string'
+        ? new Date(story.createdAt)
+        : new Date();
+
+  return {
+    id: story.id ?? story.storyId ?? story.storyContent?.id,
+    title: story.storyContent?.title || 'Untitled',
+    author: story.storyContent?.author || 'Unknown',
+    pages: story.storyContent?.pages || [],
+    date: createdAt.toISOString(),
+    coverImage: story.storyContent?.coverImg || '',
+    heroName: story.storyContent?.heroName || '',
+    status: normalizeStoryStatus(story.status),
+    formattedDate: createdAt.toLocaleDateString('en-US', { timeZone: 'UTC' }),
+  };
+};
+
 export const StoryProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user } = useAuth();
   const [config, setConfig] = useState<StoryConfig>(DEFAULT_CONFIG);
@@ -73,6 +115,11 @@ export const StoryProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   const [storiesLoaded, setStoriesLoaded] = useState<boolean>(false);
   const [videosLoaded, setVideosLoaded] = useState<boolean>(false);
   const [imagesLoaded, setImagesLoaded] = useState<boolean>(false);
+  const pullTargetIds = stories
+    .filter(story => STORY_PULL_STATUSES.includes(story.status ?? StoryStatus.PENDING))
+    .map(story => story.id)
+    .filter((id): id is string => Boolean(id));
+  const hasPullTargets = pullTargetIds.length > 0;
   // 🔹 Load from localStorage on mount
   useEffect(() => {
     setConfig(
@@ -278,70 +325,49 @@ export const StoryProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     });
   }, [drawImages]);
 
-  // useEffect(() => {
-  //   if (!user?.uid) {
-  //     return;
-  //   }
-
-  //   console.log("user.uid", user.uid);
-  //   // const storiesRef = collection(clientFirestore, "users", user.uid, "stories");
-
-  //   const storiesRef = collection(clientFirestore, "stories")
-
-
-  //   const storiesQuery = query(storiesRef);
-  //   const unsubscribe = onSnapshot(storiesQuery, (snapshot) => {
-  //     debugger;
-  //     const liveStories: any[] = snapshot.docs.map(doc => {
-  //       const data = doc.data();
-  //       const storyContent = data.storyContent || data;
-
-  //       const createdAt =
-  //         data.createdAt?.toDate?.() ??
-  //         new Date();
-
-  //       const status =
-  //         typeof data.status === "string"
-  //           ? data.status.toLowerCase()
-  //           : "pending";
-
-  //       return {
-  //         id: doc.id,
-  //         title: storyContent.title || "Untitled",
-  //         author: storyContent.author || "Unknown",
-  //         pages: storyContent.pages || [],
-  //         coverImage: storyContent.coverImg || "",
-  //         heroName: storyContent.heroName || "",
-  //         status: ["completed", "processing", "pending", "failed"].includes(status)
-  //           ? status
-  //           : "pending",
-  //         date: createdAt.toISOString(),
-  //         formattedDate: createdAt.toLocaleDateString("en-US", { timeZone: "UTC" }),
-  //       };
-  //     });
-
-  //     setStories(liveStories);
-  //   });
-
-
-  //   return () => unsubscribe();
-  // }, [user?.uid, setStories]);
-
   useEffect(() => {
-    if (!user?.uid) return;
+    if (!user?.uid || !hasPullTargets) return;
 
-    console.log("Subscribing for uid:", user.uid);
+    const intervalMs = getStoryPullIntervalMs();
 
-    const unsubscribe = onSnapshot(
-      collection(clientFirestore, "users", user.uid, "stories"),
-      snap => {
-        debugger;        
-        console.log("SNAPSHOT FIRED:", snap.size);
+    const pullStories = async () => {
+      try {
+        if (pullTargetIds.length === 0) return;
+
+        const idsParam = encodeURIComponent(pullTargetIds.join(','));
+        const res = await fetch(`/api/firebase/stories?ids=${idsParam}`);
+        if (!res.ok) {
+          console.error('Story puller failed:', res.status);
+          return;
+        }
+
+        const data = await res.json();
+        if (!Array.isArray(data?.stories)) {
+          return;
+        }
+
+        const pulledStories = data.stories.map(mapFirestoreStory);
+
+        setStories(prev => {
+          const byId = new Map(prev.map(story => [story.id, story]));
+          for (const story of pulledStories) {
+            if (!story.id) continue;
+            byId.set(story.id, { ...byId.get(story.id), ...story });
+          }
+          return Array.from(byId.values());
+        });
+      } catch (error) {
+        console.error('Story puller error:', error);
       }
-    );
+    };
 
-    return unsubscribe;
-  }, [user?.uid]);
+    pullStories();
+    const intervalId = window.setInterval(pullStories, intervalMs);
+
+    return () => {
+      window.clearInterval(intervalId);
+    };
+  }, [user?.uid, hasPullTargets, setStories]);
 
   // 🔹 Persist upsell states
   useEffect(() => {

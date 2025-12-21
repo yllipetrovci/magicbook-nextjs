@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useAuth } from "@/app/contexts/AuthContext";
 import { useStory } from "@/app/contexts/StoryContext";
 import { DecodedIdToken } from "firebase-admin/auth";
-import { GeneratedStory } from "@/app/types";
+import { GeneratedStory, StoryStatus } from "@/app/types";
 
 interface DashboardDataSetterProps {
     user: DecodedIdToken | null;
@@ -42,6 +42,10 @@ export default function DashboardDataSetter({ user, userProfile, stories, videos
         if (stories) {
             // Map Firestore stories to GeneratedStory format
             const mappedStories: GeneratedStory[] = stories.map((story: any) => {
+                const normalizedStatus =
+                    typeof story.status === "string"
+                        ? story.status.toLowerCase()
+                        : StoryStatus.PENDING;
                 const createdAt =
                     story.createdAt instanceof Date
                         ? story.createdAt
@@ -50,13 +54,19 @@ export default function DashboardDataSetter({ user, userProfile, stories, videos
                             : new Date();
 
                 return {
+                    id: story.id ?? story.storyId ?? story.storyContent?.id,
                     title: story.storyContent?.title || "Untitled",
                     author: story.storyContent?.author || "Unknown",
                     pages: story.storyContent?.pages || [],
                     date: createdAt.toISOString(),
                     coverImage: story.storyContent?.coverImg || "",
                     heroName: "", // Add if available
-                    status: story.status || "pending",
+                    status:
+                        normalizedStatus === StoryStatus.COMPLETED ||
+                        normalizedStatus === StoryStatus.PROCESSING ||
+                        normalizedStatus === StoryStatus.FAILED
+                            ? normalizedStatus
+                            : StoryStatus.PENDING,
                     formattedDate: createdAt.toLocaleDateString("en-US", { timeZone: "UTC" }),
                 };
             });

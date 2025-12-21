@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/app/components/Button';
-import { GeneratedStory } from '@/app/types';
+import { GeneratedStory, StoryStatus } from '@/app/types';
 
 interface StoryCardProps {
   story?: GeneratedStory;
@@ -60,8 +60,11 @@ export const StoryCard: React.FC<StoryCardProps> = ({
   }
 
   console.log(story);
-  const status = story?.status || 'completed';
-  const isActionDisabled = status === 'pending' || status === 'processing' || status === 'failed';
+  const status = story?.status || StoryStatus.COMPLETED;
+  const isActionDisabled =
+    status === StoryStatus.PENDING ||
+    status === StoryStatus.PROCESSING ||
+    status === StoryStatus.FAILED;
 
   // --- READY STATE ---
   return (
@@ -77,12 +80,12 @@ export const StoryCard: React.FC<StoryCardProps> = ({
           
           {/* Status Badge */}
           <div className="absolute top-2 left-2 bg-magic-surface/90 backdrop-blur-md px-2 py-0.5 rounded-full border border-white/10 shadow flex items-center gap-1 z-30">
-            <div className={`w-1.5 h-1.5 rounded-full ${status === 'completed' ? 'bg-magic-green' : (status === 'failed' ? 'bg-red-500' : 'bg-yellow-400 animate-pulse')}`}></div>
+            <div className={`w-1.5 h-1.5 rounded-full ${status === StoryStatus.COMPLETED ? 'bg-magic-green' : (status === StoryStatus.FAILED ? 'bg-red-500' : 'bg-yellow-400 animate-pulse')}`}></div>
             <span className="text-[10px] font-bold text-white max-w-[80px] truncate">{story.heroName || "Unknown"}</span>
           </div>
 
           {/* Status Overlay */}
-          {status === 'pending' && (
+          {status === StoryStatus.PENDING && (
              <div className="absolute inset-0 bg-black/60 backdrop-blur-[1px] flex flex-col items-center justify-center z-20">
                  <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center mb-2 animate-pulse border border-white/20">
                     <i className="fa-solid fa-hourglass-half text-white text-lg"></i>
@@ -91,7 +94,7 @@ export const StoryCard: React.FC<StoryCardProps> = ({
              </div>
           )}
 
-          {status === 'processing' && (
+          {status === StoryStatus.PROCESSING && (
              <div className="absolute inset-0 bg-black/60 backdrop-blur-[1px] flex flex-col items-center justify-center z-20">
                  <div className="relative w-12 h-12 flex items-center justify-center mb-2">
                     <div className="absolute inset-0 border-4 border-magic-purple/30 rounded-full"></div>
@@ -102,7 +105,7 @@ export const StoryCard: React.FC<StoryCardProps> = ({
              </div>
           )}
 
-          {status === 'failed' && (
+          {status === StoryStatus.FAILED && (
              <div className="absolute inset-0 bg-red-900/60 backdrop-blur-[1px] flex flex-col items-center justify-center z-20">
                  <div className="w-10 h-10 rounded-full bg-red-500/20 flex items-center justify-center mb-2 border border-red-500/30">
                     <i className="fa-solid fa-triangle-exclamation text-red-400 text-lg"></i>
@@ -128,7 +131,7 @@ export const StoryCard: React.FC<StoryCardProps> = ({
                 disabled={isActionDisabled}
                 className={`flex-1 text-xs py-2 h-8 ${isActionDisabled ? 'opacity-50 bg-white/5 text-gray-500 cursor-not-allowed shadow-none border border-white/5' : 'bg-magic-blue hover:bg-blue-600 shadow-lg shadow-blue-500/20'}`}
              >
-                {status === 'processing' ? 'Wait...' : (status === 'failed' ? 'Error' : 'Read Story')}
+                {status === StoryStatus.PROCESSING ? 'Wait...' : (status === StoryStatus.FAILED ? 'Error' : 'Read Story')}
              </Button>
           )}
           

@@ -118,6 +118,13 @@ export interface GeneratedPage {
     image?: string; // Direct URL for dummy/pre-generated stories
 }
 
+export enum StoryStatus {
+    COMPLETED = 'completed',
+    PENDING = 'pending',
+    PROCESSING = 'processing',
+    FAILED = 'failed',
+}
+
 export interface GeneratedStory {
     id?: string;
     title: string;
@@ -127,7 +134,7 @@ export interface GeneratedStory {
     formattedDate?: string;
     coverImage?: string;
     heroName?: string;
-    status?: 'completed' | 'pending' | 'processing' | 'failed';
+    status?: StoryStatus;
 }
 
 export interface GeneratedVideo {

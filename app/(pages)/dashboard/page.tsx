@@ -14,10 +14,11 @@ import { DASHBOARD_PATHS, PATHS } from '@/app/constants/relativeRoutePaths';
 export const DashboardPage: React.FC = () => {
     const router = useRouter();
     const { user } = useAuth();
-    const { config, stories, storiesLoaded } = useStory();
+    const { config, stories, storiesLoaded, setStories } = useStory();
 
     const { t } = useLanguage();
     const [downloadingId, setDownloadingId] = useState<number | null>(null);
+    const [storyToDelete, setStoryToDelete] = useState<GeneratedStory | null>(null);
 
     const latestHeroName = stories?.length > 0 && stories[0].heroName
         ? stories[0].heroName
@@ -47,10 +48,26 @@ export const DashboardPage: React.FC = () => {
         }, 2000);
     };
 
+    const handleDeleteStory = async (story: GeneratedStory) => {
+        if (!story.id) return;
+
+        try {
+            const res = await fetch(`/api/firebase/stories/${story.id}`, { method: 'DELETE' });
+            if (!res.ok) {
+                console.error('Failed to delete story:', res.status);
+                return;
+            }
+            setStories(prev => prev.filter(item => item.id !== story.id));
+            setStoryToDelete(null);
+        } catch (error) {
+            console.error('Failed to delete story:', error);
+        }
+    };
+
     const isLibraryLoading = !storiesLoaded;
     const placeholderStories = useMemo<(GeneratedStory | null)[]>(() => Array.from({ length: 4 }, () => null), []);
     const itemsToRender: (GeneratedStory | null)[] = isLibraryLoading ? placeholderStories : stories;
-    console.log({itemsToRender})
+    
     return (
         <>
             {/* Header Area */}
@@ -113,10 +130,10 @@ export const DashboardPage: React.FC = () => {
                                 : undefined
                         }
                         onDelete={
-                            story
+                            story?.id
                                 ? (e) => {
                                     e.stopPropagation();
-                                    // deleteStory(index);
+                                    setStoryToDelete(story);
                                 }
                                 : undefined
                         }
@@ -124,6 +141,34 @@ export const DashboardPage: React.FC = () => {
                     />
                 )}
             />
+            {storyToDelete && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4">
+                    <div className="w-full max-w-md rounded-2xl border border-white/10 bg-magic-card p-6 shadow-xl">
+                        <h3 className="text-xl font-black text-white mb-2">Delete story?</h3>
+                        <p className="text-sm text-gray-400 mb-6">
+                            Are you sure you want to delete "{storyToDelete.title}"? This can’t be undone.
+                        </p>
+                        <div className="flex gap-3 justify-end">
+                            <Button
+                                size="sm"
+                                variant="transparent"
+                                className="bg-white/5 hover:bg-white/10"
+                                onClick={() => setStoryToDelete(null)}
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                size="sm"
+                                variant="transparent"
+                                className="bg-red-600 hover:bg-red-700"
+                                onClick={() => handleDeleteStory(storyToDelete)}
+                            >
+                                Delete
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </>
     );
 };
