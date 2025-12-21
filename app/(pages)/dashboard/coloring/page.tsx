@@ -1,16 +1,22 @@
 
 'use client';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { useStory } from '@/app/contexts/StoryContext';
 import { Button } from '@/app/components/Button';
 import { ColoringCard } from '../components/ColoringCard';
 import { DashboardSection } from '../components/DashboardSection';
 import { GeneratedImage } from '@/app/types';
+import { useLanguage } from '@/app/contexts/LanguageContext';
 
 export const Coloring: React.FC = () => {
     const router = useRouter();
-    const { savedImages, t, deleteImage } = useStory();
+    const { drawImages, imagesLoaded } = useStory();
+    const { t } = useLanguage();
+    const isImagesLoading = !imagesLoaded;
+    const placeholderImages = useMemo<(GeneratedImage | null)[]>(() => Array.from({ length: 3 }, () => null), []);
+    const imagesToRender = isImagesLoading ? placeholderImages : drawImages;
+    const imageCount = imagesLoaded ? drawImages.length : 0;
 
     const handleCreateNewDrawing = () => {
         router.push('/create-drawing');
@@ -44,7 +50,7 @@ export const Coloring: React.FC = () => {
                         Printable magic for your little artist.
                     </p>
                 </div>
-                <Button onClick={handleCreateNewDrawing} size="md" className="shadow-lg shadow-blue-500/20 bg-magic-blue hover:bg-blue-600">
+                <Button onClick={handleCreateNewDrawing} size="md" variant="transparent" className="shadow-lg shadow-blue-500/20 bg-magic-blue hover:bg-blue-600">
                     New Drawing <i className="fa-solid fa-pen-nib ml-2"></i>
                 </Button>
             </div>
@@ -53,11 +59,11 @@ export const Coloring: React.FC = () => {
                 title={t('dash_drawings')}
                 icon="fa-palette"
                 iconColor="text-magic-blue"
-                count={savedImages.length}
+                count={imageCount}
                 countLabel="coloring"
                 badgeColor="text-blue-400"
                 dotColor="bg-magic-blue"
-                items={savedImages}
+                items={imagesToRender}
                 onCreate={handleCreateNewDrawing}
                 gridCols="grid-cols-1 lg:grid-cols-3"
                 emptyState={{
@@ -66,18 +72,23 @@ export const Coloring: React.FC = () => {
                     buttonLabel: t('dash_create_drawing'),
                     buttonIcon: 'fa-wand-magic-sparkles'
                 }}
-                createCard={{
-                    title: t('dash_create_drawing'),
-                    subtext: "1 Credit",
-                    icon: "fa-plus",
-                    theme: "blue"
-                }}
-                renderItem={(img) => (
+                createCard={
+                    isImagesLoading
+                        ? undefined
+                        : {
+                            title: t('dash_create_drawing'),
+                            subtext: "1 Credit",
+                            icon: "fa-plus",
+                            theme: "blue",
+                        }
+                }
+                renderItem={(img: GeneratedImage | null, index: number) => (
                     <ColoringCard
-                        key={img.id}
-                        image={img}
-                        onPrint={(e) => handlePrintDrawing(e, img)}
-                        onDelete={(e) => { e.stopPropagation(); deleteImage(img.id); }}
+                        key={img ? img.id ?? `image-${index}` : `image-placeholder-${index}`}
+                        image={img || undefined}
+                        isLoading={isImagesLoading}
+                        onPrint={img ? (e) => handlePrintDrawing(e, img) : undefined}
+                        onDelete={img ? (e) => { e.stopPropagation(); } : undefined}
                     />
                 )}
             />

@@ -2,12 +2,14 @@ import { NextRequest, NextResponse } from "next/server";
 import { adminAuth, adminFirestore } from "@/lib/firestore/firebaseAdmin";
 
 export async function GET(req: NextRequest) {
+    const nullUserResponse = (status: number) => NextResponse.json({ user: null }, { status });
+
     try {
         // Get the session cookie
         const sessionCookie = req.cookies.get("session")?.value;
 
         if (!sessionCookie) {
-            return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+            return nullUserResponse(401);
         }
 
         // Verify the session cookie
@@ -18,7 +20,7 @@ export async function GET(req: NextRequest) {
         const userDoc = await adminFirestore.collection("users").doc(uid).get();
 
         if (!userDoc.exists) {
-            return NextResponse.json({ error: "User not found" }, { status: 404 });
+            return nullUserResponse(404);
         }
 
         const userData = userDoc.data();
@@ -34,6 +36,7 @@ export async function GET(req: NextRequest) {
 
     } catch (error: any) {
         console.error("Error fetching user data:", error);
-        return NextResponse.json({ error: "Failed to fetch user data" }, { status: 500 });
+        const isAuthError = typeof error?.code === "string" && error.code.startsWith("auth/");
+        return nullUserResponse(isAuthError ? 401 : 500);
     }
 }

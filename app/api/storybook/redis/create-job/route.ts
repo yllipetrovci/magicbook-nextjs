@@ -1,4 +1,5 @@
 import { redis } from "@/lib/redis"
+import { serverTimestamp } from "firebase/firestore"
 import { nanoid } from "nanoid"
 
 export async function POST(req: Request) {
@@ -18,7 +19,7 @@ export async function POST(req: Request) {
     JSON.stringify({
       jobId,
       config: body,
-      createdAt: Date.now(),
+      createdAt: serverTimestamp()
     })
   )
 

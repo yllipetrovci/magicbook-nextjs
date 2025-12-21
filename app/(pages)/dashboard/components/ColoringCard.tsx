@@ -60,7 +60,7 @@ export const ColoringCard: React.FC<ColoringCardProps> = ({
             </div>
 
             <h3 className="text-sm font-black text-white mb-1 line-clamp-1" title={image.title}>{image.title}</h3>
-            <p className="text-[10px] text-gray-500 mb-3">{new Date(image.date).toLocaleDateString()}</p>
+            <p className="text-[10px] text-gray-500 mb-3">{image.formattedDate}</p>
 
             <div className="mt-auto flex gap-2">
                 {onPrint && (

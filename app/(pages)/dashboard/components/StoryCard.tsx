@@ -59,6 +59,7 @@ export const StoryCard: React.FC<StoryCardProps> = ({
     );
   }
 
+  console.log(story);
   const status = story?.status || 'completed';
   const isActionDisabled = status === 'pending' || status === 'processing' || status === 'failed';
 
@@ -114,7 +115,7 @@ export const StoryCard: React.FC<StoryCardProps> = ({
       <h3 className="text-base font-black text-white mb-0.5 line-clamp-1" title={story.title}>{story.title}</h3>
       <p className="text-xs text-gray-500 mb-3 flex items-center justify-between font-medium">
           {story.pages.length > 0 && <span>{story.pages.length} Pages</span>}
-          <span>{story.date ? new Date(story.date).toLocaleDateString() : 'Just now'}</span>
+          <span>{story.formattedDate || 'Just now'}</span>
       </p>
       
       <div className="mt-auto flex gap-2">

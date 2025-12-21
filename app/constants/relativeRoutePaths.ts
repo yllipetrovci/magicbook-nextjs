@@ -22,7 +22,8 @@ export const PATHS = {
     DASHBOARD: '/dashboard',
     UPSELL_BOOK: '/upsell-book',
     UPSELL_VIDEO: '/upsell-video',
-    UPSELL_DAILY: '/upsell-daily'
+    UPSELL_DAILY: '/upsell-daily',
+    READ_STORY: '/read-story',
 
 } as const;
 
@@ -32,6 +33,7 @@ export const DASHBOARD_PATHS = {
     VIDEOS: '/dashboard/videos',
     COLORING: '/dashboard/coloring',
     INVITE: '/dashboard/invite',
-    // CREDITS: '/dashboard/credits',
+    READING_STYLE: '/dashboard/reading-style',
+    CREDITS: '/dashboard/credits',
 
 } as const;

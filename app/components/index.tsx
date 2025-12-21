@@ -1,5 +1,4 @@
 export * from './BookGallery';
-export * from './BookReader';
 export * from './Button';
 export * from './CreationStepper';
 export * from './FloatingSparkles';

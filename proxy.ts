@@ -1,12 +1,12 @@
 // proxy.ts
 import { NextRequest, NextResponse } from "next/server";
-import { PATHS, STEPS_PATHS } from "./app/constants/relativeRoutePaths";
+import { DASHBOARD_PATHS, PATHS, STEPS_PATHS } from "./app/constants/relativeRoutePaths";
 
 // Routes that can be accessed only when logged OUT
 const publicOnly = ["/", "/login"];
 
 // Routes that require login
-const protectedOnly = ["/dashboard"];
+const protectedOnly = ["/dashboard", "/dashboard/read-story"];
 
 // Routes that are public for everyone
 const alwaysPublic = [
@@ -43,11 +43,12 @@ export function proxy(req: NextRequest) {
 
     // 1. ALWAYS PUBLIC → allow
     if (isPublicOnly && isLoggedIn) {
-        if (pathname !== "/dashboard" && pathname !== "/dashboard/get-coins") {
-            return NextResponse.redirect(new URL("/dashboard", req.url));
+        if (pathname !== DASHBOARD_PATHS.LIBRARY && pathname !== DASHBOARD_PATHS.CREDITS && pathname !== PATHS.READ_STORY && pathname !== DASHBOARD_PATHS.READING_STYLE
+            && pathname !== DASHBOARD_PATHS.INVITE && pathname !== DASHBOARD_PATHS.COLORING && pathname !== DASHBOARD_PATHS.VIDEOS) {
+            return NextResponse.redirect(new URL(DASHBOARD_PATHS.LIBRARY, req.url));
         }
     }
-    
+
     // 3. Public-only pages but LOGGED IN → redirect to dashboard
     if (isAlwaysPublic) {
         return NextResponse.next();
@@ -58,7 +59,6 @@ export function proxy(req: NextRequest) {
         return NextResponse.redirect(new URL("/login", req.url));
     }
 
-    console.log()
 
     // 4. Default allow
     return NextResponse.next();

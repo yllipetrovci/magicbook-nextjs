@@ -6,6 +6,7 @@ import { Button } from '@/app/components/Button';
 import { useStory } from '@/app/contexts/StoryContext';
 import { PATHS } from '@/app/constants/relativeRoutePaths';
 import { upsellVideo } from '@/lib/constants/plans';
+import { useLanguage } from '@/app/contexts/LanguageContext';
 
 const FloatingSparkles = () => {
    return (

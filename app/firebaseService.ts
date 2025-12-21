@@ -6,6 +6,7 @@ import {
     doc,
     setDoc,
     addDoc,
+    FieldValue,
 } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { clientAuth, clientFirestore, clientStorage } from "../lib/firestore/firebaseClient";
@@ -15,6 +16,7 @@ import {
     sendPasswordResetEmail,
     updatePassword,
 } from "firebase/auth";
+import { serverTimestamp } from "firebase/firestore";
 
 const generateRandomString = (length = 12) => {
     const chars =
@@ -99,7 +101,7 @@ class FirebaseService {
 
         await addDoc(collection(clientFirestore, "collectionEmails"), {
             email,
-            createdAt: new Date(),
+            createdAt: serverTimestamp()
         });
 
         console.log(`📧 Email "${email}" saved to collectionEmails!`);

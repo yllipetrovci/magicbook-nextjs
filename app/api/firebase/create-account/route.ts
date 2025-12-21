@@ -5,6 +5,8 @@ import { animationStylesPrompt, AnimationStyle } from "@/lib/constants/animation
 import { plans } from "@/lib/constants/plans";
 import { createUserVideo } from "@/lib/firestore/videos";
 import { createJob } from "@/lib/redis/createJob"
+import admin from "firebase-admin";
+const serverTimestamp = admin.firestore.FieldValue.serverTimestamp;
 /* --------------------------------------------- */
 /* 7. Main POST Handler                          */
 /* --------------------------------------------- */
@@ -101,8 +103,8 @@ async function createFirestoreUser(uid: string, email: string, plan: string) {
         email,
         credits: selectedPlanItem?.credits,
         plan: selectedPlanItem?.id,
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp()
     });
 }
 
@@ -111,8 +113,8 @@ async function createFirestoreUser(uid: string, email: string, plan: string) {
 /* --------------------------------------------- */
 async function createStoryDocument(uid: string, config: any) {
     const storyRef = await adminFirestore.collection("users").doc(uid).collection("stories").add({
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        createdAt: serverTimestamp(),
+        updatedAt: serverTimestamp(),
         status: "pending", // pending, generating, completed, failed
 
         storyContent:{
@@ -181,4 +183,3 @@ function setSessionCookie(sessionCookie: string, expiresIn: number) {
 
     return response;
 }
-

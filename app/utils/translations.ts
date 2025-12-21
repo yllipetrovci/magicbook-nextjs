@@ -19,7 +19,7 @@ const enTranslations = {
 
   // Landing Page
   landing_hero_headline: "Create Magical Storybooks Starring Your Child",
-  landing_hero_sub: "Personalized kids’ books with your child's name, photo, favorite animal, and more — generated in minutes.",
+  landing_hero_sub: "Personalized kids’ books with your child's name, photo, favorite animal, and more generated in minutes.",
   landing_cta_primary: "Create Your First Storybook",
   landing_cta_secondary: "Try a Free Preview",
 

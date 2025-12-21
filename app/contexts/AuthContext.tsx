@@ -36,11 +36,15 @@ export function AuthProvider({
     try {
       setLoading(true);
 
-      const res = await fetch("/api/user/me");
+    const res = await fetch("/api/user/me");
       const data = await res.json();
 
+      if (data?.user === null) {
+        setUser(null);
+        return;
+      }
       setUser((prev) => ({
-        ...prev,
+        ...(prev || {}),
         ...data,
       }));
     } catch (err) {

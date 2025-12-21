@@ -34,12 +34,14 @@ const ResetPassword = () => {
    const [showNewPassword, setShowNewPassword] = useState(false);
    const [passwordError, setPasswordError] = useState('');
    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+   const [isSubmitting, setIsSubmitting] = useState(false);
    console.log({ config });
 
    // const { funnelData } = { funnelData: funnelDataMock }; //useFunnel();
 
    const onSubmit = async (data: FormData) => {
       try {
+         setIsSubmitting(true);
          // Exclude original images from config for job processing
          const { heroImageOriginal, parentImageOriginal, ...configWithoutOriginals } = config;
          console.log({ hasUpSellBook, hasUpSellVideo, hasUpSellDaily, mainPaymentIsDone })
@@ -77,6 +79,8 @@ const ResetPassword = () => {
    } catch (error: any) {
       console.error(error);
       toast.error(error.message || "Something went wrong");
+   } finally {
+      setIsSubmitting(false);
    }
 };
 
@@ -148,8 +152,23 @@ return (
                <p className="text-red-400 text-sm font-bold text-center bg-red-500/10 py-2 rounded-lg">{passwordError}</p>
             )}
 
-            <Button type="submit" fullWidth size="lg" className="bg-magic-purple hover:bg-purple-600 shadow-lg mt-4" disabled={!isValid}>
-               Set Password <i className="fa-solid fa-check ml-2"></i>
+            <Button
+               type="submit"
+               fullWidth
+               size="lg"
+               className="bg-magic-purple hover:bg-purple-600 shadow-lg mt-4 disabled:opacity-60 disabled:cursor-not-allowed"
+               disabled={!isValid || isSubmitting}
+            >
+               {isSubmitting ? (
+                  <>
+                     <i className="fa-solid fa-spinner fa-spin mr-2" />
+                     Saving...
+                  </>
+               ) : (
+                  <>
+                     Set Password <i className="fa-solid fa-check ml-2"></i>
+                  </>
+               )}
             </Button>
          </div>
          <div className="flex items-center justify-center gap-2 mt-6 text-xs text-gray-500">

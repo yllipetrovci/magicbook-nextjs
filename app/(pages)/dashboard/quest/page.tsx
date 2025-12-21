@@ -1,6 +1,6 @@
 
 'use client'
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { useStory } from '@/app/contexts/StoryContext';
 import { Button } from '@/app/components/Button';
@@ -58,19 +58,31 @@ const CHRISTMAS_QUEST_CHAPTERS: QuestChapter[] = [
 
 // Snow Animation Component
 const Snowfall = () => {
+    const flakes = useMemo(
+        () =>
+            Array.from({ length: 30 }, () => ({
+                top: -Math.random() * 20,
+                left: Math.random() * 100,
+                size: Math.random() * 4 + 2,
+                duration: Math.random() * 10 + 15,
+                delay: Math.random() * 5,
+            })),
+        []
+    );
+
     return (
         <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
-            {[...Array(30)].map((_, i) => (
+            {flakes.map((flake, i) => (
                 <div
                     key={i}
                     className="absolute bg-white rounded-full opacity-40 animate-float"
                     style={{
-                        top: `-${Math.random() * 20}%`,
-                        left: `${Math.random() * 100}%`,
-                        width: `${Math.random() * 4 + 2}px`,
-                        height: `${Math.random() * 4 + 2}px`,
-                        animationDuration: `${Math.random() * 10 + 15}s`,
-                        animationDelay: `${Math.random() * 5}s`
+                        top: `${flake.top}%`,
+                        left: `${flake.left}%`,
+                        width: `${flake.size}px`,
+                        height: `${flake.size}px`,
+                        animationDuration: `${flake.duration}s`,
+                        animationDelay: `${flake.delay}s`
                     }}
                 />
             ))}

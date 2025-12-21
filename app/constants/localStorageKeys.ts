@@ -10,4 +10,6 @@ export const LOCAL_STORAGE_KEYS = {
   HAS_UPSELL_BOOK: 'has_upsell_book',
   HAS_UPSELL_VIDEO: 'has_upsell_video',
   HAS_UPSELL_DAILY: 'has_upsell_daily',
+  READING_STYLE: 'app_reading_style',
+  VOICE_STYLE: 'app_voice_style',
 } as const;

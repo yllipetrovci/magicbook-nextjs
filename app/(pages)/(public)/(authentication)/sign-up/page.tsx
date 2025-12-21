@@ -7,6 +7,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { useLanguage } from '@/app/contexts/LanguageContext';
 import { PATHS } from '@/app/constants/relativeRoutePaths';
+import toast from 'react-hot-toast';
 
 interface AuthFormData {
     name?: string;
@@ -36,23 +37,35 @@ export const Auth: React.FC = () => {
             password: ''
         }
     });
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
 
 
     const onSubmit = async (data: AuthFormData) => {
         // Mock Login/Signup
         // login(data.email, data.name || data.email.split('@')[0]);
-        const res = await fetch("/api/firebase/signup", {
-            method: "POST",
-            body: JSON.stringify({ email: data.email, password: data.password }),
-            headers: { "Content-Type": "application/json" },
-        });
-        debugger;
-        if (res.ok) {
-            router.push(PATHS.DASHBOARD);
-        } else {
-            console.error("Login failed");
-            // setError("Invalid credentials");
+        setIsSubmitting(true);
+        try {
+            const res = await fetch("/api/firebase/signup", {
+                method: "POST",
+                body: JSON.stringify({ email: data.email, password: data.password }),
+                headers: { "Content-Type": "application/json" },
+            });
+            if (res.ok) {
+                router.push(PATHS.DASHBOARD);
+            } else {
+                if (res.status === 409) {
+                    toast.error(t('auth_user_exists') || 'An account with this email already exists.');
+                } else {
+                    console.error("Signup failed");
+                    toast.error('Signup failed. Please try again.');
+                }
+            }
+        } catch (error) {
+            console.error("Signup failed", error);
+            toast.error('Signup failed. Please try again.');
+        } finally {
+            setIsSubmitting(false);
         }
 
     };
@@ -108,8 +121,21 @@ export const Auth: React.FC = () => {
                         {errors.password && <span className="text-red-500 text-xs mt-1">{errors.password.message}</span>}
                     </div>
 
-                    <Button type="submit" fullWidth size="lg" className="bg-magic-purple hover:bg-purple-600 mt-6">
-                        {isLogin ? t('auth_submit_login') : t('auth_submit_signup')}
+                    <Button
+                        type="submit"
+                        fullWidth
+                        size="lg"
+                        className="bg-magic-purple hover:bg-purple-600 mt-6 disabled:opacity-60 disabled:cursor-not-allowed"
+                        disabled={isSubmitting}
+                    >
+                        {isSubmitting ? (
+                            <>
+                                <i className="fa-solid fa-spinner fa-spin mr-2" />
+                                {'Processing...'}
+                            </>
+                        ) : (
+                            t('auth_submit_signup')
+                        )}
                     </Button>
                 </form>
 

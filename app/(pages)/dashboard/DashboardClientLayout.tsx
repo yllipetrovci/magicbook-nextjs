@@ -23,7 +23,7 @@ export const DashboardClientLayout = ({ children }: { children: ReactNode, stori
         { id: 'library', path: DASHBOARD_PATHS.LIBRARY, label: t('dash_tab_library'), icon: 'fa-book-open', color: 'text-magic-purple' },
         { id: 'videos', path: DASHBOARD_PATHS.VIDEOS, label: t('dash_tab_videos'), icon: 'fa-film', color: 'text-magic-green' },
         { id: 'drawing', path: DASHBOARD_PATHS.COLORING, label: t('dash_tab_drawings'), icon: 'fa-palette', color: 'text-magic-blue' },
-        { id: 'invite', path: '/dashboard/invite', label: t('dash_tab_invite'), icon: 'fa-gift', color: 'text-yellow-400' },
+        { id: 'invite', path: DASHBOARD_PATHS.INVITE, label: t('dash_tab_invite'), icon: 'fa-gift', color: 'text-yellow-400' },
     ];
 
     // useEffect(() => {
@@ -36,7 +36,7 @@ export const DashboardClientLayout = ({ children }: { children: ReactNode, stori
             <div className="grid grid-cols-1 md:grid-cols-[260px_1fr] gap-8 min-h-[600px]">
 
                 {/* SIDEBAR (Desktop) / TOP TABS (Mobile) */}
-                <div className="md:sticky md:top-24 h-fit z-30">
+                <div className="hidden md:block md:sticky md:top-24 h-fit z-30">
                     <div className="bg-magic-card/50 backdrop-blur-md rounded-3xl border border-white/10 p-4 shadow-xl flex md:flex-col overflow-x-auto md:overflow-visible gap-2 md:gap-4 no-scrollbar">
                         {MENU_ITEMS.map((item) => (
                             <MenuLink
@@ -50,15 +50,27 @@ export const DashboardClientLayout = ({ children }: { children: ReactNode, stori
                     {/* Credit Balance Widget (Sidebar Bottom) */}
                     <div className="mt-6 bg-gradient-to-br from-magic-card to-gray-900 rounded-3xl p-6 border border-white/10 shadow-lg text-center hidden md:block">
                         <p className="text-gray-400 text-xs font-bold uppercase tracking-wider mb-2">Balance</p>
-                        <div className="text-4xl font-black text-white mb-1">{user?.credits ?? 0}</div>
-                        <p className="text-sm text-yellow-400 font-bold mb-4"><i className="fa-solid fa-coins"></i> Magic Credits</p>
-                        <Button size="sm" fullWidth onClick={() => router.push('/dashboard/credits')} className="bg-white/10 hover:bg-white/20 border-0">
-                            Top Up
-                        </Button>
+                        {user?.credits == null ? (
+                            <div className="flex flex-col items-center gap-2 py-4">
+                                <div className="w-8 h-8 border-4 border-white/10 border-t-magic-purple rounded-full animate-spin"></div>
+                                <span className="text-xs text-gray-400 font-bold uppercase tracking-widest">Loading credits</span>
+                            </div>
+                        ) : (
+                            <>
+                                <div className="text-4xl font-black text-white mb-1">{user.credits}</div>
+                                <p className="text-sm text-yellow-400 font-bold mb-4"><i className="fa-solid fa-coins"></i> Magic Credits</p>
+                                <Button size="sm" fullWidth onClick={() => router.push('/dashboard/credits')} className="bg-white/10 hover:bg-white/20 border-0">
+                                    Top Up
+                                </Button>
+                            </>
+                        )}
                     </div>
 
                     {/* Free Credits Widget (Sidebar Bottom) */}
-                    <div onClick={() => router.push('/dashboard/invite')} className="mt-4 bg-gradient-to-br from-indigo-600/20 to-purple-600/20 rounded-3xl p-6 border border-white/10 shadow-xl text-center hidden md:block cursor-pointer hover:border-yellow-400/50 hover:shadow-yellow-400/10 transition-all group relative overflow-hidden">
+                    <div onClick={() => {
+                     console.log("CLICKED DASHBOARD INVITE")
+                     router.push('/dashboard/invite')
+                    }} className="mt-4 bg-gradient-to-br from-indigo-600/20 to-purple-600/20 rounded-3xl p-6 border border-white/10 shadow-xl text-center hidden md:block cursor-pointer hover:border-yellow-400/50 hover:shadow-yellow-400/10 transition-all group relative overflow-hidden">
                         <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl from-yellow-400/20 to-transparent rounded-bl-full -mr-8 -mt-8 pointer-events-none"></div>
 
                         <div className="w-14 h-14 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-2xl flex items-center justify-center mx-auto mb-3 shadow-lg transform group-hover:scale-110 group-hover:rotate-3 transition-all">

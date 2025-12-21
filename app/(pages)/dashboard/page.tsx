@@ -1,6 +1,6 @@
 
 'use client';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useStory } from '@/app/contexts/StoryContext';
 import { useAuth } from '@/app/contexts/AuthContext';
@@ -9,11 +9,12 @@ import { StoryCard } from './components/StoryCard';
 import { DashboardSection } from './components/DashboardSection';
 import { GeneratedStory } from '@/app/types';
 import { useLanguage } from '@/app/contexts/LanguageContext';
+import { DASHBOARD_PATHS, PATHS } from '@/app/constants/relativeRoutePaths';
 
 export const DashboardPage: React.FC = () => {
     const router = useRouter();
     const { user } = useAuth();
-    const { config, stories } = useStory();
+    const { config, stories, storiesLoaded } = useStory();
 
     const { t } = useLanguage();
     const [downloadingId, setDownloadingId] = useState<number | null>(null);
@@ -32,7 +33,7 @@ export const DashboardPage: React.FC = () => {
 
     const handleReadStory = (story: GeneratedStory) => {
         // setGeneratedStory(story);
-        router.push('/read');
+        router.push(PATHS.READ_STORY);
     };
 
     const handleDownloadPdf = (e: React.MouseEvent, index: number, story: GeneratedStory) => {
@@ -46,6 +47,10 @@ export const DashboardPage: React.FC = () => {
         }, 2000);
     };
 
+    const isLibraryLoading = !storiesLoaded;
+    const placeholderStories = useMemo<(GeneratedStory | null)[]>(() => Array.from({ length: 4 }, () => null), []);
+    const itemsToRender: (GeneratedStory | null)[] = isLibraryLoading ? placeholderStories : stories;
+    console.log({itemsToRender})
     return (
         <>
             {/* Header Area */}
@@ -65,20 +70,20 @@ export const DashboardPage: React.FC = () => {
                     <button onClick={() => router.push('/dashboard/credits')} className="w-6 h-6 bg-white/20 rounded-full flex items-center justify-center text-white text-xs"><i className="fa-solid fa-plus"></i></button>
                 </div>
 
-                <Button onClick={handleCreateNew} size="md" className="shadow-lg shadow-purple-500/20">
+                <Button onClick={handleCreateNew} size="md" variant="transparent" className="shadow-lg shadow-purple-500/20 bg-magic-blue hover:bg-blue-600">
                     Create Story <i className="fa-solid fa-wand-magic-sparkles ml-2"></i>
                 </Button>
             </div>
 
-            <DashboardSection
+            <DashboardSection<GeneratedStory | null>
                 title={t('dash_library')}
                 icon="fa-book-open-reader"
                 iconColor="text-magic-purple"
-                count={stories.length}
+                count={storiesLoaded ? stories.length : 0}
                 countLabel="stories"
                 badgeColor="text-green-400"
                 dotColor="bg-green-500"
-                items={stories}
+                items={itemsToRender}
                 onCreate={handleCreateNew}
                 emptyState={{
                     icon: 'fa-box-open',
@@ -86,28 +91,38 @@ export const DashboardPage: React.FC = () => {
                     buttonLabel: t('dash_create_new'),
                     buttonIcon: 'fa-wand-magic-sparkles'
                 }}
-                createCard={{
-                    title: t('dash_create_new'),
-                    subtext: "1 Credit",
-                    icon: "fa-plus",
-                    theme: "purple"
-                }}
-                renderItem={(story, index) => {
-                    console.log(story);
-                    return (
-                        <StoryCard
-                            key={index}
-                            story={story || {}}
-                            onRead={() => handleReadStory(story)}
-                            onDownload={(e) => handleDownloadPdf(e, index, story)}
-                            onDelete={(e) => {
-                                e.stopPropagation();
-                                // deleteStory(index);
-                            }}
-                            isDownloading={downloadingId === index}
-                        />
-                    )
-                }}
+                createCard={
+                    isLibraryLoading
+                        ? undefined
+                        : {
+                            title: t('dash_create_new'),
+                            subtext: "1 Credit",
+                            icon: "fa-plus",
+                            theme: "purple"
+                        }
+                }
+                renderItem={(story, index) => (
+                    <StoryCard
+                        key={story?.id ?? `placeholder-${index}`}
+                        story={story || undefined}
+                        isLoading={isLibraryLoading}
+                        onRead={story ? () => handleReadStory(story) : undefined}
+                        onDownload={
+                            story
+                                ? (e) => handleDownloadPdf(e, index, story)
+                                : undefined
+                        }
+                        onDelete={
+                            story
+                                ? (e) => {
+                                    e.stopPropagation();
+                                    // deleteStory(index);
+                                }
+                                : undefined
+                        }
+                        isDownloading={!story ? false : downloadingId === index}
+                    />
+                )}
             />
         </>
     );

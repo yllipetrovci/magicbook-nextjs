@@ -1,5 +1,6 @@
 import { adminFirestore } from "@/lib/firestore/firebaseAdmin";
 import { sanitizeFirestore } from "./sanitizeFirestore";
+import { serverTimestamp } from "firebase/firestore";
 
 export interface CreateVideoInput {
     taskId: string;
@@ -24,8 +25,8 @@ export async function createUserVideo(
         const payload = {
             ...videoData,
             videoId: videoRef.id,
-            createdAt: new Date(),
-            updatedAt: new Date(),
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp()
         };
 
         await videoRef.set(payload);

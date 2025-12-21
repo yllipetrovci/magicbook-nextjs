@@ -12,7 +12,7 @@ import { useLanguage } from "../contexts/LanguageContext";
 import { useAuth } from "../contexts/AuthContext";
 import { useStory } from "../contexts/StoryContext";
 import { User } from "../types";
-import { PATHS } from "../constants/relativeRoutePaths";
+import { DASHBOARD_PATHS, PATHS, STEPS_PATHS } from "../constants/relativeRoutePaths";
 
 const HeroBackground: React.FC = () => {
     const defaultIcons = [
@@ -45,6 +45,7 @@ export function RootLayoutClient({ children }: { children: React.ReactNode }) {
     const router = useRouter();
     const { t, language, setLanguage } = useLanguage();
     const { user, setUser }: any = useAuth();
+    console.log("user in RootLayoutClient:", user);
     const { resetAll } = useStory();
     const [showUserMenu, setShowUserMenu] = useState(false);
     const [showLangMenu, setShowLangMenu] = useState(false);
@@ -56,6 +57,9 @@ export function RootLayoutClient({ children }: { children: React.ReactNode }) {
     const isDashboardRoute = pathname?.startsWith('/dashboard');
     const isUpsellRoute = pathname?.startsWith('/upsell');
     const isShowCuponRoute = pathname?.startsWith('/steps/show-cupon');
+    const isReadStoryRoute = pathname?.startsWith('/read-story');
+    const isActive = (route: string) => pathname === route;
+
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -85,8 +89,9 @@ export function RootLayoutClient({ children }: { children: React.ReactNode }) {
     // Non-dashboard routes get the navbar and main wrapper
     return (
         <div className="min-h-screen flex flex-col relative">
-            <HeroBackground />
-            <ProgressBar />
+
+            {!isReadStoryRoute && <HeroBackground />}
+            {!isReadStoryRoute && <ProgressBar />}
 
             <nav className="w-full p-4 md:p-6 flex justify-between items-center relative z-20">
 
@@ -107,6 +112,7 @@ export function RootLayoutClient({ children }: { children: React.ReactNode }) {
 
                 {/* Right Side: Language & Auth */}
                 <div className="flex items-center gap-4 relative">
+                    
 
                     {/* Language Selector */}
                     <div className="relative" ref={langMenuRef}>
@@ -146,7 +152,7 @@ export function RootLayoutClient({ children }: { children: React.ReactNode }) {
                             {/* User Menu Trigger: Initials */}
                             <button
                                 onClick={() => setShowUserMenu(!showUserMenu)}
-                                className="w-10 h-10 rounded-full bg-gradient-to-br from-magic-purple to-indigo-600 flex items-center justify-center text-white font-bold shadow-lg border-2 border-white/20 hover:border-white/50 transition-all hover:scale-105 active:scale-95"
+                                className="w-10 h-10 rounded-full cursor-pointer bg-gradient-to-br from-magic-purple to-indigo-600 flex items-center justify-center text-white font-bold shadow-lg border-2 border-white/20 hover:border-white/50 transition-all hover:scale-105 active:scale-95"
                                 title="User Menu"
                             >
                                 {getInitials(user)}
@@ -163,8 +169,14 @@ export function RootLayoutClient({ children }: { children: React.ReactNode }) {
 
                                     {/* Menu Items */}
                                     <div className="py-2">
-                                        <button onClick={() => { router.push('/dashboard'); setShowUserMenu(false); }} className="w-full text-left px-5 py-3 text-sm text-gray-300 hover:text-white hover:bg-white/5 flex items-center gap-3 transition-colors">
+                                        {/* <button onClick={() => { router.push(DASHBOARD_PATHS.LIBRARY); setShowUserMenu(false); }} className="w-full text-left px-5 py-3 text-sm text-gray-300 hover:text-white hover:bg-white/5 flex items-center gap-3 transition-colors">
                                             <i className="fa-solid fa-grid-2 text-magic-blue w-5 text-center"></i> {t('nav_dashboard')}
+                                        </button> */}
+                                        <button onClick={() => { router.push(DASHBOARD_PATHS.LIBRARY); setShowUserMenu(false); }} className="w-full text-left px-5 py-3 text-sm text-gray-300 hover:text-white hover:bg-white/5 flex items-center gap-3 transition-colors">
+                                            <i className="fa-solid fa-book-open text-magic-purple w-5 text-center"></i> {t('dash_tab_library')}
+                                        </button>
+                                        <button onClick={() => { router.push(DASHBOARD_PATHS.READING_STYLE); setShowUserMenu(false); }} className="w-full text-left px-5 py-3 text-sm text-gray-300 hover:text-white hover:bg-white/5 flex items-center gap-3 transition-colors">
+                                            <i className="fa-solid fa-sliders text-magic-orange w-5 text-center"></i> Reader Style
                                         </button>
                                         <button onClick={() => { router.push('/hero'); setShowUserMenu(false); }} className="w-full text-left px-5 py-3 text-sm text-gray-300 hover:text-white hover:bg-white/5 flex items-center gap-3 transition-colors">
                                             <i className="fa-solid fa-wand-magic-sparkles text-magic-purple w-5 text-center"></i> Create New
@@ -205,11 +217,46 @@ export function RootLayoutClient({ children }: { children: React.ReactNode }) {
                 </div>
             </nav>
 
+            {/* MOBILE BOTTOM NAVIGATION BAR */}
+            {user && (
+                <div className="md:hidden fixed bottom-0 left-0 right-0 h-20 bg-magic-bg/80 backdrop-blur-xl border-t border-white/10 z-[100] flex items-center justify-around px-4">
+                    <Link href="/dashboard" className={`flex flex-col items-center gap-1 transition-all ${isActive('/dashboard') ? 'text-magic-purple scale-110' : 'text-gray-500'}`}>
+                        <i className={`fa-solid fa-book-bookmark text-xl`}></i>
+                        <span className="text-[10px] font-black uppercase tracking-widest">Library</span>
+                    </Link>
+
+                    <Link href="/dashboard/videos" className={`flex flex-col items-center gap-1 transition-all ${isActive('/dashboard/videos') ? 'text-magic-green scale-110' : 'text-gray-500'}`}>
+                        <i className={`fa-solid fa-film text-xl`}></i>
+                        <span className="text-[10px] font-black uppercase tracking-widest">Videos</span>
+                    </Link>
+
+                    {/* CENTRAL ACTION BUTTON */}
+                    <div className="relative -top-6">
+                        <button
+                            onClick={() => router.push(STEPS_PATHS?.STEP_1 || '/steps/name')}
+                            className="w-16 h-16 rounded-full bg-gradient-to-br from-magic-purple to-indigo-600 border-4 border-magic-bg flex items-center justify-center text-white text-2xl shadow-[0_10px_20px_rgba(139,92,246,0.5)] transform active:scale-90 transition-transform"
+                        >
+                            <i className="fa-solid fa-plus"></i>
+                        </button>
+                    </div>
+
+                    <Link href="/quest" className={`flex flex-col items-center gap-1 transition-all ${isActive('/quest') ? 'text-magic-orange scale-110' : 'text-gray-500'}`}>
+                        <i className={`fa-solid fa-map-location-dot text-xl`}></i>
+                        <span className="text-[10px] font-black uppercase tracking-widest">Quest</span>
+                    </Link>
+
+                    <Link href="/dashboard/credits" className={`flex flex-col items-center gap-1 transition-all ${isActive('/dashboard/credits') ? 'text-magic-blue scale-110' : 'text-gray-500'}`}>
+                        <i className={`fa-solid fa-gauge-high text-xl`}></i>
+                        <span className="text-[10px] font-black uppercase tracking-widest">Dash</span>
+                    </Link>
+                </div>
+            )}
+
             <main className="flex-grow relative z-10">
                 {children}
             </main>
 
-            <footer className="bg-magic-bg/80 backdrop-blur-lg py-12 border-t border-white/5 mt-20 relative z-10">
+            {!isReadStoryRoute && <footer className="bg-magic-bg/80 backdrop-blur-lg py-12 border-t border-white/5 mt-20 relative z-10">
                 <div className="max-w-6xl mx-auto px-6 flex flex-col md:flex-row items-start justify-between gap-8">
                     <div className="flex flex-col gap-4 max-w-xs">
                         <div className="flex items-center gap-2">
@@ -256,8 +303,7 @@ export function RootLayoutClient({ children }: { children: React.ReactNode }) {
                 <div className="max-w-6xl mx-auto px-6 mt-12 pt-8 border-t border-white/5 text-center text-xs text-gray-500">
                     © 2025 AI Magic Book. All rights reserved.
                 </div>
-            </footer>
+            </footer>}
         </div>
     );
 }
-

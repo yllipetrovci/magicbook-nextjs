@@ -69,7 +69,7 @@ export const VideoCard: React.FC<VideoCardProps> = ({
             </div>
 
             <h3 className="text-sm font-black text-white mb-1 line-clamp-1" title={video.title}>{video.title}</h3>
-            <p className="text-[10px] text-gray-500 mb-3">{new Date(video.date).toLocaleDateString()}</p>
+            <p className="text-[10px] text-gray-500 mb-3">{video.formattedDate}</p>
 
             <div className="mt-auto flex gap-2">
                 {onWatch && (

@@ -44,6 +44,21 @@ export interface StoryResponse {
 }
 
 
+export enum VoiceStyle {
+    NARRATOR = 'narrator',
+    GRANDMA = 'grandma',
+    WIZARD = 'wizard',
+    PIXIE = 'pixie'
+}
+
+export enum ReadingStyle {
+    MODERN = 'modern',     // Image Top, Text Bottom
+    CINEMATIC = 'cinematic', // Full image, Text Overlay (Glass Card)
+    SPLIT = 'split',        // Image Left, Text Right (Desktop)
+    MINIMAL = 'minimal',    // Clean Canvas (Image Top, Text floats on page)
+    OVERLAY = 'overlay'     // Immersive Overlay (Text floats on bottom of full-page image)
+}
+
 
 
 //MAGIC BOOK
@@ -104,10 +119,12 @@ export interface GeneratedPage {
 }
 
 export interface GeneratedStory {
+    id?: string;
     title: string;
     author?: string;
     pages: GeneratedPage[];
     date?: string;
+    formattedDate?: string;
     coverImage?: string;
     heroName?: string;
     status?: 'completed' | 'pending' | 'processing' | 'failed';
@@ -119,6 +136,7 @@ export interface GeneratedVideo {
     thumbnail: string;
     videoUrl: string;
     date: string;
+    formattedDate?: string;
     duration: string;
 }
 
@@ -128,6 +146,7 @@ export interface GeneratedImage {
     imageUrl: string;
     date: string;
     prompt: string;
+    formattedDate?: string;
 }
 
 export const DEFAULT_CONFIG: StoryConfig = {
@@ -203,5 +222,3 @@ export type Job = {
     progress: number
     resultId?: string
 }
-
-

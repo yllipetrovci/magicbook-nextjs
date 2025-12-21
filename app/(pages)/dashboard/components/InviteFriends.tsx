@@ -2,14 +2,16 @@
 import React, { useState } from 'react';
 import { Button } from '@/app/components/Button';
 import { useStory } from '@/app/contexts/StoryContext';
+import { useAuth } from '@/app/contexts/AuthContext';
 import { useLanguage } from '@/app/contexts/LanguageContext';
 
 export const InviteFriends: React.FC = () => {
-    const { user } = useStory();
-    const [copied, setCopied] = useState(false);
+    const { user }:any = useAuth()
     const { t } = useLanguage();
+    const [copied, setCopied] = useState(false);
+
     // Generate a mock code based on user name or fallback
-    const referralCode = user?.name ? `${user.name.split(' ')[0].toUpperCase()}2024` : "MAGIC2024";
+    const referralCode = user ? user.uid : '';
     const referralLink = `https://aimagicbook.com/join?ref=${referralCode}`;
 
     const handleCopy = () => {
@@ -18,8 +20,10 @@ export const InviteFriends: React.FC = () => {
         setTimeout(() => setCopied(false), 2000);
     };
 
+    console.log({user})
+
     return (
-        <div className="flex flex-col items-center justify-center h-full p-4 animate-fade-in">
+        <div className="flex flex-col items-center p-4 animate-fade-in">
 
             <div className="text-center mb-10 max-w-2xl">
                 <div className="w-24 h-24 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center mx-auto mb-6 shadow-[0_0_40px_rgba(251,191,36,0.4)] animate-float">
@@ -49,43 +53,58 @@ export const InviteFriends: React.FC = () => {
                 ))}
             </div>
 
-            {/* Copy Box */}
-            <div className="w-full max-w-xl bg-magic-card/80 p-8 rounded-3xl border-2 border-magic-purple/30 shadow-2xl relative overflow-hidden">
+            {/* Copy Box - Redesigned to show full link and prevent cropping */}
+            <div className="w-full max-w-2xl bg-magic-card/80 p-6 md:p-8 rounded-[2rem] border-2 border-magic-purple/30 shadow-2xl relative overflow-hidden">
                 <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-orange-500"></div>
 
-                <label className="block text-gray-400 font-bold mb-3 uppercase tracking-wider text-xs text-center">{t('inv_code_label')}</label>
+                <label className="block text-gray-400 font-bold mb-4 uppercase tracking-wider text-xs text-center">{t('inv_code_label')}</label>
 
-                <div className="flex flex-col md:flex-row gap-3">
-                    <div className="flex-1 bg-black/40 border border-white/10 rounded-xl p-4 flex items-center justify-between group cursor-pointer" onClick={handleCopy}>
-                        <span className="text-white font-mono text-lg truncate">{referralLink}</span>
-                        <i className="fa-regular fa-copy text-gray-500 group-hover:text-white transition-colors"></i>
+                <div className="flex flex-col gap-4">
+                    {/* Link Area - No truncation, break-all for long URLs */}
+                    <div
+                        className="w-full bg-black/40 border border-white/10 rounded-2xl p-5 flex flex-col md:flex-row items-center justify-between gap-4 group hover:border-magic-purple/40 transition-all cursor-pointer"
+                        onClick={handleCopy}
+                    >
+                        <span className="text-white font-mono text-sm md:text-base break-all text-center md:text-left flex-1 selection:bg-magic-purple selection:text-white">
+                            {referralLink}
+                        </span>
+                        <div className="flex-shrink-0 flex items-center gap-2 text-magic-purple font-bold text-xs uppercase tracking-widest bg-magic-purple/10 px-3 py-1.5 rounded-full border border-magic-purple/20">
+                            <i className="fa-regular fa-copy"></i>
+                            <span>{copied ? 'Copied' : 'Click to Copy'}</span>
+                        </div>
                     </div>
+
+                    {/* Easy Copy Button - Large and prominent */}
                     <Button
                         onClick={handleCopy}
-                        className={`min-w-[140px] shadow-lg ${copied ? 'bg-green-500 hover:bg-green-600' : 'bg-magic-purple hover:bg-purple-600'}`}
+                        fullWidth
+                        size="lg"
+                        variant='transparent'
+                        className={`h-16 text-lg md:text-xl shadow-[0_10px_20px_rgba(0,0,0,0.3)] transition-all transform active:scale-95 ${copied ? 'bg-green-500 hover:bg-green-600 border-green-700' : 'bg-magic-purple hover:bg-purple-600 border-purple-800'} border-b-4`}
                     >
                         {copied ? (
-                            <><i className="fa-solid fa-check mr-2"></i> {t('inv_copied')}</>
+                            <><i className="fa-solid fa-check-circle mr-3 text-2xl"></i> {t('inv_copied')}</>
                         ) : (
-                            <><i className="fa-solid fa-link mr-2"></i> {t('inv_btn_copy')}</>
+                            <><i className="fa-solid fa-copy mr-3 text-2xl"></i> Copy Magic Link</>
                         )}
                     </Button>
                 </div>
 
                 {/* Social Shares */}
-                <div className="flex justify-center gap-4 mt-8">
-                    <button className="w-12 h-12 rounded-full bg-[#1877F2] text-white flex items-center justify-center hover:scale-110 transition-transform shadow-lg">
-                        <i className="fa-brands fa-facebook-f"></i>
-                    </button>
-                    <button className="w-12 h-12 rounded-full bg-[#1DA1F2] text-white flex items-center justify-center hover:scale-110 transition-transform shadow-lg">
-                        <i className="fa-brands fa-twitter"></i>
-                    </button>
-                    <button className="w-12 h-12 rounded-full bg-[#25D366] text-white flex items-center justify-center hover:scale-110 transition-transform shadow-lg">
-                        <i className="fa-brands fa-whatsapp"></i>
-                    </button>
-                    <button className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 text-white flex items-center justify-center hover:scale-110 transition-transform shadow-lg">
-                        <i className="fa-brands fa-instagram"></i>
-                    </button>
+                <div className="flex justify-center gap-5 mt-10">
+                    {[
+                        { icon: 'fa-facebook-f', color: 'bg-[#1877F2]', shadow: 'shadow-[#1877F2]/20' },
+                        { icon: 'fa-twitter', color: 'bg-[#1DA1F2]', shadow: 'shadow-[#1DA1F2]/20' },
+                        { icon: 'fa-whatsapp', color: 'bg-[#25D366]', shadow: 'shadow-[#25D366]/20' },
+                        { icon: 'fa-instagram', color: 'bg-gradient-to-br from-purple-500 to-pink-500', shadow: 'shadow-pink-500/20' }
+                    ].map((social, i) => (
+                        <button
+                            key={i}
+                            className={`w-12 h-12 rounded-full ${social.color} text-white flex items-center justify-center hover:scale-110 hover:-translate-y-1 transition-all shadow-lg ${social.shadow}`}
+                        >
+                            <i className={`fa-brands ${social.icon} text-lg`}></i>
+                        </button>
+                    ))}
                 </div>
             </div>
         </div>

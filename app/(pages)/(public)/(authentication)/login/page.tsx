@@ -36,21 +36,27 @@ export const Auth: React.FC = () => {
          password: ''
       }
    });
+   const [isSubmitting, setIsSubmitting] = useState(false);
 
    const onSubmit = async (data: AuthFormData) => {
       // Mock Login/Signup
       // login(data.email, data.name || data.email.split('@')[0]);
-      const res = await fetch("/api/firebase/login", {
-         method: "POST",
-         body: JSON.stringify({ email: data.email, password: data.password }),
-         headers: { "Content-Type": "application/json" },
-      });
-      debugger;
-      if (res.ok) {
-         router.push(PATHS.DASHBOARD);
-      } else {
-         console.error("Login failed");
-         // setError("Invalid credentials");
+      setIsSubmitting(true);
+      try {
+         const res = await fetch("/api/firebase/login", {
+            method: "POST",
+            body: JSON.stringify({ email: data.email, password: data.password }),
+            headers: { "Content-Type": "application/json" },
+         });
+         if (res.ok) {
+            router.push(PATHS.DASHBOARD);
+         } else {
+            console.error("Login failed");
+         }
+      } catch (error) {
+         console.error("Login failed", error);
+      } finally {
+         setIsSubmitting(false);
       }
 
    };
@@ -117,8 +123,21 @@ export const Auth: React.FC = () => {
                   {errors.password && <span className="text-red-500 text-xs mt-1">{errors.password.message}</span>}
                </div>
 
-               <Button type="submit" fullWidth size="lg" className="bg-magic-purple hover:bg-purple-600 mt-6">
-                  {isLogin ? t('auth_submit_login') : t('auth_submit_signup')}
+               <Button
+                  type="submit"
+                  fullWidth
+                  size="lg"
+                  className="bg-magic-purple hover:bg-purple-600 mt-6 disabled:opacity-60 disabled:cursor-not-allowed"
+                  disabled={isSubmitting}
+               >
+                  {isSubmitting ? (
+                     <>
+                        <i className="fa-solid fa-spinner fa-spin mr-2" />
+                        {'Processing...'}
+                     </>
+                  ) : (
+                     isLogin ? t('auth_submit_login') : t('auth_submit_signup')
+                  )}
                </Button>
             </form>
 

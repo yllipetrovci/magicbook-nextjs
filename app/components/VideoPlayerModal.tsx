@@ -28,7 +28,7 @@ export const VideoPlayerModal: React.FC<VideoPlayerModalProps> = ({ video, onClo
             </div>
             <div className="p-6">
                 <h3 className="text-2xl font-bold text-white mb-2">{video.title}</h3>
-                <p className="text-gray-400">Created on {new Date(video.date).toLocaleDateString()}</p>
+                <p className="text-gray-400">Created on {video.formattedDate || new Date(video.date).toLocaleDateString("en-US", { timeZone: "UTC" })}</p>
             </div>
         </div>
     </div>

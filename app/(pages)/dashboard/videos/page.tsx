@@ -1,19 +1,26 @@
 
 
 'use client';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { useStory } from '@/app/contexts/StoryContext';
 import { Button } from '@/app/components/Button';
 import { VideoCard } from '../components/VideoCard';
 import { DashboardSection } from '../components/DashboardSection';
 import { VideoPlayerModal } from '@/app/components/VideoPlayerModal';
 import { GeneratedVideo } from '@/app/types';
+import { useLanguage } from '@/app/contexts/LanguageContext';
+import { useStory } from '@/app/contexts/StoryContext';
 
 export const Videos: React.FC = () => {
     const router = useRouter();
-    const { savedVideos, t, deleteVideo } = useStory();
+    const { t } = useLanguage();
+    const { videos, videosLoaded } = useStory();
+
     const [selectedVideo, setSelectedVideo] = useState<GeneratedVideo | null>(null);
+    const isVideosLoading = !videosLoaded;
+    const placeholderVideos = useMemo<(GeneratedVideo | null)[]>(() => Array.from({ length: 3 }, () => null), []);
+    const videosToRender = isVideosLoading ? placeholderVideos : videos;
+    const videoCount = videosLoaded ? videos.length : 0;
 
     const handleCreateNewVideo = () => {
         router.push('/create-video');
@@ -35,7 +42,7 @@ export const Videos: React.FC = () => {
                         Watch your stories come to life.
                     </p>
                 </div>
-                <Button onClick={handleCreateNewVideo} size="md" className="shadow-lg shadow-green-500/20 bg-magic-green hover:bg-green-600">
+                <Button onClick={handleCreateNewVideo} size="md" variant="transparent" className="shadow-lg shadow-purple-500/20 bg-magic-blue hover:bg-blue-600">
                     Create Video <i className="fa-solid fa-video ml-2"></i>
                 </Button>
             </div>
@@ -44,11 +51,11 @@ export const Videos: React.FC = () => {
                 title={t('dash_videos')}
                 icon="fa-film"
                 iconColor="text-magic-green"
-                count={savedVideos.length}
+                count={videoCount}
                 countLabel="watching"
                 badgeColor="text-red-400"
                 dotColor="bg-red-500"
-                items={savedVideos}
+                items={videosToRender}
                 onCreate={handleCreateNewVideo}
                 gridCols="grid-cols-1 lg:grid-cols-3"
                 emptyState={{
@@ -57,18 +64,23 @@ export const Videos: React.FC = () => {
                     buttonLabel: t('dash_create_video'),
                     buttonIcon: 'fa-video'
                 }}
-                createCard={{
-                    title: t('dash_create_video'),
-                    subtext: "2 Credits",
-                    icon: "fa-plus",
-                    theme: "green"
-                }}
-                renderItem={(video) => (
+                createCard={
+                    isVideosLoading
+                        ? undefined
+                        : {
+                            title: t('dash_create_video'),
+                            subtext: "2 Credits",
+                            icon: "fa-plus",
+                            theme: "green",
+                        }
+                }
+                renderItem={(video: GeneratedVideo | null, index: number) => (
                     <VideoCard
-                        key={video.id}
-                        video={video}
-                        onWatch={() => setSelectedVideo(video)}
-                        onDelete={(e) => { e.stopPropagation(); deleteVideo(video.id); }}
+                        key={video ? video.id ?? `video-${index}` : `video-placeholder-${index}`}
+                        video={video || undefined}
+                        isLoading={isVideosLoading}
+                        onWatch={video ? () => setSelectedVideo(video) : undefined}
+                        onDelete={video ? (e) => { e.stopPropagation(); } : undefined}
                     />
                 )}
             />

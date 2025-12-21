@@ -71,7 +71,7 @@ export const DashboardSection = <T,>({
                 <div className="flex flex-col items-center justify-center py-10 text-center opacity-70 px-4 flex-grow min-h-[200px]">
                     <i className={`fa-solid ${emptyState.icon} text-4xl text-gray-600 mb-2`}></i>
                     <p className="text-lg text-gray-400 font-bold mb-4">{emptyState.message}</p>
-                    <Button onClick={onCreate} size="md" className={`w-full md:w-auto shadow-xl ${iconColor.replace('text-', 'shadow-').replace('magic-', '')}-500/20`}>
+                    <Button onClick={onCreate} size="md" variant="transparent" className={`w-full bg-magic-blue hover:bg-blue-600 md:w-auto shadow-xl ${iconColor.replace('text-', 'shadow-').replace('magic-', '')}-500/20`}>
                         {emptyState.buttonLabel} <i className={`fa-solid ${emptyState.buttonIcon || 'fa-plus'} ml-2`}></i>
                     </Button>
                 </div>
