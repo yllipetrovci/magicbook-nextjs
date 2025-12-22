@@ -7,14 +7,16 @@ import { CREDITS_PER_PAGE, MIN_STORY_PAGE_COUNT } from "@/lib/constants/story-cr
 import { createUserVideo } from "@/lib/firestore/videos";
 import { createJob } from "@/lib/redis/createJob"
 import admin from "firebase-admin";
+import { REFERRAL_BONUS_CREDITS } from "@/lib/constants/referral";
 const serverTimestamp = admin.firestore.FieldValue.serverTimestamp;
+const increment = admin.firestore.FieldValue.increment;
 /* --------------------------------------------- */
 /* 7. Main POST Handler                          */
 /* --------------------------------------------- */
 export async function POST(req: Request) {
     try {
         const { email, password, selectedPlanId, config,
-            hasUpSellBook, hasUpsellVideo, hasUpsellDaily, mainPaymentIsDone
+            hasUpSellBook, hasUpsellVideo, hasUpsellDaily, mainPaymentIsDone, ref
         } = await req.json();
 
         console.log("SERVER SIDE SIGNUP:");
@@ -49,7 +51,27 @@ export async function POST(req: Request) {
             );
         }
 
-        await createFirestoreUser(user.uid, email, selectedPlanId);
+        const normalizedRef = typeof ref === "string" ? ref.trim() : "";
+        const isReferralValid =
+            normalizedRef.length > 0 &&
+            normalizedRef !== user.uid &&
+            (await adminFirestore.collection("users").doc(normalizedRef).get()).exists;
+        const referralBonus = isReferralValid ? REFERRAL_BONUS_CREDITS : 0;
+
+        await createFirestoreUser(
+            user.uid,
+            email,
+            selectedPlanId,
+            referralBonus,
+            isReferralValid ? normalizedRef : undefined
+        );
+
+        if (isReferralValid) {
+            await adminFirestore.collection("users").doc(normalizedRef).update({
+                credits: increment(REFERRAL_BONUS_CREDITS),
+                updatedAt: serverTimestamp(),
+            });
+        }
         const storyDoc = await createStoryDocument(user.uid, configWithoutOriginals);
         console.log("Story document created with ID:", storyDoc.id);
 
@@ -110,15 +132,23 @@ async function createFirebaseUser(email: string, password: string) {
 /* --------------------------------------------- */
 /* 3. Create user Firestore profile              */
 /* --------------------------------------------- */
-async function createFirestoreUser(uid: string, email: string, plan: string) {
+async function createFirestoreUser(
+    uid: string,
+    email: string,
+    plan: string,
+    referralBonus: number = 0,
+    referredBy?: string
+) {
 
     const selectedPlanItem = plans.find((planItem) => planItem.id === plan);
 
 
     await adminFirestore.collection("users").doc(uid).set({
         email,
-        credits: selectedPlanItem?.credits,
+        credits: (selectedPlanItem?.credits ?? 0) + referralBonus,
         plan: selectedPlanItem?.id,
+        referredBy: referredBy || null,
+        referralBonusApplied: referralBonus > 0,
         createdAt: serverTimestamp(),
         updatedAt: serverTimestamp()
     });

@@ -1,8 +1,13 @@
 import { NextResponse } from "next/server";
-import { adminAuth } from "@/lib/firestore/firebaseAdmin";
+import { adminAuth, adminFirestore } from "@/lib/firestore/firebaseAdmin";
+import admin from "firebase-admin";
+import { REFERRAL_BONUS_CREDITS } from "@/lib/constants/referral";
+
+const serverTimestamp = admin.firestore.FieldValue.serverTimestamp;
+const increment = admin.firestore.FieldValue.increment;
 
 export async function POST(req: Request) {
-  const { email, password } = await req.json();
+  const { email, password, ref } = await req.json();
 
   if (!email || !password) {
     return NextResponse.json(
@@ -20,6 +25,30 @@ export async function POST(req: Request) {
       password,
       emailVerified: false,
     });
+
+    const normalizedRef = typeof ref === "string" ? ref.trim() : "";
+    const isReferralValid =
+      normalizedRef.length > 0 &&
+      normalizedRef !== userRecord.uid &&
+      (await adminFirestore.collection("users").doc(normalizedRef).get()).exists;
+    const referralBonus = isReferralValid ? REFERRAL_BONUS_CREDITS : 0;
+
+    await adminFirestore.collection("users").doc(userRecord.uid).set({
+      email,
+      credits: referralBonus,
+      plan: "free",
+      referredBy: isReferralValid ? normalizedRef : null,
+      referralBonusApplied: referralBonus > 0,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    });
+
+    if (isReferralValid) {
+      await adminFirestore.collection("users").doc(normalizedRef).update({
+        credits: increment(REFERRAL_BONUS_CREDITS),
+        updatedAt: serverTimestamp(),
+      });
+    }
 
     /**
      * 2️⃣ Sign in user via Firebase REST API

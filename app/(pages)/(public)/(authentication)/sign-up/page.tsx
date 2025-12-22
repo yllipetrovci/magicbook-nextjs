@@ -1,6 +1,6 @@
 'use client';
 import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { Button } from '@/app/components/Button';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -24,6 +24,7 @@ type FormData = yup.InferType<typeof schema>;
 
 export const Auth: React.FC = () => {
     const router = useRouter();
+    const searchParams = useSearchParams();
     // const { login} = useAuth();
     const { t } = useLanguage();
     const [isLogin, setIsLogin] = useState(true);
@@ -48,7 +49,11 @@ export const Auth: React.FC = () => {
         try {
             const res = await fetch("/api/firebase/signup", {
                 method: "POST",
-                body: JSON.stringify({ email: data.email, password: data.password }),
+                body: JSON.stringify({
+                    email: data.email,
+                    password: data.password,
+                    ref: searchParams.get("ref") || undefined,
+                }),
                 headers: { "Content-Type": "application/json" },
             });
             if (res.ok) {
