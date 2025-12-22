@@ -1,9 +1,10 @@
 
 'use client'
 import React from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/app/components/Button';
 import { useStory } from '@/app/contexts/StoryContext';
+import { useAuth } from '@/app/contexts/AuthContext';
 import { OrderSummary } from './components/OrderSummary';
 import { PaymentForm } from './components/PaymentForm';
 import { PATHS } from '@/app/constants/relativeRoutePaths';
@@ -23,8 +24,11 @@ const getCheckoutCover = (theme: string, generatedCover?: string) => {
 
 export const Checkout: React.FC = () => {
    const router = useRouter();
+   const searchParams = useSearchParams();
    const { config, generatedStory, setMainPaymentIsDone }: any = useStory();
+   const { refreshUser } = useAuth();
    const { t } = useLanguage();
+   const isDashboardFlow = searchParams.get("source") === "dashboard";
 
    const selectedPlan = plans.find(p => p.id === config?.planType);
 
@@ -34,7 +38,7 @@ export const Checkout: React.FC = () => {
 
    const coverImage = getCheckoutCover(config.theme, generatedStory?.coverImage);
 
-   const handlePayment = () => {
+   const handlePayment = async () => {
       // Simulate payment processing
       const btn = document.activeElement as HTMLButtonElement;
       if (btn) {
@@ -42,8 +46,27 @@ export const Checkout: React.FC = () => {
          btn.disabled = true;
       }
 
+      if (isDashboardFlow) {
+         try {
+            const res = await fetch("/api/user/credits", {
+               method: "POST",
+               headers: { "Content-Type": "application/json" },
+               body: JSON.stringify({ planId: selectedPlan?.id }),
+            });
+            if (!res.ok) {
+               console.error("Failed to add credits:", res.status);
+               return;
+            }
+            await refreshUser();
+            router.push(PATHS.DASHBOARD);
+            return;
+         } catch (error) {
+            console.error("Checkout failed:", error);
+            return;
+         }
+      }
+
       setMainPaymentIsDone(true);
-      console.log("HELLO")
       setTimeout(() => {
          router.push(PATHS.SUCCESS);
       }, 2000);

@@ -16,7 +16,7 @@ interface PhotoUploadSectionProps {
   onParentImageUpdate: (optimized: string, original: string) => void;
   onBack: () => void;
   onNext: () => void;
-  onSkip: () => void;
+  onSkip?: () => void;
 }
 
 /**
@@ -291,12 +291,11 @@ export const PhotoUploadSection: React.FC<PhotoUploadSectionProps> = ({
               </Button>
           ) : (
                 <Button 
-                  onClick={() => { playMagicSound(); onSkip(); }} 
-                  className="flex-[2] shadow-lg shadow-white/10 bg-white/10 hover:bg-white/20" 
+                  className="flex-[2] shadow-lg shadow-white/10 bg-white/10" 
                   size="lg"
-                  disabled={processingTarget !== null || cropMode !== null}
+                  disabled
               >
-                  Skip Photo <i className="fa-solid fa-arrow-right ml-2"></i>
+                  Add a photo to continue
               </Button>
           )}
       </div>

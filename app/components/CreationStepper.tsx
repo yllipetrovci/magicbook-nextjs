@@ -16,7 +16,9 @@ export const CreationStepper: React.FC<CreationStepperProps> = ({ currentStep })
   ];
 
   const stepIds = steps.map(s => s.id);
-  const currentIndex = currentStep != 'show-cupon' && currentStep != 'upload' && currentStep !='whos-creating-it' ? stepIds.indexOf(currentStep) : 0;
+  const currentIndex = currentStep != 'upload' && currentStep != 'whos-creating-it'
+    ? stepIds.indexOf(currentStep)
+    : 0;
 
 
   return (

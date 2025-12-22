@@ -1,16 +1,17 @@
 import { nanoid } from "nanoid"
 import { redis } from "@/lib/redis"
-import type { Job } from "./types"
+import type { CreateJobInput, Job } from "./types"
 
-export async function createJob(config: unknown): Promise<Job> {
+export async function createJob(input: CreateJobInput): Promise<Job> {
   const jobId = nanoid()
   const now = Date.now()
 
   const job: Job = {
     jobId,
+    jobType: input.jobType,
     status: "queued",
     progress: 0,
-    config,
+    config: input.config,
     resultId: null,
     createdAt: now,
     updatedAt: now,
@@ -24,7 +25,8 @@ export async function createJob(config: unknown): Promise<Job> {
     "story:queue",
     JSON.stringify({
       jobId,
-      config,
+      jobType: input.jobType,
+      config: input.config,
       createdAt: now,
     })
   )

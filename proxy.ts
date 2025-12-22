@@ -16,7 +16,6 @@ const alwaysPublic = [
     STEPS_PATHS.STEP_4,
     STEPS_PATHS.STEP_5,
     STEPS_PATHS.STEP_6,
-    STEPS_PATHS.STEP_7,
     PATHS.GENERATING,
     PATHS.PREVIEW,
     PATHS.GENERATING_2,
@@ -37,7 +36,7 @@ export function proxy(req: NextRequest) {
     const sessionCookie = req.cookies.get("session");
     const isLoggedIn = Boolean(sessionCookie?.value);
 
-    const isPublicOnly = publicOnly.some((r) => pathname.startsWith(r));
+    const isPublicOnly = publicOnly.some((r) => pathname === r);
     const isProtected = protectedOnly.some((r) => pathname.startsWith(r));
     const isAlwaysPublic = alwaysPublic.some((r) => pathname.startsWith(r));
 

@@ -325,49 +325,49 @@ export const StoryProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     });
   }, [drawImages]);
 
-  useEffect(() => {
-    if (!user?.uid || !hasPullTargets) return;
+  // useEffect(() => {
+  //   if (!user?.uid || !hasPullTargets) return;
 
-    const intervalMs = getStoryPullIntervalMs();
+  //   const intervalMs = getStoryPullIntervalMs();
 
-    const pullStories = async () => {
-      try {
-        if (pullTargetIds.length === 0) return;
+  //   const pullStories = async () => {
+  //     try {
+  //       if (pullTargetIds.length === 0) return;
 
-        const idsParam = encodeURIComponent(pullTargetIds.join(','));
-        const res = await fetch(`/api/firebase/stories?ids=${idsParam}`);
-        if (!res.ok) {
-          console.error('Story puller failed:', res.status);
-          return;
-        }
+  //       const idsParam = encodeURIComponent(pullTargetIds.join(','));
+  //       const res = await fetch(`/api/firebase/stories?ids=${idsParam}`);
+  //       if (!res.ok) {
+  //         console.error('Story puller failed:', res.status);
+  //         return;
+  //       }
 
-        const data = await res.json();
-        if (!Array.isArray(data?.stories)) {
-          return;
-        }
+  //       const data = await res.json();
+  //       if (!Array.isArray(data?.stories)) {
+  //         return;
+  //       }
 
-        const pulledStories = data.stories.map(mapFirestoreStory);
+  //       const pulledStories = data.stories.map(mapFirestoreStory);
 
-        setStories(prev => {
-          const byId = new Map(prev.map(story => [story.id, story]));
-          for (const story of pulledStories) {
-            if (!story.id) continue;
-            byId.set(story.id, { ...byId.get(story.id), ...story });
-          }
-          return Array.from(byId.values());
-        });
-      } catch (error) {
-        console.error('Story puller error:', error);
-      }
-    };
+  //       setStories(prev => {
+  //         const byId = new Map(prev.map(story => [story.id, story]));
+  //         for (const story of pulledStories) {
+  //           if (!story.id) continue;
+  //           byId.set(story.id, { ...byId.get(story.id), ...story });
+  //         }
+  //         return Array.from(byId.values());
+  //       });
+  //     } catch (error) {
+  //       console.error('Story puller error:', error);
+  //     }
+  //   };
 
-    pullStories();
-    const intervalId = window.setInterval(pullStories, intervalMs);
+  //   pullStories();
+  //   const intervalId = window.setInterval(pullStories, intervalMs);
 
-    return () => {
-      window.clearInterval(intervalId);
-    };
-  }, [user?.uid, hasPullTargets, setStories]);
+  //   return () => {
+  //     window.clearInterval(intervalId);
+  //   };
+  // }, [user?.uid, hasPullTargets, setStories]);
 
   // 🔹 Persist upsell states
   useEffect(() => {

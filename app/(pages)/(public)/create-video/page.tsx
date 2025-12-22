@@ -1,5 +1,5 @@
 'use client'
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { useStory } from '../../../contexts/StoryContext';
@@ -25,29 +25,19 @@ interface CreateVideoForm {
 
 export const CreateVideo: React.FC = () => {
     const router = useRouter();
-    const { addVideo } = useStory();
+    const { addVideo, stories } = useStory();
     const { t } = useLanguage();
-    const [photo1, setPhoto1] = useState<string | null>(null);
-    const [photo2, setPhoto2] = useState<string | null>(null);
+    const [selectedStoryId, setSelectedStoryId] = useState<string | null>(null);
+    const [selectedPageIndex, setSelectedPageIndex] = useState<number>(0);
     const [selectedRole, setSelectedRole] = useState<string>('hero');
     const [isProcessing, setIsProcessing] = useState(false);
 
     const { register, watch } = useForm<CreateVideoForm>();
     const customRoleValue = watch('customRole');
 
-    const fileInput1Ref = useRef<HTMLInputElement>(null);
-    const fileInput2Ref = useRef<HTMLInputElement>(null);
-
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>, setPhoto: (s: string | null) => void) => {
-        const file = e.target.files?.[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setPhoto(reader.result as string);
-            };
-            reader.readAsDataURL(file);
-        }
-    };
+    const selectedStory = stories.find(story => story.id === selectedStoryId) || null;
+    const selectedPage = selectedStory?.pages?.[selectedPageIndex];
+    const selectedImage = selectedPage?.image || selectedStory?.coverImage || "";
 
     const handleGenerate = () => {
         setIsProcessing(true);
@@ -63,7 +53,7 @@ export const CreateVideo: React.FC = () => {
             const newVideo: GeneratedVideo = {
                 id: `v_${Date.now()}`,
                 title: `The ${roleDisplay.charAt(0).toUpperCase() + roleDisplay.slice(1)}'s Journey`,
-                thumbnail: photo1 || "https://picsum.photos/600/400", // Fallback to upload or generic
+                thumbnail: selectedImage || "https://picsum.photos/600/400",
                 videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4", // Demo video
                 date: new Date().toISOString(),
                 duration: "1:30"
@@ -106,10 +96,10 @@ export const CreateVideo: React.FC = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 w-full mb-12">
 
-                {/* Left Column: Uploads */}
+                {/* Left Column: Story Reference */}
                 <div className="bg-magic-card p-6 md:p-8 rounded-3xl border border-white/10 shadow-xl">
                     <h3 className="text-2xl font-bold text-white mb-2 flex items-center gap-2">
-                        <i className="fa-solid fa-camera text-magic-green"></i> 1. Upload Photos
+                        <i className="fa-solid fa-book-open text-magic-green"></i> 1. Choose Story Page
                     </h3>
 
                     <div className="flex items-center gap-3 mb-8 bg-green-500/10 border border-green-500/20 rounded-xl p-3 w-full">
@@ -117,60 +107,61 @@ export const CreateVideo: React.FC = () => {
                             <i className="fa-solid fa-shield-heart text-green-400 text-lg"></i>
                         </div>
                         <div className="text-left">
-                            <p className="text-green-400 font-bold text-sm">All photos are 100% Safe & Private</p>
-                            <p className="text-gray-400 text-xs">Your photos are processed securely and never shared.</p>
+                            <p className="text-green-400 font-bold text-sm">Use your story as the video reference</p>
+                            <p className="text-gray-400 text-xs">Pick a story and the exact page to animate.</p>
                         </div>
                     </div>
 
-                    <div className="space-y-6">
-                        {/* Photo 1 (Main) */}
-                        <div>
-                            <label className="block text-gray-300 font-bold mb-2">{t('cv_upload_1')}</label>
-                            <div
-                                onClick={() => fileInput1Ref.current?.click()}
-                                className={`aspect-video rounded-xl border-2 border-dashed flex flex-col items-center justify-center cursor-pointer transition-all relative overflow-hidden group ${photo1 ? 'border-magic-green bg-black' : 'border-white/20 hover:border-white/50 bg-white/5'}`}
-                            >
-                                {photo1 ? (
-                                    <>
-                                        <img src={photo1} alt="Main" className="w-full h-full object-cover opacity-80" />
-                                        <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <i className="fa-solid fa-pen text-white text-2xl"></i>
-                                        </div>
-                                    </>
-                                ) : (
-                                    <div className="text-center p-4">
-                                        <i className="fa-solid fa-cloud-arrow-up text-3xl text-gray-500 mb-2"></i>
-                                        <p className="text-sm text-gray-400">Click to upload main photo</p>
-                                    </div>
-                                )}
-                                <input type="file" ref={fileInput1Ref} onChange={(e) => handleFileChange(e, setPhoto1)} accept="image/*" className="hidden" />
-                            </div>
+                    {stories.length === 0 ? (
+                        <div className="text-center text-gray-400 bg-white/5 border border-white/10 rounded-xl p-6">
+                            You don’t have any stories yet. Create one first.
                         </div>
+                    ) : (
+                        <div className="space-y-6">
+                            <div>
+                                <label className="block text-gray-300 font-bold mb-2">Story</label>
+                                <select
+                                    className="w-full p-3 rounded-xl bg-black/40 border border-white/10 text-white"
+                                    value={selectedStoryId ?? ""}
+                                    onChange={(e) => {
+                                        setSelectedStoryId(e.target.value || null);
+                                        setSelectedPageIndex(0);
+                                    }}
+                                >
+                                    <option value="">Select a story</option>
+                                    {stories.map((story) => (
+                                        <option key={story.id ?? story.title} value={story.id ?? ""}>
+                                            {story.title}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
 
-                        {/* Photo 2 (Optional) */}
-                        <div>
-                            <label className="block text-gray-300 font-bold mb-2">{t('cv_upload_2')}</label>
-                            <div
-                                onClick={() => fileInput2Ref.current?.click()}
-                                className={`aspect-video rounded-xl border-2 border-dashed flex flex-col items-center justify-center cursor-pointer transition-all relative overflow-hidden group ${photo2 ? 'border-magic-green bg-black' : 'border-white/20 hover:border-white/50 bg-white/5'}`}
-                            >
-                                {photo2 ? (
-                                    <>
-                                        <img src={photo2} alt="Secondary" className="w-full h-full object-cover opacity-80" />
-                                        <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <i className="fa-solid fa-pen text-white text-2xl"></i>
-                                        </div>
-                                    </>
+                            <div>
+                                <label className="block text-gray-300 font-bold mb-2">Page</label>
+                                <select
+                                    className="w-full p-3 rounded-xl bg-black/40 border border-white/10 text-white"
+                                    value={selectedPageIndex}
+                                    onChange={(e) => setSelectedPageIndex(Number(e.target.value))}
+                                    disabled={!selectedStory}
+                                >
+                                    {selectedStory?.pages?.map((page, idx) => (
+                                        <option key={`${selectedStory.id ?? selectedStory.title}-${idx}`} value={idx}>
+                                            Page {idx + 1}{page?.text ? ` — ${page.text.slice(0, 30)}...` : ""}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            <div className="aspect-video rounded-xl border border-white/10 overflow-hidden bg-black/40 flex items-center justify-center">
+                                {selectedImage ? (
+                                    <img src={selectedImage} alt="Selected page" className="w-full h-full object-cover" />
                                 ) : (
-                                    <div className="text-center p-4">
-                                        <i className="fa-solid fa-plus text-3xl text-gray-500 mb-2"></i>
-                                        <p className="text-sm text-gray-400">Add another photo (optional)</p>
-                                    </div>
+                                    <span className="text-gray-500 text-sm">Select a story page to preview.</span>
                                 )}
-                                <input type="file" ref={fileInput2Ref} onChange={(e) => handleFileChange(e, setPhoto2)} accept="image/*" className="hidden" />
                             </div>
                         </div>
-                    </div>
+                    )}
                 </div>
 
                 {/* Right Column: Role Selection */}
@@ -220,14 +211,18 @@ export const CreateVideo: React.FC = () => {
             <div className="w-full max-w-2xl">
                 <Button
                     onClick={handleGenerate}
-                    disabled={!photo1}
+                    disabled={!selectedStoryId || !selectedImage}
                     fullWidth
                     size="lg"
-                    className={`text-xl py-4 shadow-xl ${!photo1 ? 'opacity-50 cursor-not-allowed' : 'bg-magic-green hover:bg-green-600 shadow-green-500/30 animate-pulse'}`}
+                    className={`text-xl py-4 shadow-xl ${!selectedStoryId || !selectedImage ? 'opacity-50 cursor-not-allowed' : 'bg-magic-green hover:bg-green-600 shadow-green-500/30 animate-pulse'}`}
                 >
                     {t('cv_btn_create')} <i className="fa-solid fa-wand-magic-sparkles ml-2"></i>
                 </Button>
-                {!photo1 && <p className="text-center text-red-400 mt-2 font-bold text-sm">Please upload at least one photo.</p>}
+                {(!selectedStoryId || !selectedImage) && (
+                    <p className="text-center text-red-400 mt-2 font-bold text-sm">
+                        Please choose a story page to continue.
+                    </p>
+                )}
             </div>
 
         </div>

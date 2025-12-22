@@ -39,7 +39,7 @@ export const Pricing: React.FC = () => {
             return;
         }
 
-        router.push(PATHS.CHECKOUT);
+        router.push(`${PATHS.CHECKOUT}?source=dashboard`);
     };
 
     const handleBack = () => {

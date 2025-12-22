@@ -174,6 +174,7 @@ export const CreateDrawing: React.FC = () => {
                         onClick={handleGenerate}
                         disabled={isProcessing || (!prompt.trim() && !photo)}
                         size="lg"
+                        variant="transparent"
                         fullWidth
                         className={`text-xl py-4 shadow-xl ${isProcessing ? 'opacity-70' : 'bg-magic-blue hover:bg-blue-600 shadow-blue-500/20'}`}
                     >

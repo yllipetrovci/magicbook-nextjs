@@ -9,7 +9,8 @@ import { StoryCard } from './components/StoryCard';
 import { DashboardSection } from './components/DashboardSection';
 import { GeneratedStory } from '@/app/types';
 import { useLanguage } from '@/app/contexts/LanguageContext';
-import { DASHBOARD_PATHS, PATHS } from '@/app/constants/relativeRoutePaths';
+import { DASHBOARD_PATHS, PATHS, STEPS_PATHS } from '@/app/constants/relativeRoutePaths';
+import { CREDITS_PER_PAGE, MIN_STORY_PAGE_COUNT } from '@/lib/constants/story-credits';
 
 export const DashboardPage: React.FC = () => {
     const router = useRouter();
@@ -25,8 +26,9 @@ export const DashboardPage: React.FC = () => {
         : (config.heroName || "Little Hero");
 
     const handleCreateNew = () => {
-        if (user && user.credits && user.credits > 0) {
-            router.push('/hero');
+        const requiredCredits = MIN_STORY_PAGE_COUNT * CREDITS_PER_PAGE;
+        if (user && (user.credits ?? 0) >= requiredCredits) {
+            router.push(STEPS_PATHS.STEP_1);
         } else {
             router.push('/dashboard/credits');
         }

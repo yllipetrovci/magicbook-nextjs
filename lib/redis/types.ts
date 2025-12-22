@@ -1,11 +1,15 @@
 export type JobStatus = "queued" | "processing" | "completed" | "failed"
 
+export type JobType = "story" | "video" | "coloring"
+
 export type CreateJobInput = {
   config: unknown
+  jobType: JobType
 }
 
 export type Job = {
   jobId: string
+  jobType: JobType
   status: JobStatus
   progress: number
   resultId: string | null
@@ -50,5 +54,4 @@ export interface GeneratedStory {
   dedication?: string;
   status?: 'pending' | 'processing' | 'completed' | 'failed';
 }
-
 

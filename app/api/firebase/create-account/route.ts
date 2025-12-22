@@ -3,6 +3,7 @@ import { adminAuth, adminFirestore } from "@/lib/firestore/firebaseAdmin";
 import { klingImageToVideo } from "@/lib/klingai";
 import { animationStylesPrompt, AnimationStyle } from "@/lib/constants/animation-styles-prompt";
 import { plans } from "@/lib/constants/plans";
+import { CREDITS_PER_PAGE, MIN_STORY_PAGE_COUNT } from "@/lib/constants/story-credits";
 import { createUserVideo } from "@/lib/firestore/videos";
 import { createJob } from "@/lib/redis/createJob"
 import admin from "firebase-admin";
@@ -36,11 +37,26 @@ export async function POST(req: Request) {
 
         
         console.log("User created:", user);
+        const selectedPlanItem = plans.find((planItem) => planItem.id === selectedPlanId);
+        const requiredCredits = MIN_STORY_PAGE_COUNT * CREDITS_PER_PAGE;
+        const availableCredits = selectedPlanItem?.credits ?? 0;
+        if (availableCredits < requiredCredits) {
+            return NextResponse.json(
+                {
+                    error: `Plan does not have enough credits for a ${MIN_STORY_PAGE_COUNT}-page story.`,
+                },
+                { status: 400 }
+            );
+        }
+
         await createFirestoreUser(user.uid, email, selectedPlanId);
         const storyDoc = await createStoryDocument(user.uid, configWithoutOriginals);
         console.log("Story document created with ID:", storyDoc.id);
 
-        createJob({...configWithoutOriginals,  storyDocId: storyDoc.id, userId: user.uid});
+        createJob({
+            jobType: "story",
+            config: { ...configWithoutOriginals, storyDocId: storyDoc.id, userId: user.uid },
+        });
 
         // const video = await klingImageToVideo({
         //     image,

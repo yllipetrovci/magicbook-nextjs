@@ -56,7 +56,6 @@ export function RootLayoutClient({ children }: { children: React.ReactNode }) {
     // Routes that should NOT have the navbar and main wrapper
     const isDashboardRoute = pathname?.startsWith('/dashboard');
     const isUpsellRoute = pathname?.startsWith('/upsell');
-    const isShowCuponRoute = pathname?.startsWith('/steps/show-cupon');
     const isReadStoryRoute = pathname?.startsWith('/read-story');
     const isActive = (route: string) => pathname === route;
 
@@ -81,7 +80,7 @@ export function RootLayoutClient({ children }: { children: React.ReactNode }) {
     };
 
 
-    if (isUpsellRoute || isShowCuponRoute) {
+    if (isUpsellRoute) {
         // Dashboard routes get their own layout, so just return children
         return <>{children}</>;
     }

@@ -1,7 +1,10 @@
 'use client'
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLanguage } from '@/app/contexts/LanguageContext'
+import { useAuth } from '@/app/contexts/AuthContext';
+import { useStory } from '@/app/contexts/StoryContext';
+import { CREDITS_PER_PAGE, MIN_STORY_PAGE_COUNT } from '@/lib/constants/story-credits';
 
 
 
@@ -11,6 +14,9 @@ const Generating2: React.FC = () => {
     const [currentStepIndex, setCurrentStepIndex] = useState(0);
     const [progress, setProgress] = useState(0);
     const { t } = useLanguage();
+    const { user } = useAuth();
+    const { config, resetAll } = useStory();
+    const hasTriggered = useRef(false);
     const CRAFTING_STEPS = [
         { label: t("generatingPage2.gen2_step_1"), icon: "fa-hat-wizard", color: "text-purple-400" },
         { label: t("generatingPage2.gen2_step_2"), icon: "fa-pen-nib", color: "text-blue-400" },
@@ -47,6 +53,36 @@ const Generating2: React.FC = () => {
 
         return () => clearInterval(timer);
     }, [CRAFTING_STEPS.length]);
+
+    useEffect(() => {
+        if (!user || hasTriggered.current) return;
+        const requiredCredits = MIN_STORY_PAGE_COUNT * CREDITS_PER_PAGE;
+        if ((user.credits ?? 0) < requiredCredits) {
+            router.push("/dashboard/credits");
+            return;
+        }
+
+        const createStoryJob = async () => {
+            hasTriggered.current = true;
+            try {
+                const res = await fetch("/api/firebase/create-story", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ config }),
+                });
+                if (!res.ok) {
+                    console.error("Failed to create story:", res.status);
+                    return;
+                }
+                resetAll();
+                router.push("/dashboard");
+            } catch (error) {
+                console.error("Failed to create story:", error);
+            }
+        };
+
+        createStoryJob();
+    }, [user, config]);
 
     return (
         <div className="overflow-y-auto animate-fade-in">

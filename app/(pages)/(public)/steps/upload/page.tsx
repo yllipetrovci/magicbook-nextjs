@@ -3,12 +3,14 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useStory } from '@/app/contexts/StoryContext';
+import { useAuth } from '@/app/contexts/AuthContext';
 import { PhotoUploadSection } from '@/app/components/PhotoUploadSection';
 import { playMagicSound } from '@/app/utils/audio';
 import { STEPS_PATHS } from '@/app/constants/relativeRoutePaths';
 
 export const HeroSelection: React.FC = () => {
     const router = useRouter();
+    const { user } = useAuth();
     const { updateConfig, config } = useStory();
     const [localName, setLocalName] = useState(config.heroName || '');
     const [relationship, setRelationship] = useState(config.parentRelationship || 'Mom');
@@ -27,13 +29,8 @@ export const HeroSelection: React.FC = () => {
         updateConfig('parentImageOriginal', original);
     };
 
-    //TODO: need to be removed
-    const handleSkipUpload = () => {
-        // setStep('gender');
-    };
-
     const handleUploadContinue = () => {
-        router.push(STEPS_PATHS.STEP_3);
+        router.push(user ? STEPS_PATHS.STEP_4 : STEPS_PATHS.STEP_3);
 
     };
 
@@ -59,7 +56,7 @@ export const HeroSelection: React.FC = () => {
                     onParentImageUpdate={handleParentImageUpdate}
                     onBack={() => router.back()}
                     onNext={handleUploadContinue}
-                    onSkip={handleSkipUpload}
+                    onSkip={() => {}}
                 />
             </div>
         </div>

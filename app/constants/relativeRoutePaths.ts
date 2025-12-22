@@ -5,7 +5,6 @@ export const STEPS_PATHS = {
     STEP_4: '/steps/style',
     STEP_5: '/steps/adventure',
     STEP_6: '/steps/customize-and-finish',
-    STEP_7: '/steps/show-cupon',
 } as const;
 
 

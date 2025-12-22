@@ -15,7 +15,7 @@ import { COLORS, COMPANION_PRESETS, FANTASY_LOCATIONS, PAGE_COUNTS, STORY_TONES 
 import { getBorderClass, getCoverImage } from './helpers';
 import StoryToneOption from './components/StoryTonesButton';
 import { useLanguage } from '@/app/contexts/LanguageContext';
-import { STEPS_PATHS } from '@/app/constants/relativeRoutePaths';
+import { PATHS } from '@/app/constants/relativeRoutePaths';
 import { generatePageImagePrompt } from '@/lib/prompts/pageImageGeneration';
 import { CompanionSelector } from './components/CompanionSection';
 import { ReaderDetails } from './components/RenderDetails';
@@ -239,7 +239,7 @@ export default function CustomizeAndFinish() {
         Object.keys(data).forEach(key => {
             updateConfig(key as keyof StoryConfig, data[key as keyof StoryConfig]);
         });
-        router.push(STEPS_PATHS.STEP_7);
+        router.push(PATHS.GENERATING);
         // router.push('/generating');
 
 
@@ -407,4 +407,3 @@ export default function CustomizeAndFinish() {
         </div>
     );
 };
-
