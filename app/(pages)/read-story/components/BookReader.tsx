@@ -1,4 +1,5 @@
 
+'use client';
 import React, { useState, useEffect, useRef } from 'react';
 import { GeneratedStory, ReadingStyle, VoiceStyle, GeneratedPage } from '@/app/types';
 import { playPageTurnSound, playMagicSound } from '@/app/utils/audio';
@@ -130,7 +131,7 @@ export const BookReader: React.FC<BookReaderProps> = ({ story, onClose, onComple
   const [isReading, setIsReading] = useState(false);
   const [isCinematic, setIsCinematic] = useState(false); 
   const [isFullscreen, setIsFullscreen] = useState(false);
-  const synthRef = useRef<SpeechSynthesis>(window.speechSynthesis);
+  const synthRef = useRef<SpeechSynthesis | null>(null);
 
   const isCover = currentPageIndex === -1;
   const isEnd = currentPageIndex === story.pages.length;
@@ -186,6 +187,9 @@ export const BookReader: React.FC<BookReaderProps> = ({ story, onClose, onComple
   };
 
   useEffect(() => {
+    if (typeof window !== 'undefined') {
+      synthRef.current = window.speechSynthesis;
+    }
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'ArrowRight') next();
       if (e.key === 'ArrowLeft') prev();

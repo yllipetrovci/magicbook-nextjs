@@ -8,7 +8,7 @@ export async function createJob(input: CreateJobInput): Promise<Job> {
 
   const job: Job = {
     jobId,
-    jobType: input.jobType,
+    type: input.type,
     status: "queued",
     progress: 0,
     config: input.config,
@@ -25,7 +25,7 @@ export async function createJob(input: CreateJobInput): Promise<Job> {
     "story:queue",
     JSON.stringify({
       jobId,
-      jobType: input.jobType,
+      type: input.type,
       config: input.config,
       createdAt: now,
     })

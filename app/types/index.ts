@@ -225,7 +225,7 @@ export interface User {
 
 export type Job = {
     jobId: string
-    jobType: 'story' | 'video' | 'coloring'
+    type: 'story' | 'video' | 'coloring'
     status: "queued" | "processing" | "completed" | "failed"
     progress: number
     resultId?: string

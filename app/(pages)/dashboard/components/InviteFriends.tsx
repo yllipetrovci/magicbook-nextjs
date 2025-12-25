@@ -1,4 +1,5 @@
 
+'use client';
 import React, { useState } from 'react';
 import { Button } from '@/app/components/Button';
 import { useStory } from '@/app/contexts/StoryContext';

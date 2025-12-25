@@ -32,14 +32,14 @@ export const Pricing: React.FC = () => {
         }
     };
 
-    const handlePricePlan = (plan: string) => {
-        updateConfig('planType', plan);
-        if (plan === 'free') {
-            router.push(PATHS.SUCCESS);
+    const handlePricePlan = (priceId: string) => {
+        updateConfig('planType', priceId);
+        if (priceId === 'free') {
+            router.push(PATHS.RESET_PASSWORD);
             return;
         }
 
-        router.push(`${PATHS.CHECKOUT}?source=dashboard`);
+        router.push(`${PATHS.CHECKOUT}/${priceId}?source=dashboard`);
     };
 
     const handleBack = () => {

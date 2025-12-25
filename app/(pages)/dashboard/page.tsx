@@ -35,8 +35,8 @@ export const DashboardPage: React.FC = () => {
     };
 
     const handleReadStory = (story: GeneratedStory) => {
-        // setGeneratedStory(story);
-        router.push(PATHS.READ_STORY);
+        const storyId = story.id;
+        router.push(storyId ? `${PATHS.READ_STORY}?id=${storyId}` : PATHS.READ_STORY);
     };
 
     const handleDownloadPdf = (e: React.MouseEvent, index: number, story: GeneratedStory) => {

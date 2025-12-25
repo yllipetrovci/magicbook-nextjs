@@ -76,7 +76,7 @@ export async function POST(req: Request) {
         console.log("Story document created with ID:", storyDoc.id);
 
         createJob({
-            jobType: "story",
+            type: "story",
             config: { ...configWithoutOriginals, storyDocId: storyDoc.id, userId: user.uid },
         });
 

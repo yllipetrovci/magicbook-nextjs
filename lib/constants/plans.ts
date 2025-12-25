@@ -1,55 +1,62 @@
 export const plans: any[] = [
     {
         id: 'free',
-        title: 'Starter',
+        title: 'Free - Explorer',
         price: 'Free',
-        subtitle: '3 Pages',
-        credits: 3,
+        subtitle: '6 Credits',
+        credits: 6,
         features: [
-            '3 Page Story',
-            'Standard Illustrations',
-            'Web View Only'
+            'Create 1 short story',
+            'Basic illustrations(standard style)',
+            'Limited customization(character name + theme)',
+            'Web reading only(no download)',
+            'Watermark on pages',
+            'Relax Mode: Slower generation during peak times',
         ],
-        buttonText: 'Start Creating',
+        buttonText: 'Start Explore',
         colorTheme: 'dark',
-        isSubscription: true,
+        isSubscription: false,
         badge: undefined
-    },
-    {
-        id: 'unlimited',
-        title: 'Family Pack',
-        price: 29.99,
-        credits: 25,
-        isSubscription: true,
-        billingText: 'Unlimited',
-        features: [
-            'Unlimited Stories',
-            'Unlimited HD Illustrations',
-            'Commercial Rights',
-            'Access to New Themes'
-        ],
-        buttonText: 'Start Creating',
-        colorTheme: 'purple',
-        isPopular: true,
-        savingsText: 'SAVE 40% VS BUYING INDIVIDUALLY'
     },
     {
         id: 'credits',
         title: 'Creator',
-        price: 19.99,
-        credits: 15,
-        subtitle: '10 Credits',
+        priceId: 'pri_01kd4a2gh26e41gjngberydqbz',  
         features: [
-            '10 Magical Stories',
-            'Keep them forever',
-            'Printable PDF',
-            'No Expiration'
+            '10–12 long stories (8–10 pages)',
+            'Premium illustration styles',
+            'Long-form stories',
+            'Full character control',
+            'PDF + print-ready',
+            'Optional commercial use',
+            'Turbo Mode:Priority processing (near-instant)',
         ],
         buttonText: 'Start Creating',
         isSubscription: true,
-        colorTheme: 'dark',
+        colorTheme: 'purple',
+        savingsText: 'SAVE 40% VS BUYING INDIVIDUALLY',
+        isPopular: true,
         badge: undefined // Removed "CREDIT PACK" badge to match screenshot cleaner look, or we can keep it. Screenshot shows standard dark card.
-    }
+    },
+
+    {
+        id: 'Starter_Dreamer',
+        title: 'Starter – Dreamer',
+        isSubscription: true,
+        colorTheme: 'dark',
+        priceId: "pri_01kd4a5ze9e598p55nd1p2ejr3",
+        features: [ // will be depricated
+            '4–5 medium stories (8–10 pages each)',
+            'Multiple illustration styles',
+            'Tone selection (funny, calm, bedtime)',
+            'PDF download',
+            'No watermark',
+            'Fast Mode: Faster generation',
+
+        ],
+        buttonText: 'Start Dream',
+
+    },
 ];
 
 

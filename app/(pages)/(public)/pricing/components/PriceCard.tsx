@@ -170,15 +170,18 @@ export interface PricePlan {
 interface PriceCardProps {
     plan: PricePlan;
     onClick: () => void;
+    price: string;
+    credits: number;
+    features: string[];
 }
 
-export const PriceCard: React.FC<PriceCardProps> = ({ plan, onClick }) => {
+export const PriceCard: React.FC<PriceCardProps> = ({ plan, onClick, price, credits, features }) => {
     const {
         title,
-        price,
+        // price,
         subtitle,
         billingText,
-        features,
+        // features,
         buttonText,
         isPopular,
         colorTheme,
@@ -243,7 +246,8 @@ export const PriceCard: React.FC<PriceCardProps> = ({ plan, onClick }) => {
 
                 {billingText && (
                     <div className="text-xs text-white/70 mt-1 bg-black/20 inline-block px-3 py-1 rounded-full backdrop-blur-sm">
-                        {billingText}
+                        {/* {billingText} */}
+                        {credits} Credits
                     </div>
                 )}
 

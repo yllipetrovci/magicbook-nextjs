@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
             });
 
         createJob({
-            jobType: "story",
+            type: "story",
             config: { ...configWithoutOriginals, storyDocId: storyRef.id, userId: uid },
         });
 

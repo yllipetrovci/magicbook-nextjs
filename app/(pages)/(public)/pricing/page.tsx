@@ -32,14 +32,16 @@ export const Pricing: React.FC = () => {
       }
    };
 
-   const handlePricePlan = (plan: string) => {
-      updateConfig('planType', plan);
-      if (plan === 'free') {
+   const handlePricePlan = (priceId: string) => {
+      updateConfig('planType', priceId);
+      if (priceId === 'free') {
          router.push(PATHS.SUCCESS);
          return;
       }
 
-      router.push(PATHS.CHECKOUT);
+      console.log("handlePricePlan", priceId);
+
+      router.push(PATHS.CHECKOUT + '/' + priceId);
    };
 
    const handleBack = () => {
@@ -51,52 +53,6 @@ export const Pricing: React.FC = () => {
    };
 
    if (!mounted) return null;
-
-   // const freePlan: PricePlan = {
-   //    id: 'free',
-   //    title: 'Free Magic',
-   //    price: '$0',
-   //    subtitle: 'Forever Free',
-   //    features: [
-   //       '3 Page Story',
-   //       'Standard Illustrations',
-   //       'Web View Only'
-   //    ],
-   //    buttonText: 'Choose Free',
-   //    colorTheme: 'gray'
-   // };
-
-   // const creditPlan: PricePlan = {
-   //    id: 'credits',
-   //    title: '10 Credits',
-   //    price: '$9.99',
-   //    subtitle: '($0.99 / story)',
-   //    features: [
-   //       '10 Magical Stories',
-   //       'Keep them forever',
-   //       'Printable PDF',
-   //       'No Expiration'
-   //    ],
-   //    buttonText: 'Get Credits',
-   //    colorTheme: 'blue',
-   //    badge: 'CREDIT PACK'
-   // };
-
-   // const unlimitedPlan: PricePlan = {
-   //    id: 'unlimited',
-   //    title: 'Unlimited Magic',
-   //    price: '$14.99',
-   //    billingText: 'billed monthly',
-   //    features: [
-   //       'Unlimited Stories',
-   //       'Unlimited HD Illustrations',
-   //       'Commercial Rights',
-   //       'Access to New Themes'
-   //    ],
-   //    buttonText: t('price_best_value'),
-   //    colorTheme: 'orange',
-   //    isPopular: true
-   // };
 
    return (
       <div className="flex flex-col items-center justify-center min-h-[80vh] px-4 py-12 bg-transparent relative">

@@ -1,32 +1,31 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { initializePaddle, Paddle } from '@paddle/paddle-js';
-// import { getPaddle } from "@/lib/paddle";
+import { initializePaddle, Paddle } from "@paddle/paddle-js";
 
 export default function PaddleTestPage() {
-
-
-    const [paddle, setPaddle] = useState<Paddle>();
+    const [paddle, setPaddle] = useState<Paddle | null>(null);
 
     useEffect(() => {
         initializePaddle({
-            environment: 'sandbox', // or 'production'
-            token: process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN!
-        }).then(
-            (paddleInstance: Paddle | undefined) => {
-                if (paddleInstance) {
-                    setPaddle(paddleInstance);
-                }
-            },
-        );
+            environment: "sandbox",
+            seller: 43714,
+            token: process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN!, // ✅ CORRECT
+        }).then((p) => {
+            if (p) setPaddle(p);
+        });
     }, []);
 
-    console.log(process.env.NEXT_PUBLIC_PADDLE_CLIENT_TOKEN!);
-
     const openCheckout = () => {
-        paddle?.Checkout.open({
-            items: [{ priceId: 'pri_01gsz8x8sawmvhz1pv30nge1ke', quantity: 1 }]
+        if (!paddle) return;
+
+        paddle.Checkout.open({
+            items: [
+                {
+                    priceId: process.env.NEXT_PUBLIC_PADDLE_PRICE_ID_UNLIMITED!,
+                    quantity: 1,
+                },
+            ],
         });
     };
 
