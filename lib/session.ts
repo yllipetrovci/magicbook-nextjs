@@ -1,5 +1,8 @@
 import { cookies } from 'next/headers';
-import { auth } from './firestore/firebaseAdmin';
+import { getAuth } from 'firebase-admin/auth';
+import * as admin from 'firebase-admin';
+
+const auth = getAuth(admin.app());
 
 const SESSION_COOKIE_NAME = 'session';
 const SESSION_COOKIE_MAX_AGE = 60 * 60 * 24 * 5; // 5 days
@@ -64,8 +67,8 @@ export async function getServerSession(): Promise<SessionUser | null> {
 /**
  * Set session cookie in response
  */
-export function setSessionCookie(sessionCookie: string) {
-    const cookieStore = cookies();
+export async function setSessionCookie(sessionCookie: string) {
+    const cookieStore = await cookies();
 
     cookieStore.set(SESSION_COOKIE_NAME, sessionCookie, {
         httpOnly: true,
@@ -79,8 +82,8 @@ export function setSessionCookie(sessionCookie: string) {
 /**
  * Clear session cookie
  */
-export function clearSessionCookie() {
-    const cookieStore = cookies();
+export async function clearSessionCookie() {
+    const cookieStore = await cookies();
 
     cookieStore.set(SESSION_COOKIE_NAME, '', {
         httpOnly: true,

@@ -92,7 +92,11 @@ const Snowfall = () => {
 
 const QuestMap: React.FC = () => {
     const router = useRouter();
-    const { setGeneratedStory, config } = useStory();
+    const { config } = useStory();//setGeneratedStory,
+
+    const setGeneratedStory = (item: any) => {
+
+    }
 
     const handleChapterClick = (chapter: QuestChapter) => {
         if (chapter.status === 'locked') return;

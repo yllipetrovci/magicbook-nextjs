@@ -169,7 +169,7 @@ export const BookReader: React.FC<BookReaderProps> = ({ story, onClose, onComple
 
   const toggleReadAloud = (text: string) => {
     const synth = synthRef.current;
-    if (synth.speaking) {
+    if (synth?.speaking) {
       synth.cancel();
       setIsReading(false);
     } else {
@@ -181,7 +181,7 @@ export const BookReader: React.FC<BookReaderProps> = ({ story, onClose, onComple
         default: utterance.rate = 0.95; utterance.pitch = 1.0; break;
       }
       utterance.onend = () => setIsReading(false);
-      synth.speak(utterance);
+      synth?.speak(utterance);
       setIsReading(true);
     }
   };
@@ -201,7 +201,7 @@ export const BookReader: React.FC<BookReaderProps> = ({ story, onClose, onComple
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
       document.removeEventListener('fullscreenchange', handleFsChange);
-      synthRef.current.cancel();
+      synthRef?.current?.cancel();
     };
   }, [currentPageIndex]);
 

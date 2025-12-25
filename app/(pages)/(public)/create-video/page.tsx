@@ -25,7 +25,11 @@ interface CreateVideoForm {
 
 export const CreateVideo: React.FC = () => {
     const router = useRouter();
-    const { addVideo, stories } = useStory();
+    const { stories } = useStory(); //addVideo, 
+
+    const addVideo = (video: GeneratedVideo) => {
+        // Placeholder function to avoid errors
+    }
     const { t } = useLanguage();
     const [selectedStoryId, setSelectedStoryId] = useState<string | null>(null);
     const [selectedPageIndex, setSelectedPageIndex] = useState<number>(0);

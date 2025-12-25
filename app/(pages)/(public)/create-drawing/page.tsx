@@ -17,7 +17,7 @@ const STYLES = [
 
 export const CreateDrawing: React.FC = () => {
     const router = useRouter();
-    const { addImage } = useStory();
+    // const { addImage } = useStory();
     const { t } = useLanguage();
     const [prompt, setPrompt] = useState('');
     const [isProcessing, setIsProcessing] = useState(false);
@@ -37,6 +37,10 @@ export const CreateDrawing: React.FC = () => {
             reader.readAsDataURL(file);
         }
     };
+
+    const addImage = (image:GeneratedImage) =>{
+        // Placeholder function to avoid errors
+    }
 
     const handleGenerate = () => {
         if (!prompt.trim() && !photo) return;

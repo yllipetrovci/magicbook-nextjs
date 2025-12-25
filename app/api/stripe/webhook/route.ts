@@ -2,12 +2,6 @@ import Stripe from "stripe";
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 
-export const config = {
-    api: {
-        bodyParser: false,
-    },
-};
-
 const stripe = new Stripe(process.env.STRIPE_PRIVATE_KEY as string, {
     apiVersion: "2025-11-17.clover",
 });

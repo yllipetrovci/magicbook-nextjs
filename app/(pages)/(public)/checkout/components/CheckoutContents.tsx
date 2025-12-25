@@ -45,12 +45,6 @@ export function CheckoutContents({ userEmail }: Props) {
 
     const handleCheckoutEvents = (event: CheckoutEventsData) => {
         setCheckoutData(event);
-
-        if (event.name === 'checkout.completed') {
-            // router.push(PATHS.SUCCESS);
-
-            console.log("SAVE DATA AND REDIRECT TO SUCCESS PAGE");
-        }
     };
 
     const updateItems = useCallback(
@@ -74,6 +68,11 @@ export function CheckoutContents({ userEmail }: Props) {
                     debugger;
                     if (event.data && event.name) {
                         handleCheckoutEvents(event.data);
+                    }
+
+                    if (event.name === 'checkout.completed') {
+                        // router.push(PATHS.SUCCESS);
+                        console.log("SAVE DATA AND REDIRECT TO SUCCESS PAGE");
                     }
 
 
